@@ -1,0 +1,48 @@
+这里为您准备了 **Private License (私有许可证 / 最终用户许可协议)**。
+
+由于您的项目包含高性能的 WASM 核心和经过混淆的商业级代码，该协议采用了**“所有权利保留（All Rights Reserved）”**的专有许可模式，旨在保护您的知识产权，禁止未经授权的商业化、逆向工程或二次分发。
+
+---
+
+# King's Reach - Private License & Terms of Use
+# 《王权网络》- 私有许可证及使用条款
+
+**Version / 版本**: 1.0
+**Date / 日期**: 2024
+
+### 1. Ownership and Intellectual Property / 所有权与知识产权
+The Software (including but not limited to source code, compiled WASM binaries, obfuscated JavaScript, art assets, and game design) is the sole property of the King's Reach Developers ("the Owner"). All intellectual property rights are reserved.
+本软件（包括但不限于源代码、编译后的 WASM 二进制文件、混淆后的 JavaScript 代码、美术资源及游戏设计）均为《王权网络》开发团队（以下简称“所有者”）的独家财产。所有知识产权均予以保留。
+
+### 2. Grant of License / 许可授予
+The Owner hereby grants you a personal, non-exclusive, non-transferable, and revocable license to use the Software for personal, non-commercial evaluation and entertainment purposes only.
+所有者特此授予您一项个人的、非排他性的、不可转让的且可撤销的许可，仅允许您出于个人非商业性评估及娱乐目的使用本软件。
+
+### 3. Restrictions / 使用限制
+You are strictly prohibited from:
+您被严禁执行以下操作：
+*   **Redistribution**: Copying, sharing, or re-hosting the Software or any part of it on any public or private platform without explicit written consent.
+    **二次分发**：未经明确书面同意，在任何公开或私有平台上复制、分享或重新托管本软件或其任何部分。
+*   **Commercial Use**: Using the Software, its logic, or its assets for any revenue-generating activities.
+    **商业用途**：将本软件、其逻辑或资源用于任何营利活动。
+*   **Reverse Engineering**: Attempting to decompile, disassemble, or reverse engineer the compiled WASM engine or obfuscated JavaScript code.
+    **逆向工程**：尝试对编译后的 WASM 引擎或混淆后的 JavaScript 代码进行反编译、反汇编或逆向工程。
+*   **Derivative Works**: Modifying the Software or creating derivative works based on the "King's Reach" core mechanics and universe for public distribution.
+    **衍生作品**：修改本软件或基于《王权网络》的核心机制与世界观创作衍生作品并公开发布。
+
+### 4. No Warranty / 免责声明
+The Software is provided "AS IS", without warranty of any kind, express or implied. In no event shall the authors or copyright holders be liable for any claim, damages, or other liability arising from the use of the Software.
+本软件按“原样”提供，不提供任何形式的明示或暗示保证。在任何情况下，作者或版权所有者均不对因使用本软件而产生的任何索赔、损害或其他责任负责。
+
+### 5. Termination / 协议终止
+This license terminates automatically if you fail to comply with any of the terms outlined above. Upon termination, you must destroy all copies of the Software in your possession.
+如果您未能遵守上述任何条款，本许可将自动终止。协议终止后，您必须销毁所持有的本软件的所有副本。
+
+### 6. Governing Law / 适用法律
+Any disputes arising from this license shall be governed by the laws of the jurisdiction where the Owner resides.
+由本许可引起的任何争议均应受所有者所在地管辖区的法律管辖。
+
+---
+
+**Copyright © 2024 King's Reach Developers. All Rights Reserved.**
+**版权所有 © 2024 王权网络开发团队。保留所有权利。**
