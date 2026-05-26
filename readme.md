@@ -83,8 +83,8 @@ npm run dev
 
 ## 📄 License / 许可证
 
-Copyright © 2024 King's Reach Developers. All rights reserved.
+Copyright © 2026 King's Reach Developers. All rights reserved.
 See [Private License](./LICENSE) for details.
 
-版权所有 © 2024 王权网络开发团队。保留所有权利。
+版权所有 © 2026 王权网络开发团队。保留所有权利。
 详情请参阅 [私有许可证](./LICENSE)。
