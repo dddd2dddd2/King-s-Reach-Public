@@ -1,13 +1,13 @@
 const e = "__IS_GRID_DEV__";
 "undefined" != typeof globalThis && void 0 === globalThis[e] && (globalThis[e] = !1);
-const t = "W", o = "B", r = {
+const t = "W", o = "B", i = {
 	PAWN: "P",
 	KNIGHT: "N",
 	BISHOP: "B",
 	ROOK: "R",
 	QUEEN: "Q",
 	KING: "K"
-}, i = {
+}, r = {
 	FROZEN: "FROZEN",
 	PETRIFIED: "PETRIFIED",
 	SKILL_LOCKED: "SKILL_LOCKED",
@@ -47,7 +47,7 @@ const t = "W", o = "B", r = {
 	JAMMING_TOWER: "JAMMING_TOWER",
 	ROOTED: "ROOTED",
 	CROSS_AURA: "CROSS_AURA"
-}, s = "VOID_ANCHOR", a = "FROZEN_TRAP", c = "PORTAL_ENTRY", n = "SQUARE_RAILWAY", d = "IRON_CURTAIN", p = "SQ_AFTERIMAGE", E = "SQUARE_BASTION_FIELD", l = "BARRICADE", u = "JAMMING_TOWER", A = "VOID_FISSURE_SQUARE", I = "SUPPLY_DEPOT_SQUARE", m = "ANTI_PAWN_MINE", T = "ICE_SLICK", O = "WORMHOLE_A", _ = "WORMHOLE_B", f = "WARP_STORM_PORTAL", S = {
+}, s = "VOID_ANCHOR", a = "FROZEN_TRAP", c = "PORTAL_ENTRY", n = "SQUARE_RAILWAY", d = "IRON_CURTAIN", p = "SQ_AFTERIMAGE", E = "SQUARE_BASTION_FIELD", l = "BARRICADE", u = "JAMMING_TOWER", A = "VOID_FISSURE_SQUARE", m = "SUPPLY_DEPOT_SQUARE", I = "ANTI_PAWN_MINE", T = "ICE_SLICK", O = "WORMHOLE_A", _ = "WORMHOLE_B", f = "WARP_STORM_PORTAL", y = {
 	DESTRUCTIVE_SKILLS: [
 		"PAWN_ASSASSIN",
 		"PAWN_PROMOTE",
@@ -68,7 +68,7 @@ const t = "W", o = "B", r = {
 		"GRAVITY_LOCKED",
 		"AURA_SUPPRESSED"
 	]
-}, y = {
+}, S = {
 	R: [
 		[0, 1],
 		[0, -1],
@@ -111,14 +111,14 @@ const t = "W", o = "B", r = {
 		[-1, 2],
 		[-1, -2]
 	]
-}, R = (r.PAWN, r.KNIGHT, r.BISHOP, r.ROOK, r.QUEEN, [
+}, R = (i.PAWN, i.KNIGHT, i.BISHOP, i.ROOK, i.QUEEN, [
 	"SELL_PIECE",
 	"SELL_ITEM",
 	"RECYCLE",
 	"MIDAS_TOUCH",
 	"REQUISITION_GAIN"
-]), N = "ARTHUR", h = "ODYSSEUS", M = "HAPPY_PRINCE", P = "LOUIS_XIV", D = "RICHARD";
-var C = class {
+]), N = "ARTHUR", h = "ODYSSEUS", M = "HAPPY_PRINCE", P = "LOUIS_XIV", L = "RICHARD";
+var D = class {
 	static isValidPos(e, t) {
 		return e >= 0 && e < 8 && t >= 0 && t < 8;
 	}
@@ -128,119 +128,140 @@ var C = class {
 	static isEmpty(e, t, o) {
 		return !!this.isValidPos(t, o) && null === e[t][o];
 	}
-	static hasEnemy(e, t, o, r) {
-		const i = this.getPiece(e, t, o);
-		return null !== i && i.color !== r;
+	static hasEnemy(e, t, o, i) {
+		const r = this.getPiece(e, t, o);
+		return null !== r && r.color !== i;
 	}
-	static hasFriend(e, t, o, r) {
-		const i = this.getPiece(e, t, o);
-		return null !== i && i.color === r;
+	static hasFriend(e, t, o, i) {
+		const r = this.getPiece(e, t, o);
+		return null !== r && r.color === i;
 	}
 	static findPieces(e, t) {
 		const o = [];
-		for (let r = 0; r < 8; r++) for (let i = 0; i < 8; i++) {
-			const s = e[r][i];
-			s && t(s, r, i) && o.push({
-				r,
-				c: i,
+		for (let i = 0; i < 8; i++) for (let r = 0; r < 8; r++) {
+			const s = e[i][r];
+			s && t(s, i, r) && o.push({
+				r: i,
+				c: r,
 				piece: s
 			});
 		}
 		return o;
 	}
-	static slidingMoves(e, t, o, r, i) {
+	static slidingMoves(e, t, o, i, r) {
 		const s = [];
-		for (const [a, c] of i) {
-			let i = t + a, n = o + c;
-			for (; this.isValidPos(i, n);) {
-				const t = e[i][n];
+		for (const [a, c] of r) {
+			let r = t + a, n = o + c;
+			for (; this.isValidPos(r, n);) {
+				const t = e[r][n];
 				if (t) {
-					t.color !== r && s.push({
-						r: i,
+					t.color !== i && s.push({
+						r,
 						c: n
 					});
 					break;
 				}
 				s.push({
-					r: i,
+					r,
 					c: n
-				}), i += a, n += c;
+				}), r += a, n += c;
 			}
 		}
 		return s;
 	}
-	static findFirstInLine(e, t, o, r, i) {
-		for (const [s, a] of r) {
-			let r = t + s, c = o + a;
-			for (; this.isValidPos(r, c);) {
-				const t = e[r][c];
+	static findFirstInLine(e, t, o, i, r) {
+		for (const [s, a] of i) {
+			let i = t + s, c = o + a;
+			for (; this.isValidPos(i, c);) {
+				const t = e[i][c];
 				if (t) {
-					if (i(t)) return {
+					if (r(t)) return {
 						piece: t,
-						r,
+						r: i,
 						c
 					};
 					break;
 				}
-				r += s, c += a;
+				i += s, c += a;
 			}
 		}
 		return null;
 	}
 	static neighbors(e, t, o = 1) {
-		const r = [];
-		for (let i = -o; i <= o; i++) for (let s = -o; s <= o; s++) {
-			if (0 === i && 0 === s) continue;
-			const o = e + i, a = t + s;
-			this.isValidPos(o, a) && r.push({
+		const i = [];
+		for (let r = -o; r <= o; r++) for (let s = -o; s <= o; s++) {
+			if (0 === r && 0 === s) continue;
+			const o = e + r, a = t + s;
+			this.isValidPos(o, a) && i.push({
 				r: o,
 				c: a
 			});
 		}
-		return r;
+		return i;
 	}
 };
-const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
+const C = "undefined" != typeof window ? window : "undefined" != typeof self ? self : globalThis, U = C.gameEvents || new class {
+	constructor() {
+		this.events = {};
+	}
+	on(e, t) {
+		return this.events[e] || (this.events[e] = []), this.events[e].push(t), () => this.off(e, t);
+	}
+	off(e, t) {
+		this.events[e] && (this.events[e] = this.events[e].filter((e) => e !== t));
+	}
+	emit(e, t) {
+		this.events[e] && this.events[e].forEach((e) => e(t));
+	}
+	once(e, t) {
+		const o = (i) => {
+			this.off(e, o), t(i);
+		};
+		return this.on(e, o);
+	}
+}();
+void 0 !== C && (C.gameEvents = U);
+const G = "STAT_TRACK", k = (e, t) => Math.atan2(e, t) * (180 / Math.PI), K = [
 	{
 		id: "BISHOP_REFRACTION",
 		name: "反射",
 		tier: "COMMON",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "移动触碰边界时，可以按 90 度角折射继续滑行一格。",
-		modifiers: { movement: ({ board: e, r: t, c: o }, r) => ([
+		modifiers: { movement: ({ board: e, r: t, c: o }, i) => ([
 			[-1, -1],
 			[-1, 1],
 			[1, -1],
 			[1, 1]
-		].forEach(([i, s]) => {
-			let a = t + i, c = o + s;
-			for (; a >= 0 && a < 8 && c >= 0 && c < 8 && !e[a][c];) a += i, c += s;
+		].forEach(([r, s]) => {
+			let a = t + r, c = o + s;
+			for (; a >= 0 && a < 8 && c >= 0 && c < 8 && !e[a][c];) a += r, c += s;
 			if (a < 0 || a >= 8 || c < 0 || c >= 8) {
-				const t = a < 0 || a >= 8, o = a - i + (t ? -i : i), n = c - s + (t ? s : -s);
-				o >= 0 && o < 8 && n >= 0 && n < 8 && !e[o][n] && r.push({
+				const t = a < 0 || a >= 8, o = a - r + (t ? -r : r), n = c - s + (t ? s : -s);
+				o >= 0 && o < 8 && n >= 0 && n < 8 && !e[o][n] && i.push({
 					r: o,
 					c: n
 				});
 			}
-		}), r) }
+		}), i) }
 	},
 	{
 		id: "BISHOP_MIRROR",
 		name: "镜像",
 		tier: "COMMON",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "当斜线上有另一个己方“象”时，这两个象可以互相传送（交换位置）。",
-		modifiers: { movement: ({ board: e, piece: t, r: o, c: i }, s) => ([
+		modifiers: { movement: ({ board: e, piece: t, r: o, c: r }, s) => ([
 			[-1, -1],
 			[-1, 1],
 			[1, -1],
 			[1, 1]
 		].forEach(([a, c]) => {
-			let n = o + a, d = i + c;
+			let n = o + a, d = r + c;
 			for (; n >= 0 && n < 8 && d >= 0 && d < 8;) {
 				const o = e[n][d];
 				if (o) {
-					o.color === t.color && o.type === r.BISHOP && s.push({
+					o.color === t.color && o.type === i.BISHOP && s.push({
 						r: n,
 						c: d
 					});
@@ -250,7 +271,7 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 			}
 		}), s) },
 		hooks: { onAfterMove: ({ from: e, victim: t, emit: o }) => {
-			e && t && t.type === r.BISHOP && o({
+			e && t && t.type === i.BISHOP && o({
 				type: "SPAWN",
 				pos: e,
 				piece: t
@@ -261,17 +282,17 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 		id: "BISHOP_PHASE_SHIFT",
 		name: "相位偏转",
 		tier: "COMMON",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "允许象像“车”一样水平或垂直移动 1 格（但此移动不能吃子）。",
 		modifiers: { movement: (e, t) => {
-			const { board: o, r, c: i, piece: s, isControlSquares: a } = e;
+			const { board: o, r: i, c: r, piece: s, isControlSquares: a } = e;
 			return [
 				[-1, 0],
 				[1, 0],
 				[0, -1],
 				[0, 1]
 			].forEach(([e, c]) => {
-				const n = r + e, d = i + c;
+				const n = i + e, d = r + c;
 				if (n >= 0 && n < 8 && d >= 0 && d < 8) {
 					const e = o[n][d];
 					(!e || a && e.color === s.color) && t.push({
@@ -286,14 +307,14 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 		id: "BISHOP_AFTERSHOCK",
 		name: "余震",
 		tier: "COMMON",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "吃子后，落点周围 1 格的所有空格在下回合内，敌方无法进行“库存部署”。",
-		hooks: { onKill: ({ r: e, c: t, piece: o, board: r, emit: i }) => {
+		hooks: { onKill: ({ r: e, c: t, piece: o, board: i, emit: r }) => {
 			const s = o.color;
 			for (let a = -1; a <= 1; a++) for (let o = -1; o <= 1; o++) {
 				if (0 === a && 0 === o) continue;
 				const c = e + a, n = t + o;
-				c >= 0 && c < 8 && n >= 0 && n < 8 && (r[c][n] || i({
+				c >= 0 && c < 8 && n >= 0 && n < 8 && (i[c][n] || r({
 					type: "SET_SQUARE",
 					pos: {
 						r: c,
@@ -312,22 +333,22 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 		id: "BISHOP_PIERCE",
 		name: "穿透狙击",
 		tier: "RARE",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "可以穿过一个己方单位进行攻击。",
 		modifiers: { movement: (e, t) => {
-			const { board: o, r: i, c: s, piece: a, isControlSquares: c } = e;
+			const { board: o, r, c: s, piece: a, isControlSquares: c } = e;
 			return [
 				[-1, -1],
 				[-1, 1],
 				[1, -1],
 				[1, 1]
 			].forEach(([e, n]) => {
-				let d = i + e, p = s + n, E = !1;
+				let d = r + e, p = s + n, E = !1;
 				for (; d >= 0 && d < 8 && p >= 0 && p < 8;) {
-					const i = o[d][p];
-					if (i) {
-						if (E || i.color !== a.color || i.type === r.KING) {
-							(i.color !== a.color || c) && t.push({
+					const r = o[d][p];
+					if (r) {
+						if (E || r.color !== a.color || r.type === i.KING) {
+							(r.color !== a.color || c) && t.push({
 								r: d,
 								c: p
 							});
@@ -350,28 +371,28 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 		id: "BISHOP_HOLY_LAND",
 		name: "圣域",
 		tier: "RARE",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "该棋子斜线上所有空格，即使被阻挡也视为“已控制区”，可直接部署。",
-		modifiers: { movement: ({ board: e, r: t, c: o, piece: r }, i) => ([
+		modifiers: { movement: ({ board: e, r: t, c: o, piece: i }, r) => ([
 			[-1, -1],
 			[-1, 1],
 			[1, -1],
 			[1, 1]
-		].forEach(([r, s]) => {
-			let a = t + r, c = o + s;
-			for (; a >= 0 && a < 8 && c >= 0 && c < 8;) e[a][c] || i.push({
+		].forEach(([i, s]) => {
+			let a = t + i, c = o + s;
+			for (; a >= 0 && a < 8 && c >= 0 && c < 8;) e[a][c] || r.push({
 				r: a,
 				c
-			}), a += r, c += s;
-		}), i) }
+			}), a += i, c += s;
+		}), r) }
 	},
 	{
 		id: "BISHOP_MIRROR_RESONANCE",
 		name: "镜像共鸣",
 		tier: "RARE",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "当斜线上有另一个己方“象”时，两者共享网络连接状态。",
-		modifiers: { alwaysNetworked: ({ board: e, r: t, c: o, piece: i }) => {
+		modifiers: { alwaysNetworked: ({ board: e, r: t, c: o, piece: r }) => {
 			for (const [s, a] of [
 				[-1, -1],
 				[-1, 1],
@@ -381,7 +402,7 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 				let c = t + s, n = o + a;
 				for (; c >= 0 && c < 8 && n >= 0 && n < 8;) {
 					const t = e[c][n];
-					if (t && t.color === i.color && t.type === r.BISHOP && t !== i) return !0;
+					if (t && t.color === r.color && t.type === i.BISHOP && t !== r) return !0;
 					if (t) break;
 					c += s, n += a;
 				}
@@ -393,21 +414,21 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 		id: "BISHOP_RECALL",
 		name: "应急回存",
 		tier: "RARE",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "主动技能：可以将该棋子撤回库存。每局限一次，再部署后失效。",
 		activeSpec: {
 			targeting: "self",
 			usesKey: "recallUses",
 			maxUses: 1,
-			execute: (e, t, o, r, i, s) => {
-				(r.metadata?.recallUses || 0) >= 1 || (s({
+			execute: (e, t, o, i, r, s) => {
+				(i.metadata?.recallUses || 0) >= 1 || (s({
 					type: "MODIFY_RESERVE",
-					color: r.color,
-					pieceType: r.type,
+					color: i.color,
+					pieceType: i.type,
 					amount: 1
 				}), s({
 					type: "UNDEPLOY_PIECE",
-					uid: r.uid
+					uid: i.uid
 				}), s({
 					type: "REMOVE_PIECE",
 					pos: {
@@ -416,10 +437,10 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 					}
 				}), s({
 					type: "UPDATE_ROSTER_PIECE",
-					pieceUid: r.uid,
+					pieceUid: i.uid,
 					updates: { metadata: {
-						...r.metadata,
-						recallUses: (r.metadata?.recallUses || 0) + 1
+						...i.metadata,
+						recallUses: (i.metadata?.recallUses || 0) + 1
 					} }
 				}), s({
 					type: "SHOW_TEXT",
@@ -441,7 +462,7 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 		id: "BISHOP_CONDUIT",
 		name: "远程授能",
 		tier: "EPIC",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "只要象连通，斜线上所有友军即使离王很远也视为连通。",
 		modifiers: { networkRange: ({ r: e, c: t }) => {
 			const o = [];
@@ -450,12 +471,12 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 				[-1, 1],
 				[1, -1],
 				[1, 1]
-			].forEach(([r, i]) => {
-				let s = e + r, a = t + i;
+			].forEach(([i, r]) => {
+				let s = e + i, a = t + r;
 				for (; s >= 0 && s < 8 && a >= 0 && a < 8;) o.push({
 					r: s,
 					c: a
-				}), s += r, a += i;
+				}), s += i, a += r;
 			}), o;
 		} }
 	},
@@ -463,7 +484,7 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 		id: "BISHOP_SILENCE",
 		name: "禁魔",
 		tier: "EPIC",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "被该棋子攻击控制范围覆盖的敌方棋子无法触发主动技能。",
 		hooks: { onAfterMove: ({ board: e, r: t, c: o, piece: s, emit: a }) => {
 			[
@@ -475,13 +496,13 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 				let d = t + c, p = o + n;
 				for (; d >= 0 && d < 8 && p >= 0 && p < 8;) {
 					const t = e[d][p];
-					if (t && t.color !== s.color && t.type !== r.KING && a({
+					if (t && t.color !== s.color && t.type !== i.KING && a({
 						type: "ADD_STATUS",
 						pos: {
 							r: d,
 							c: p
 						},
-						statusId: i.SILENCED,
+						statusId: r.SILENCED,
 						duration: 2
 					}), t) break;
 					d += c, p += n;
@@ -493,12 +514,12 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 		id: "BISHOP_OPTICAL_BLIND_ZONE",
 		name: "光学死角",
 		tier: "EPIC",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "免疫直线远程攻击（1格之外的车、后打击）。",
 		modifiers: { invulnerable: ({ r: e, c: t }, o) => {
-			const r = o._lastPos?.r, i = o._lastPos?.c;
-			if (void 0 !== r && void 0 !== i) {
-				const o = Math.abs(r - e), s = Math.abs(i - t);
+			const i = o._lastPos?.r, r = o._lastPos?.c;
+			if (void 0 !== i && void 0 !== r) {
+				const o = Math.abs(i - e), s = Math.abs(r - t);
 				return (0 === o || 0 === s) && (o > 1 || s > 1);
 			}
 			return !1;
@@ -508,18 +529,18 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 		id: "BISHOP_ZEALOT",
 		name: "狂热",
 		tier: "EPIC",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "吃子后下回合变“后”滑行，若持续吃子则效果延续。",
-		hooks: { onKill: ({ piece: e, r: t, c: o, emit: r }) => {
-			r({
+		hooks: { onKill: ({ piece: e, r: t, c: o, emit: i }) => {
+			i({
 				type: "ADD_STATUS",
 				pos: {
 					r: t,
 					c: o
 				},
-				statusId: i.ZEALOT_BUFF,
+				statusId: r.ZEALOT_BUFF,
 				duration: 2
-			}), r({
+			}), i({
 				type: "SHOW_TEXT",
 				text: "Zealot!",
 				textKey: "LOG_ZEALOT",
@@ -531,7 +552,7 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 		id: "BISHOP_SACRED_ZONE",
 		name: "神圣领域",
 		tier: "EPIC",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "斜线上敌军被冻结 1 回合。对王和后无效。",
 		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: s, emit: a }) => {
 			[
@@ -543,13 +564,13 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 				let d = t + c, p = o + n;
 				for (; d >= 0 && d < 8 && p >= 0 && p < 8;) {
 					const t = e[d][p];
-					t && t.color !== s.color && t.type !== r.KING && t.type !== r.QUEEN && (t.statuses?.some((e) => e.id === i.FROZEN) || a({
+					t && t.color !== s.color && t.type !== i.KING && t.type !== i.QUEEN && (t.statuses?.some((e) => e.id === r.FROZEN) || a({
 						type: "ADD_STATUS",
 						pos: {
 							r: d,
 							c: p
 						},
-						statusId: i.FROZEN,
+						statusId: r.FROZEN,
 						duration: 2,
 						visualMeta: { delayBefore: 50 }
 					})), d += c, p += n;
@@ -561,11 +582,11 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 		id: "BISHOP_CONVERSION",
 		name: "洗礼",
 		tier: "EPIC",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "主动：将一名相邻的敌方兵永久转化为己方，该象随后损毁。",
 		activeSpec: {
 			targeting: "target",
-			getAlternatives: (e, t, o, i) => {
+			getAlternatives: (e, t, o, r) => {
 				const s = [];
 				for (const [a, c] of [
 					[-1, -1],
@@ -578,9 +599,9 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 					[1, 1]
 				]) {
 					const n = t + a, d = o + c;
-					if (C.isValidPos(n, d)) {
+					if (D.isValidPos(n, d)) {
 						const t = e[n][d];
-						t && t.color !== i.color && t.type === r.PAWN && s.push({
+						t && t.color !== r.color && t.type === i.PAWN && s.push({
 							pos: {
 								r: n,
 								c: d
@@ -594,17 +615,17 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 				}
 				return s;
 			},
-			getAoE: (e, t, o, r, i) => i ? [{
-				r: i.r,
-				c: i.c
+			getAoE: (e, t, o, i, r) => r ? [{
+				r: r.r,
+				c: r.c
 			}] : [],
-			execute: (e, t, o, r, i, s) => {
-				if (i) {
-					const a = e[i.r][i.c];
+			execute: (e, t, o, i, r, s) => {
+				if (r) {
+					const a = e[r.r][r.c];
 					if (a) {
 						const e = `u-${Date.now()}`, c = {
 							...a,
-							color: r.color,
+							color: i.color,
 							statuses: [],
 							uid: e
 						};
@@ -613,14 +634,14 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 							piece: c
 						}), s({
 							type: "SPAWN",
-							pos: i,
+							pos: r,
 							piece: c
 						}), s({
 							type: "REMOVE_FROM_ROSTER",
-							pieceUid: r.uid
+							pieceUid: i.uid
 						}), s({
 							type: "UNDEPLOY_PIECE",
-							uid: r.uid
+							uid: i.uid
 						}), s({
 							type: "REMOVE_PIECE",
 							pos: {
@@ -632,7 +653,7 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 							text: "Conversion",
 							textKey: "LOG_CONVERSION",
 							style: "gold",
-							pos: i
+							pos: r
 						});
 					}
 				}
@@ -643,20 +664,20 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 		id: "BISHOP_HOLY_LIGHT",
 		name: "圣光",
 		tier: "RARE",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "每回合开始时，象周围 1 格的友军负面状态清除。",
-		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: r, emit: s }) => {
+		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: i, emit: s }) => {
 			const a = [
-				i.FROZEN,
-				i.PETRIFIED,
-				i.SKILL_LOCKED,
-				i.SILENCED,
-				i.INFECTED,
-				i.BETRAYED,
-				i.GRAVITY_LOCKED,
-				i.AURA_SUPPRESSED
+				r.FROZEN,
+				r.PETRIFIED,
+				r.SKILL_LOCKED,
+				r.SILENCED,
+				r.INFECTED,
+				r.BETRAYED,
+				r.GRAVITY_LOCKED,
+				r.AURA_SUPPRESSED
 			];
-			for (const [i, c] of [
+			for (const [r, c] of [
 				[-1, -1],
 				[-1, 0],
 				[-1, 1],
@@ -666,10 +687,10 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 				[1, 0],
 				[1, 1]
 			]) {
-				const n = t + i, d = o + c;
-				if (C.isValidPos(n, d)) {
+				const n = t + r, d = o + c;
+				if (D.isValidPos(n, d)) {
 					const t = e[n][d];
-					t && t.color === r.color && a.forEach((e) => {
+					t && t.color === i.color && a.forEach((e) => {
 						t.statuses?.some((t) => t.id === e) && s({
 							type: "REMOVE_STATUS",
 							pos: {
@@ -687,10 +708,10 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 		id: "BISHOP_RESURRECTION",
 		name: "复活术",
 		tier: "LEGENDARY",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "吃掉敌方棋子时，随机将一个本局阵亡的友方棋子放回库存。",
-		hooks: { onKill: ({ piece: e, emit: t, roster: o, deployedUids: i, board: s, prng: a }) => {
-			const c = i || [], n = (o || []).filter((e) => !(e.type === r.KING || !e.uid) && !(C.findPieces(s, (t) => t.uid === e.uid).length > 0 || c.includes(e.uid)));
+		hooks: { onKill: ({ piece: e, emit: t, roster: o, deployedUids: r, board: s, prng: a }) => {
+			const c = r || [], n = (o || []).filter((e) => !(e.type === i.KING || !e.uid) && !(D.findPieces(s, (t) => t.uid === e.uid).length > 0 || c.includes(e.uid)));
 			if (n.length > 0 && a) {
 				const o = n[Math.floor(a.next() * n.length)];
 				t({
@@ -712,11 +733,11 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 		id: "BISHOP_AURORA",
 		name: "极光",
 		tier: "LEGENDARY",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "主动技能：不移动，直接狙击吃掉斜线上任何位置的一个敌方棋子。",
 		activeSpec: {
 			targeting: "target",
-			getAlternatives: (e, t, o, i) => {
+			getAlternatives: (e, t, o, r) => {
 				const s = [];
 				return [
 					[-1, -1],
@@ -727,7 +748,7 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 					let n = t + a, d = o + c;
 					for (; n >= 0 && n < 8 && d >= 0 && d < 8;) {
 						const t = e[n][d];
-						if (t && t.color !== i.color && t.type !== r.KING && s.push({
+						if (t && t.color !== r.color && t.type !== i.KING && s.push({
 							pos: {
 								r: n,
 								c: d
@@ -741,13 +762,13 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 					}
 				}), s;
 			},
-			getAoE: (e, t, o, r, i) => i ? [{
-				r: i.r,
-				c: i.c
+			getAoE: (e, t, o, i, r) => r ? [{
+				r: r.r,
+				c: r.c
 			}] : [],
-			execute: (e, t, o, r, i, s) => {
-				if (i) {
-					const e = i.r - t, r = i.c - o;
+			execute: (e, t, o, i, r, s, a) => {
+				if (r) {
+					const e = r.r - t, i = r.c - o;
 					s({
 						type: "ANIMATE",
 						name: "LINEAR_BEAM",
@@ -756,15 +777,19 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 							c: o
 						},
 						duration: 600,
-						metadata: { angle: L(e, r) }
+						metadata: { angle: k(e, i) }
 					}), s({
 						type: "KILL",
-						pos: i
+						pos: r
 					}), s({
 						type: "SHOW_TEXT",
 						text: "Aurora Snipe",
 						textKey: "LOG_AURORA",
 						style: "system"
+					}), a && !a.isAISimulation && Math.max(Math.abs(e), Math.abs(i)) >= 6 && U.emit(G, {
+						key: "bishopSnipe6",
+						value: 1,
+						isLifetimeOnly: !0
 					});
 				}
 			}
@@ -774,39 +799,39 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 		id: "BISHOP_ABSOLUTE_BARRIER",
 		name: "绝对防线",
 		tier: "LEGENDARY",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "敌方棋子无法在不吃子的情况下，停留在该象的对角线控制格上。",
-		modifiers: { squareBlockMovement: ({ board: e, r: t, c: o, piece: i }) => !!C.findPieces(e, (e) => e.color !== i.color && e.type === r.BISHOP && e.skills.includes("BISHOP_ABSOLUTE_BARRIER")).some(({ r, c: i }) => Math.abs(r - t) === Math.abs(i - o) && !e[t][o]) }
+		modifiers: { squareBlockMovement: ({ board: e, r: t, c: o, piece: r }) => !!D.findPieces(e, (e) => e.color !== r.color && e.type === i.BISHOP && e.skills.includes("BISHOP_ABSOLUTE_BARRIER")).some(({ r: i, c: r }) => Math.abs(i - t) === Math.abs(r - o) && !e[t][o]) }
 	},
 	{
 		id: "EQ_REFRACTION_LENS",
 		name: "折射透镜",
 		tier: "RARE",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "象的路径上有友军时，可以改变方向移动 2 格（90度折射）。",
 		modifiers: { movement: (e, t) => {
-			const { board: o, r, c: i, piece: s, isControlSquares: a } = e;
+			const { board: o, r: i, c: r, piece: s, isControlSquares: a } = e;
 			return [
 				[-1, -1],
 				[-1, 1],
 				[1, -1],
 				[1, 1]
 			].forEach(([e, c]) => {
-				let n = r + e, d = i + c;
+				let n = i + e, d = r + c;
 				for (; n >= 0 && n < 8 && d >= 0 && d < 8;) {
-					const r = o[n][d];
-					if (r) {
-						r.color === s.color && [[-c, e], [c, -e]].forEach(([e, r]) => {
-							let i = n + e, c = d + r;
-							if (i >= 0 && i < 8 && c >= 0 && c < 8) {
-								const n = o[i][c];
+					const i = o[n][d];
+					if (i) {
+						i.color === s.color && [[-c, e], [c, -e]].forEach(([e, i]) => {
+							let r = n + e, c = d + i;
+							if (r >= 0 && r < 8 && c >= 0 && c < 8) {
+								const n = o[r][c];
 								if ((!n || a && n.color === s.color) && t.push({
-									r: i,
+									r,
 									c
-								}), !n && (i += e, c += r, i >= 0 && i < 8 && c >= 0 && c < 8)) {
-									const e = o[i][c];
+								}), !n && (r += e, c += i, r >= 0 && r < 8 && c >= 0 && c < 8)) {
+									const e = o[r][c];
 									(!e || a && e.color === s.color || e.color !== s.color) && t.push({
-										r: i,
+										r,
 										c
 									});
 								}
@@ -823,21 +848,21 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 		id: "EQ_FAITH_SIPHON",
 		name: "信仰汲取",
 		tier: "RARE",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "每当象斜线上的单位阵亡，玩家获得 2 金币。",
 		tags: ["GLOBAL"],
-		hooks: { onDeath: ({ board: e, piece: o, ownerPos: r, subject: i, r: s, c: a, emit: c }) => {
-			if (r && i && "number" == typeof s && "number" == typeof a && o.color === t) {
-				const t = Math.abs(r.r - s);
-				if (t === Math.abs(r.c - a) && t > 0) {
-					const t = Math.sign(s - r.r), o = Math.sign(a - r.c);
-					let i = r.r + t, n = r.c + o, d = !1;
-					for (; i !== s && n !== a;) {
-						if (e[i][n]) {
+		hooks: { onDeath: ({ board: e, piece: o, ownerPos: i, subject: r, r: s, c: a, emit: c }) => {
+			if (i && r && "number" == typeof s && "number" == typeof a && o.color === t) {
+				const t = Math.abs(i.r - s);
+				if (t === Math.abs(i.c - a) && t > 0) {
+					const t = Math.sign(s - i.r), o = Math.sign(a - i.c);
+					let r = i.r + t, n = i.c + o, d = !1;
+					for (; r !== s && n !== a;) {
+						if (e[r][n]) {
 							d = !0;
 							break;
 						}
-						i += t, n += o;
+						r += t, n += o;
 					}
 					d || (c({
 						type: "MODIFY_GOLD",
@@ -861,23 +886,23 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 			}
 		} }
 	}
-], G = new Int32Array(4096), k = new Int32Array(4096), K = new Int32Array(64), g = new Array(64), b = new Array(64);
+], g = new Int32Array(4096), b = new Int32Array(4096), H = new Int32Array(64), v = new Array(64), x = new Array(64);
 (function() {
 	for (let e = 0; e < 8; e++) for (let t = 0; t < 8; t++) {
 		const o = 8 * e + t;
-		K[o] = Math.abs(2 * e - 7) + Math.abs(2 * t - 7);
-		for (let a = 0; a < 8; a++) for (let r = 0; r < 8; r++) {
-			const i = o << 6 | 8 * a + r;
-			G[i] = Math.abs(e - a) + Math.abs(t - r), k[i] = Math.max(Math.abs(e - a), Math.abs(t - r));
+		H[o] = Math.abs(2 * e - 7) + Math.abs(2 * t - 7);
+		for (let a = 0; a < 8; a++) for (let i = 0; i < 8; i++) {
+			const r = o << 6 | 8 * a + i;
+			g[r] = Math.abs(e - a) + Math.abs(t - i), b[r] = Math.max(Math.abs(e - a), Math.abs(t - i));
 		}
-		const r = [];
+		const i = [];
 		for (let a = -1; a <= 1; a++) for (let o = -1; o <= 1; o++) {
 			if (0 === a && 0 === o) continue;
-			const i = e + a, s = t + o;
-			i >= 0 && i < 8 && s >= 0 && s < 8 && r.push(8 * i + s);
+			const r = e + a, s = t + o;
+			r >= 0 && r < 8 && s >= 0 && s < 8 && i.push(8 * r + s);
 		}
-		b[o] = new Int32Array(r);
-		const i = [], s = [
+		x[o] = new Int32Array(i);
+		const r = [], s = [
 			[-2, -1],
 			[-2, 1],
 			[-1, -2],
@@ -888,13 +913,13 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 			[2, 1]
 		];
 		for (let a = 0; a < s.length; a++) {
-			const o = e + s[a][0], r = t + s[a][1];
-			o >= 0 && o < 8 && r >= 0 && r < 8 && i.push(8 * o + r);
+			const o = e + s[a][0], i = t + s[a][1];
+			o >= 0 && o < 8 && i >= 0 && i < 8 && r.push(8 * o + i);
 		}
-		g[o] = new Int32Array(i);
+		v[o] = new Int32Array(r);
 	}
 })();
-var H = class {
+var W = class {
 	static {
 		this.REGISTRY = /* @__PURE__ */ new Map();
 	}
@@ -915,19 +940,19 @@ var H = class {
 	static hasSkill(e, t) {
 		return this.getActiveSkillIds(e).includes(t);
 	}
-}, v = class {
+}, B = class {
 	static isSilenced(e) {
-		return e.statuses?.some((e) => e.id === i.SILENCED || e.id === i.SKILL_LOCKED) || !1;
+		return e.statuses?.some((e) => e.id === r.SILENCED || e.id === r.SKILL_LOCKED) || !1;
 	}
 	static applyStatus(e, t, o, s) {
-		if (e.type === r.KING && (t === i.INVISIBLE || t === i.PETRIFIED)) return;
-		if (H.hasSkill(e, "GENERIC_COATING") && S.NEGATIVE_STATUSES.includes(t)) return;
-		if (H.hasSkill(e, "GENERIC_FIREWALL") && [
-			i.SILENCED,
-			i.BETRAYED,
-			i.SKILL_LOCKED
+		if (e.type === i.KING && (t === r.INVISIBLE || t === r.PETRIFIED)) return;
+		if (W.hasSkill(e, "GENERIC_COATING") && y.NEGATIVE_STATUSES.includes(t)) return;
+		if (W.hasSkill(e, "GENERIC_FIREWALL") && [
+			r.SILENCED,
+			r.BETRAYED,
+			r.SKILL_LOCKED
 		].includes(t)) return;
-		if (e.statuses?.some((e) => e.id === i.HOLY_DOMAIN_AURA) && S.NEGATIVE_STATUSES.includes(t)) return;
+		if (e.statuses?.some((e) => e.id === r.HOLY_DOMAIN_AURA) && y.NEGATIVE_STATUSES.includes(t)) return;
 		const a = {
 			id: t,
 			duration: o,
@@ -941,42 +966,42 @@ var H = class {
 			statuses: e.statuses ? e.statuses.map((e) => ({ ...e })) : [],
 			traits: e.traits ? [...e.traits] : []
 		};
-		t.type === r.KING && (t.statuses = t.statuses.filter((e) => e.id !== i.INVISIBLE && e.id !== i.PETRIFIED)), t.stackedPiece && (t.stackedPiece = this.tickPiece(t.stackedPiece)), t.statuses.length > 0 && (t.statuses = t.statuses.map((e) => e.duration >= 99 ? e : (e.duration <= 1 && e.id === i.BETRAYED && e.originalColor && (t.color = e.originalColor), {
+		t.type === i.KING && (t.statuses = t.statuses.filter((e) => e.id !== r.INVISIBLE && e.id !== r.PETRIFIED)), t.stackedPiece && (t.stackedPiece = this.tickPiece(t.stackedPiece)), t.statuses.length > 0 && (t.statuses = t.statuses.map((e) => e.duration >= 99 ? e : (e.duration <= 1 && e.id === r.BETRAYED && e.originalColor && (t.color = e.originalColor), {
 			...e,
 			duration: e.duration - 1
 		})).filter((e) => e.duration > 0));
-		const o = [i.GRACE_LIMIT, i.CANNOT_CAPTURE];
+		const o = [r.GRACE_LIMIT, r.CANNOT_CAPTURE];
 		return t.traits && t.traits.length > 0 && (t.traits = t.traits.filter((e) => !o.includes(e))), t;
 	}
-}, x = class {
-	static getModifiers(e, t, o, r) {
+}, F = class {
+	static getModifiers(e, t, o, i) {
 		if (!e) return [];
-		const i = v.isSilenced(e), s = [];
-		if (!i) {
-			const t = H.getActiveSkillIds(e);
+		const r = B.isSilenced(e), s = [];
+		if (!r) {
+			const t = W.getActiveSkillIds(e);
 			e.metadata?.isSwallow && !t.includes("SWALLOW_TRAIT") && t.push("SWALLOW_TRAIT"), t.forEach((t) => {
-				const o = H.get(t);
+				const o = W.get(t);
 				!o || o.pieceType && o.pieceType !== e.type || !o.modifiers || s.push(o.modifiers);
 			}), e.equippedItems && e.equippedItems.forEach((e) => {
-				const t = H.get(e.effectId);
+				const t = W.get(e.effectId);
 				t && t.modifiers && s.push(t.modifiers);
 			});
 		}
 		return e.statuses && e.statuses.forEach((e) => {
-			const t = H.get(e.id);
+			const t = W.get(e.id);
 			t && t.modifiers && s.push(t.modifiers);
 		}), s;
 	}
-	static getSquareModifiers(e, t, o, r) {
-		if (!r || !r.squares) return [];
-		const i = r.squares[`${t},${o}`];
-		return i ? i.map((e) => H.get(e.id)?.modifiers).filter((e) => void 0 !== e) : [];
+	static getSquareModifiers(e, t, o, i) {
+		if (!i || !i.squares) return [];
+		const r = i.squares[`${t},${o}`];
+		return r ? r.map((e) => W.get(e.id)?.modifiers).filter((e) => void 0 !== e) : [];
 	}
 	static hasModifier(e, t) {
 		return this.getModifiers(e).some((e) => "function" == typeof e[t] || !0 === e[t]);
 	}
 };
-const W = {
+const Q = {
 	ATOMIC_STATUS_FROZEN: 256n,
 	ATOMIC_STATUS_INFECTED: 512n,
 	MOVE_FWD: 65536n,
@@ -1019,7 +1044,7 @@ const W = {
 	DEF_IMMUNE_PAWN: 1n << 58n,
 	DEF_IMMUNE_KNIGHT: 1n << 59n,
 	CREED_ACTIVE: 1n << 60n
-}, B = {
+}, Y = {
 	BISHOP_REFRACTION: ["STEP_UNLIMITED"],
 	ROOK_VAULT: ["LEAP_OVER"],
 	BISHOP_PHASE_SHIFT: ["MOVE_SIDE", "STEP_LIMIT_1"],
@@ -1048,22 +1073,22 @@ const W = {
 	KING_REFLECTION_OLD: ["NET_MIRROR"],
 	EQ_REFLECTIVE_ARMOR_OLD: ["NET_MIRROR"]
 };
-var F = class {
+var V = class {
 	static resolveMask(e) {
 		let t = 0n;
 		return this.getUniqueSkillIds(e).forEach((e) => {
-			const o = B[e];
+			const o = Y[e];
 			o && o.forEach((e) => {
-				t |= W[e] || 0n;
+				t |= Q[e] || 0n;
 			});
 		}), e.equippedItems?.forEach((e) => {
-			const o = B[e.effectId];
+			const o = Y[e.effectId];
 			o && o.forEach((e) => {
-				t |= W[e] || 0n;
+				t |= Q[e] || 0n;
 			});
 		}), e.statuses?.forEach((e) => {
 			const o = `ATOMIC_STATUS_${e.id}`;
-			t |= W[o] || 0n;
+			t |= Q[o] || 0n;
 		}), BigInt(t);
 	}
 	static getUniqueSkillIds(e) {
@@ -1072,9 +1097,9 @@ var F = class {
 	}
 	static has(e, t) {
 		if (void 0 === e.abilityMask || null === e.abilityMask) return !1;
-		const o = W[t];
+		const o = Q[t];
 		if (void 0 === o) {
-			const o = W[`ATOMIC_STATUS_${t}`];
+			const o = Q[`ATOMIC_STATUS_${t}`];
 			return void 0 !== o && 0n !== (BigInt(e.abilityMask) & BigInt(o));
 		}
 		return 0n !== (BigInt(e.abilityMask) & BigInt(o));
@@ -1082,7 +1107,7 @@ var F = class {
 	static hasBit(e, t) {
 		return void 0 !== e.abilityMask && null !== e.abilityMask && 0n !== (BigInt(e.abilityMask) & BigInt(t));
 	}
-}, Q = class e {
+}, w = class e {
 	constructor(e) {
 		this.seed = e >>> 0;
 	}
@@ -1115,10 +1140,10 @@ var F = class {
 		const t = new e(0);
 		return t.seed = this.seed, t;
 	}
-}, Y = class {
-	static recompute(e, i, s, a, c = !1) {
-		Ne.build(e, i);
-		const n = Ge(e, t, i, a), d = Ge(e, o, i, a), p = this.filterVisibility(e, t, n.networked, i), E = this.filterVisibility(e, o, d.networked, i), l = E.map((e) => e.map((e) => e ? 1 : 0)), u = {
+}, q = class {
+	static recompute(e, r, s, a, c = !1) {
+		Ne.build(e, r);
+		const n = Ge(e, t, r, a), d = Ge(e, o, r, a), p = this.filterVisibility(e, t, n.networked, r), E = this.filterVisibility(e, o, d.networked, r), l = E.map((e) => e.map((e) => e ? 1 : 0)), u = {
 			whiteNetwork: n.networked,
 			blackNetwork: d.networked,
 			whiteControl: p,
@@ -1133,32 +1158,32 @@ var F = class {
 			isCheck: !1,
 			lastUpdateEpoch: Date.now()
 		}, A = {
-			...i,
+			...r,
 			cache: u
 		};
-		if (!c && 999 !== i.globalJamming && !0 !== i.isAISimulation && !0 !== globalThis.isAISimulation) {
-			u.validDeployments = Le(e, s, A, a);
+		if (!c && 999 !== r.globalJamming && !0 !== r.isAISimulation && !0 !== globalThis.isAISimulation) {
+			u.validDeployments = Ce(e, s, A, a);
 			const t = {};
-			for (let o = 0; o < 8; o++) for (let r = 0; r < 8; r++) {
-				const i = e[o][r];
-				i && (t[i.uid || i.id] = Ce(e, o, r, A, a));
+			for (let o = 0; o < 8; o++) for (let i = 0; i < 8; i++) {
+				const r = e[o][i];
+				r && (t[r.uid || r.id] = De(e, o, i, A, a));
 			}
 			u.validMovesMap = t;
 		}
-		let I = !1;
+		let m = !1;
 		for (let o = 0; o < 8; o++) {
-			for (let i = 0; i < 8; i++) {
-				const a = e[o][i];
-				if (a && a.color === s && (a.type === r.KING || Pe.isProxyKing(a)) && (s === t ? E : p)[o][i]) {
-					I = !0;
+			for (let r = 0; r < 8; r++) {
+				const a = e[o][r];
+				if (a && a.color === s && (a.type === i.KING || Pe.isProxyKing(a)) && (s === t ? E : p)[o][r]) {
+					m = !0;
 					break;
 				}
 			}
-			if (I) break;
+			if (m) break;
 		}
-		return u.isCheck = I, u;
+		return u.isCheck = m, u;
 	}
-	static patchCache(e, o, i, s, a, c) {
+	static patchCache(e, o, r, s, a, c) {
 		let n = !0;
 		for (const t of a) {
 			const e = t.piece || (t.to ? o[t.to.r]?.[t.to.c] : null);
@@ -1167,12 +1192,12 @@ var F = class {
 				break;
 			}
 			const s = e.type;
-			if (s === r.KING || s === r.QUEEN || s === r.ROOK || s === r.BISHOP || Pe.isProxyKing(e) || Pe.hasModifier(e, "networkSource") || Pe.hasModifier(e, "networkRange") || Pe.hasModifier(e, "alwaysNetworked") || i.globalJamming && i.globalJamming > 0) {
+			if (s === i.KING || s === i.QUEEN || s === i.ROOK || s === i.BISHOP || Pe.isProxyKing(e) || Pe.hasModifier(e, "networkSource") || Pe.hasModifier(e, "networkRange") || Pe.hasModifier(e, "alwaysNetworked") || r.globalJamming && r.globalJamming > 0) {
 				n = !1;
 				break;
 			}
 		}
-		if (!n) return this.recompute(o, i, s, c, !0);
+		if (!n) return this.recompute(o, r, s, c, !0);
 		const d = {
 			...e,
 			whiteControl: e.whiteControl.map((e) => [...e]),
@@ -1181,24 +1206,24 @@ var F = class {
 			blackNetwork: e.blackNetwork.map((e) => [...e]),
 			lastUpdateEpoch: Date.now()
 		};
-		for (const r of a) {
-			const e = r.piece || (r.to ? o[r.to.r]?.[r.to.c] : null);
+		for (const i of a) {
+			const e = i.piece || (i.to ? o[i.to.r]?.[i.to.c] : null);
 			if (!e) continue;
 			const s = e.color, a = s === t ? d.whiteControl : d.blackControl, c = s === t ? d.whiteNetwork : d.blackNetwork;
-			if (r.from) {
-				const t = o[r.from.r][r.from.c];
-				o[r.from.r][r.from.c] = e;
-				const s = ke(o, r.from.r, r.from.c, c, i);
-				o[r.from.r][r.from.c] = t, s.forEach((e) => {
+			if (i.from) {
+				const t = o[i.from.r][i.from.c];
+				o[i.from.r][i.from.c] = e;
+				const s = ke(o, i.from.r, i.from.c, c, r);
+				o[i.from.r][i.from.c] = t, s.forEach((e) => {
 					a[e.r][e.c] = !1;
-				}), c[r.from.r][r.from.c] = !1;
+				}), c[i.from.r][i.from.c] = !1;
 			}
-			if (r.to) {
-				ke(o, r.to.r, r.to.c, c, i).forEach((e) => {
+			if (i.to) {
+				ke(o, i.to.r, i.to.c, c, r).forEach((e) => {
 					a[e.r][e.c] = !0;
 				});
 				let e = !1;
-				for (const [t, i] of [
+				for (const [t, r] of [
 					[-1, 0],
 					[1, 0],
 					[0, -1],
@@ -1208,7 +1233,7 @@ var F = class {
 					[1, -1],
 					[1, 1]
 				]) {
-					const a = r.to.r + t, n = r.to.c + i;
+					const a = i.to.r + t, n = i.to.c + r;
 					if (a >= 0 && a < 8 && n >= 0 && n < 8) {
 						const t = o[a][n];
 						if (t && t.color === s && c[a][n]) {
@@ -1217,13 +1242,13 @@ var F = class {
 						}
 					}
 				}
-				c[r.to.r][r.to.c] = e;
+				c[i.to.r][i.to.c] = e;
 			}
 		}
 		let p = !1;
 		for (let E = 0; E < 8; E++) for (let e = 0; e < 8; e++) {
-			const i = o[E][e];
-			if (i && i.color === s && (i.type === r.KING || Pe.isProxyKing(i)) && (s === t ? d.blackControl : d.whiteControl)[E][e]) {
+			const r = o[E][e];
+			if (r && r.color === s && (r.type === i.KING || Pe.isProxyKing(r)) && (s === t ? d.blackControl : d.whiteControl)[E][e]) {
 				p = !0;
 				break;
 			}
@@ -1241,12 +1266,12 @@ var F = class {
 		const p = Array(8).fill(null).map(() => Array(8).fill(!1));
 		return e.forEach((t, o) => t.forEach((t, n) => {
 			if (t && t.color === s) {
-				if (!a[o][n] && t.type !== r.KING && !Pe.isProxyKing(t)) return;
-				const s = t.statuses?.some((e) => e.id === i.ENCRYPTED), E = d.some((e) => Math.max(Math.abs(e.r - o), Math.abs(e.c - n)) <= 2);
+				if (!a[o][n] && t.type !== i.KING && !Pe.isProxyKing(t)) return;
+				const s = t.statuses?.some((e) => e.id === r.ENCRYPTED), E = d.some((e) => Math.max(Math.abs(e.r - o), Math.abs(e.c - n)) <= 2);
 				if (s && !E) return;
 				const l = ke(e, o, n, a, c);
-				Pe.getModifiers(t, e, o, n).forEach((r) => {
-					r.networkRange && l.push(...r.networkRange({
+				Pe.getModifiers(t, e, o, n).forEach((i) => {
+					i.networkRange && l.push(...i.networkRange({
 						board: e,
 						piece: t,
 						r: o,
@@ -1259,41 +1284,41 @@ var F = class {
 		})), p;
 	}
 	static getControlValue(e, t, o) {
-		const r = e.cache;
-		if (!r) return 0;
-		let i = 0;
-		return r.whiteControl[t][o] && (i += 1), r.blackControl[t][o] && (i -= 1), i;
+		const i = e.cache;
+		if (!i) return 0;
+		let r = 0;
+		return i.whiteControl[t][o] && (r += 1), i.blackControl[t][o] && (r -= 1), r;
 	}
-	static isNetworked(e, o, r, i) {
+	static isNetworked(e, o, i, r) {
 		const s = e.cache;
-		return !s || (o === t ? s.whiteNetwork[r][i] : s.blackNetwork[r][i]);
+		return !s || (o === t ? s.whiteNetwork[i][r] : s.blackNetwork[i][r]);
 	}
-}, V = class {
-	static apply(e, t, o, i, s, a, c = !1) {
+}, X = class {
+	static apply(e, t, o, r, s, a, c = !1) {
 		const n = c || !0 === globalThis.isAISimulation;
-		if (!e) return Y.recompute(t, o, i, a, n);
+		if (!e) return q.recompute(t, o, r, a, n);
 		const d = [];
 		let p = !1;
-		for (const r of s) if ("MOVE" === r.type) {
-			const e = t[r.to.r][r.to.c];
+		for (const i of s) if ("MOVE" === i.type) {
+			const e = t[i.to.r][i.to.c];
 			d.push({
-				from: r.from,
-				to: r.to,
+				from: i.from,
+				to: i.to,
 				type: "MOVE",
 				piece: e
 			});
-		} else if ("KILL" === r.type) {
-			const e = r.pos;
+		} else if ("KILL" === i.type) {
+			const e = i.pos;
 			e ? d.push({
 				from: e,
 				type: "KILL"
 			}) : p = !0;
-		} else "SPAWN" === r.type ? r.pos ? d.push({
-			to: r.pos,
+		} else "SPAWN" === i.type ? i.pos ? d.push({
+			to: i.pos,
 			type: "SPAWN",
-			piece: r.piece
-		}) : p = !0 : "ADD_STATUS" !== r.type && "REMOVE_STATUS" !== r.type && "SET_SQUARE" !== r.type && "REMOVE_SQUARE" !== r.type && "SWITCH_TURN" !== r.type || (p = !0);
-		if (p || 0 === d.length) return Y.recompute(t, o, i, a, n);
+			piece: i.piece
+		}) : p = !0 : "ADD_STATUS" !== i.type && "REMOVE_STATUS" !== i.type && "SET_SQUARE" !== i.type && "REMOVE_SQUARE" !== i.type && "SWITCH_TURN" !== i.type || (p = !0);
+		if (p || 0 === d.length) return q.recompute(t, o, r, a, n);
 		let E = !0;
 		for (const l of d) {
 			const e = l.piece || (l.from ? t[l.from.r]?.[l.from.c] : null);
@@ -1301,40 +1326,40 @@ var F = class {
 				E = !1;
 				break;
 			}
-			const i = e.type;
-			if (i === r.KING || i === r.QUEEN || i === r.ROOK || i === r.BISHOP || Pe.isProxyKing(e) || Pe.hasModifier(e, "networkSource") || Pe.hasModifier(e, "networkRange") || Pe.hasModifier(e, "alwaysNetworked") || o.globalJamming && o.globalJamming > 0) {
+			const r = e.type;
+			if (r === i.KING || r === i.QUEEN || r === i.ROOK || r === i.BISHOP || Pe.isProxyKing(e) || Pe.hasModifier(e, "networkSource") || Pe.hasModifier(e, "networkRange") || Pe.hasModifier(e, "alwaysNetworked") || o.globalJamming && o.globalJamming > 0) {
 				E = !1;
 				break;
 			}
 		}
-		return E ? Y.patchCache(e, t, o, i, d, a) : Y.recompute(t, o, i, a, n);
+		return E ? q.patchCache(e, t, o, r, d, a) : q.recompute(t, o, r, a, n);
 	}
-}, w = class {
+}, $ = class {
 	static build(e, t) {
 		const o = {
 			movement: [],
 			invulnerable: [],
 			squareBlock: []
-		}, r = fe.getActivePieces(e);
-		for (const { piece: i, r: s, c: a } of r) {
-			if (!i.uid) continue;
-			const t = x.getModifiers(i, e, s, a);
+		}, i = fe.getActivePieces(e);
+		for (const { piece: r, r: s, c: a } of i) {
+			if (!r.uid) continue;
+			const t = F.getModifiers(r, e, s, a);
 			for (const e of t) e.movement && o.movement.push({
-				pieceUid: i.uid,
+				pieceUid: r.uid,
 				fn: e.movement
 			}), e.invulnerable && o.invulnerable.push({
-				pieceUid: i.uid,
+				pieceUid: r.uid,
 				fn: e.invulnerable
 			}), e.squareBlockMovement && o.squareBlock.push({
-				pieceUid: i.uid,
+				pieceUid: r.uid,
 				fn: e.squareBlockMovement
 			});
 		}
-		if (t?.squares) for (const [i, s] of Object.entries(t.squares)) {
-			const [r, s] = i.split(",").map(Number), a = x.getSquareModifiers(e, r, s, t);
+		if (t?.squares) for (const [r, s] of Object.entries(t.squares)) {
+			const [i, s] = r.split(",").map(Number), a = F.getSquareModifiers(e, i, s, t);
 			for (const e of a) e.squareBlockMovement && o.squareBlock.push({
 				pieceUid: null,
-				r,
+				r: i,
 				c: s,
 				fn: e.squareBlockMovement
 			});
@@ -1342,25 +1367,25 @@ var F = class {
 		return o;
 	}
 };
-const q = () => crypto.randomUUID(), X = [
+const Z = () => crypto.randomUUID(), j = [
 	{
 		id: "KING_CHARISMA",
 		name: "宽宏",
 		tier: "COMMON",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "周围 2 格内 of “兵”移动 logic 变为同“后”（滑行），移动范围两格。",
 		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: s, emit: a }) => {
 			for (let c = -2; c <= 2; c++) for (let n = -2; n <= 2; n++) {
 				const d = t + c, p = o + n;
-				if (C.isValidPos(d, p)) {
+				if (D.isValidPos(d, p)) {
 					const t = e[d][p];
-					t && t.color === s.color && t.type === r.PAWN && a({
+					t && t.color === s.color && t.type === i.PAWN && a({
 						type: "ADD_STATUS",
 						pos: {
 							r: d,
 							c: p
 						},
-						statusId: i.CHARISMA_BUFF,
+						statusId: r.CHARISMA_BUFF,
 						duration: 2
 					});
 				}
@@ -1371,13 +1396,13 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KING_RADIATION",
 		name: "辐射",
 		tier: "COMMON",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "王 of 初始信号强度极高，第一层连接 of 有效距离从 1 格提升至 2 格。",
 		modifiers: { networkRange: ({ r: e, c: t }) => {
 			const o = [];
-			for (let r = -2; r <= 2; r++) for (let i = -2; i <= 2; i++) {
-				const s = e + r, a = t + i;
-				C.isValidPos(s, a) && o.push({
+			for (let i = -2; i <= 2; i++) for (let r = -2; r <= 2; r++) {
+				const s = e + i, a = t + r;
+				D.isValidPos(s, a) && o.push({
 					r: s,
 					c: a
 				});
@@ -1389,7 +1414,7 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KING_STEADY",
 		name: "稳重",
 		tier: "COMMON",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "王免疫任何来自敌方技能 of “强制位移”效果。",
 		modifiers: { isSteady: () => !0 }
 	},
@@ -1397,20 +1422,20 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KING_REWARD",
 		name: "恩赏",
 		tier: "COMMON",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "任何友军在王周围 2 格内吃子时，额外获得 5 金币。",
-		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: r, emit: s }) => {
+		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: i, emit: s }) => {
 			for (let a = -2; a <= 2; a++) for (let c = -2; c <= 2; c++) {
 				const n = t + a, d = o + c;
-				if (C.isValidPos(n, d)) {
+				if (D.isValidPos(n, d)) {
 					const t = e[n][d];
-					t && t.color === r.color && s({
+					t && t.color === i.color && s({
 						type: "ADD_STATUS",
 						pos: {
 							r: n,
 							c: d
 						},
-						statusId: i.AURA_REWARD,
+						statusId: r.AURA_REWARD,
 						duration: 2
 					});
 				}
@@ -1421,9 +1446,9 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KING_FORTIFY",
 		name: "固守",
 		tier: "COMMON",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "只要王相邻有友方“车”，王无法被敌方 of “兵”或“马”吃掉。",
-		modifiers: { invulnerable: ({ board: e, r: t, c: o, piece: i }, s) => {
+		modifiers: { invulnerable: ({ board: e, r: t, c: o, piece: r }, s) => {
 			let a = !1;
 			for (const [c, n] of [
 				[-1, 0],
@@ -1438,42 +1463,42 @@ const q = () => crypto.randomUUID(), X = [
 				const s = t + c, d = o + n;
 				if (s >= 0 && s < 8 && d >= 0 && d < 8) {
 					const t = e[s][d];
-					if (t && t.color === i.color && t.type === r.ROOK) {
+					if (t && t.color === r.color && t.type === i.ROOK) {
 						a = !0;
 						break;
 					}
 				}
 			}
-			return a && (s.type === r.PAWN || s.type === r.KNIGHT);
+			return a && (s.type === i.PAWN || s.type === i.KNIGHT);
 		} }
 	},
 	{
 		id: "KING_BACKUP",
 		name: "应急供电",
 		tier: "COMMON",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "王周围 1 格没有友方单位时，连通 3 格内最近的友方棋子（可多个）。",
-		modifiers: { networkRange: ({ board: e, r: t, c: o, piece: r }) => {
-			const i = [];
+		modifiers: { networkRange: ({ board: e, r: t, c: o, piece: i }) => {
+			const r = [];
 			let s = !1;
-			for (let n = -1; n <= 1; n++) for (let i = -1; i <= 1; i++) {
-				if (0 === n && 0 === i) continue;
-				const a = t + n, c = o + i;
+			for (let n = -1; n <= 1; n++) for (let r = -1; r <= 1; r++) {
+				if (0 === n && 0 === r) continue;
+				const a = t + n, c = o + r;
 				if (a >= 0 && a < 8 && c >= 0 && c < 8) {
 					const t = e[a][c];
-					t && t.color === r.color && (s = !0);
+					t && t.color === i.color && (s = !0);
 				}
 			}
 			if (s) return [];
 			const a = [];
 			let c = 999;
-			for (let n = -3; n <= 3; n++) for (let i = -3; i <= 3; i++) {
-				if (0 === n && 0 === i) continue;
-				const s = t + n, d = o + i;
+			for (let n = -3; n <= 3; n++) for (let r = -3; r <= 3; r++) {
+				if (0 === n && 0 === r) continue;
+				const s = t + n, d = o + r;
 				if (s >= 0 && s < 8 && d >= 0 && d < 8) {
 					const t = e[s][d];
-					if (t && t.color === r.color) {
-						const e = n * n + i * i;
+					if (t && t.color === i.color) {
+						const e = n * n + r * r;
 						a.push({
 							pos: {
 								r: s,
@@ -1485,30 +1510,30 @@ const q = () => crypto.randomUUID(), X = [
 				}
 			}
 			return a.forEach((e) => {
-				e.distSq === c && i.push(e.pos);
-			}), i;
+				e.distSq === c && r.push(e.pos);
+			}), r;
 		} }
 	},
 	{
 		id: "KING_OVERSEER",
 		name: "督战",
 		tier: "RARE",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "只要王处于联网状态，每回合额外获得 2 金币。单局限 40 金币。",
-		hooks: { onTurnStart: ({ board: e, r: o, c: r, piece: i, emit: s, metadata: a }) => {
-			const c = i.metadata?.overseerEarned || 0;
-			if (c < 40 && i.color === t) {
-				const { networked: t } = Ge(e, i.color, a);
-				t[o][r] && (s({
+		hooks: { onTurnStart: ({ board: e, r: o, c: i, piece: r, emit: s, metadata: a }) => {
+			const c = r.metadata?.overseerEarned || 0;
+			if (c < 40 && r.color === t) {
+				const { networked: t } = Ge(e, r.color, a);
+				t[o][i] && (s({
 					type: "SPAWN",
 					pos: {
 						r: o,
-						c: r
+						c: i
 					},
 					piece: {
-						...i,
+						...r,
 						metadata: {
-							...i.metadata,
+							...r.metadata,
 							overseerEarned: c + 2
 						}
 					}
@@ -1524,13 +1549,13 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KING_ROYAL_GUARD",
 		name: "护卫征召",
 		tier: "RARE",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "主动：消耗 10 金币，在王身边的空格处随机生成一个 1 级“兵”（过关不保留）。",
 		activeSpec: {
 			targeting: "self",
-			execute: (e, t, o, i, s, a, c, n) => {
+			execute: (e, t, o, r, s, a, c, n) => {
 				const d = c?.gold || 0, p = [];
-				for (const [r, l] of [
+				for (const [i, l] of [
 					[-1, 0],
 					[1, 0],
 					[0, -1],
@@ -1540,9 +1565,9 @@ const q = () => crypto.randomUUID(), X = [
 					[1, -1],
 					[1, 1]
 				]) {
-					const i = t + r, s = o + l;
-					C.isValidPos(i, s) && !e[i][s] && p.push({
-						r: i,
+					const r = t + i, s = o + l;
+					D.isValidPos(r, s) && !e[r][s] && p.push({
+						r,
 						c: s
 					});
 				}
@@ -1575,9 +1600,9 @@ const q = () => crypto.randomUUID(), X = [
 					type: "SPAWN",
 					pos: E,
 					piece: {
-						id: q(),
-						type: r.PAWN,
-						color: i.color,
+						id: Z(),
+						type: i.PAWN,
+						color: r.color,
 						level: 1,
 						skills: [],
 						statuses: [],
@@ -1598,17 +1623,17 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KING_TAXATION",
 		name: "纳税",
 		tier: "RARE",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "每当有一个友方单位被吃掉，王会立即产生 15 金币作为“抚恤金”。",
 		tags: ["GLOBAL"],
-		hooks: { onDeath: ({ piece: e, subject: t, emit: o, r, c: i }) => {
+		hooks: { onDeath: ({ piece: e, subject: t, emit: o, r: i, c: r }) => {
 			t && t.color === e.color && t.uid !== e.uid && (o({
 				type: "MODIFY_GOLD",
 				amount: 15,
 				reason: "TAXATION",
 				pos: {
-					r,
-					c: i
+					r: i,
+					c: r
 				}
 			}), o({
 				type: "SHOW_TEXT",
@@ -1616,8 +1641,8 @@ const q = () => crypto.randomUUID(), X = [
 				textKey: "LOG_TAXATION_REWARD",
 				style: "gold",
 				pos: {
-					r,
-					c: i
+					r: i,
+					c: r
 				}
 			}));
 		} }
@@ -1626,17 +1651,17 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KING_SWAP",
 		name: "换位",
 		tier: "EPIC",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "主动：与周围 2 格内的任何一个友军交换位置。",
 		activeSpec: {
 			targeting: "target",
-			getAlternatives: (e, t, o, i) => {
+			getAlternatives: (e, t, o, r) => {
 				const s = [];
 				for (let a = -2; a <= 2; a++) for (let c = -2; c <= 2; c++) {
 					const n = t + a, d = o + c;
-					if (C.isValidPos(n, d)) {
+					if (D.isValidPos(n, d)) {
 						const t = e[n][d];
-						t && t.color === i.color && t.type !== r.KING && s.push({
+						t && t.color === r.color && t.type !== i.KING && s.push({
 							pos: {
 								r: n,
 								c: d
@@ -1650,24 +1675,24 @@ const q = () => crypto.randomUUID(), X = [
 				}
 				return s;
 			},
-			getAoE: (e, t, o, r, i) => i ? [{
-				r: i.r,
-				c: i.c
+			getAoE: (e, t, o, i, r) => r ? [{
+				r: r.r,
+				c: r.c
 			}] : [],
-			execute: (e, t, o, r, i, s) => {
-				i && (s({
+			execute: (e, t, o, i, r, s) => {
+				r && (s({
 					type: "SWAP_PIECES",
 					posA: {
 						r: t,
 						c: o
 					},
-					posB: i
+					posB: r
 				}), s({
 					type: "SHOW_TEXT",
 					text: "Swap",
 					textKey: "LOG_SWAP",
 					style: "system",
-					pos: i
+					pos: r
 				}));
 			}
 		}
@@ -1676,20 +1701,20 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KING_REFLECTION",
 		name: "镜像之盾",
 		tier: "EPIC",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "任何在王周围 1 格内吃掉友军 of 敌方棋子，会立即被“震死”（同归于尽）。",
-		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: r, emit: s }) => {
+		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: i, emit: s }) => {
 			for (let a = -1; a <= 1; a++) for (let c = -1; c <= 1; c++) {
 				const n = t + a, d = o + c;
-				if (C.isValidPos(n, d)) {
+				if (D.isValidPos(n, d)) {
 					const t = e[n][d];
-					t && t.color === r.color && s({
+					t && t.color === i.color && s({
 						type: "ADD_STATUS",
 						pos: {
 							r: n,
 							c: d
 						},
-						statusId: i.REFLECTION_AURA,
+						statusId: r.REFLECTION_AURA,
 						duration: 2
 					});
 				}
@@ -1700,17 +1725,17 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KING_COMMANDER",
 		name: "御前统领",
 		tier: "EPIC",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "只要王处于连通状态，全场所有 of “马”在跳跃落点时，会自动冻结周围 1 格 of 敌军。",
 		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: s, emit: a, metadata: c }) => {
 			const { networked: n } = Ge(e, s.color, c);
-			n[t][o] && C.findPieces(e, (e) => e.color === s.color && e.type === r.KNIGHT).forEach(({ r: e, c: t }) => a({
+			n[t][o] && D.findPieces(e, (e) => e.color === s.color && e.type === i.KNIGHT).forEach(({ r: e, c: t }) => a({
 				type: "ADD_STATUS",
 				pos: {
 					r: e,
 					c: t
 				},
-				statusId: i.COMMANDER_AURA,
+				statusId: r.COMMANDER_AURA,
 				duration: 2
 			}));
 		} }
@@ -1719,11 +1744,11 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KING_GRAND_CASTLE",
 		name: "王车易位",
 		tier: "EPIC",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "主动：无视距离，直接与场上任意位置的一个友方“车”交换位置。",
 		activeSpec: {
 			targeting: "target",
-			getAlternatives: (e, t, o, i) => C.findPieces(e, (e) => e.color === i.color && e.type === r.ROOK).map(({ r: e, c: t }) => ({
+			getAlternatives: (e, t, o, r) => D.findPieces(e, (e) => e.color === r.color && e.type === i.ROOK).map(({ r: e, c: t }) => ({
 				pos: {
 					r: e,
 					c: t
@@ -1733,24 +1758,24 @@ const q = () => crypto.randomUUID(), X = [
 					c: t
 				}
 			})),
-			getAoE: (e, t, o, r, i) => i ? [{
-				r: i.r,
-				c: i.c
+			getAoE: (e, t, o, i, r) => r ? [{
+				r: r.r,
+				c: r.c
 			}] : [],
-			execute: (e, t, o, r, i, s) => {
-				i && (s({
+			execute: (e, t, o, i, r, s) => {
+				r && (s({
 					type: "SWAP_PIECES",
 					posA: {
 						r: t,
 						c: o
 					},
-					posB: i
+					posB: r
 				}), s({
 					type: "SHOW_TEXT",
 					text: "Castling",
 					textKey: "LOG_CASTLING",
 					style: "system",
-					pos: i
+					pos: r
 				}));
 			}
 		}
@@ -1759,11 +1784,11 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KING_SOUL_LINK",
 		name: "附身斗篷",
 		tier: "LEGENDARY",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "王被吃掉时，如果场上有 1 级的兵，该兵变身为新的“王”，使游戏继续。",
-		hooks: { onDeath: ({ board: e, piece: t, emit: o, cancelAction: i, r: s, c: a }) => {
-			const c = C.findPieces(e, (e) => e.color === t.color && e.type === r.PAWN && 1 === e.level)[0];
-			c && (i?.(), o({
+		hooks: { onDeath: ({ board: e, piece: t, emit: o, cancelAction: r, r: s, c: a }) => {
+			const c = D.findPieces(e, (e) => e.color === t.color && e.type === i.PAWN && 1 === e.level)[0];
+			c && (r?.(), o({
 				type: "REMOVE_PIECE",
 				pos: {
 					r: s,
@@ -1773,7 +1798,7 @@ const q = () => crypto.randomUUID(), X = [
 				type: "UPDATE_ROSTER_PIECE",
 				pieceUid: c.piece.uid,
 				updates: {
-					type: r.KING,
+					type: i.KING,
 					maxSlots: 3
 				}
 			}), o({
@@ -1784,7 +1809,7 @@ const q = () => crypto.randomUUID(), X = [
 				},
 				piece: {
 					...c.piece,
-					type: r.KING,
+					type: i.KING,
 					maxSlots: 3
 				}
 			}), o({
@@ -1799,38 +1824,42 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KING_HOLY_DOMAIN",
 		name: "绝对圣域",
 		tier: "LEGENDARY",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "王周围 2 格内，所有友方棋子免疫一切负面状态（冻结、石化、沉默等）。",
-		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: r, emit: s }) => {
-			for (let a = -2; a <= 2; a++) for (let c = -2; c <= 2; c++) {
-				const n = t + a, d = o + c;
-				if (C.isValidPos(n, d)) {
-					const t = e[n][d];
-					t && t.color === r.color && ([
-						i.FROZEN,
-						i.PETRIFIED,
-						i.SKILL_LOCKED,
-						i.SILENCED,
-						i.INFECTED,
-						i.BETRAYED,
-						i.GRAVITY_LOCKED,
-						i.AURA_SUPPRESSED
+		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: i, emit: s, isAISimulation: a }) => {
+			for (let c = -2; c <= 2; c++) for (let n = -2; n <= 2; n++) {
+				const d = t + c, p = o + n;
+				if (D.isValidPos(d, p)) {
+					const t = e[d][p];
+					t && t.color === i.color && ([
+						r.FROZEN,
+						r.PETRIFIED,
+						r.SKILL_LOCKED,
+						r.SILENCED,
+						r.INFECTED,
+						r.BETRAYED,
+						r.GRAVITY_LOCKED,
+						r.AURA_SUPPRESSED
 					].forEach((e) => {
-						t.statuses?.some((t) => t.id === e) && s({
+						t.statuses?.some((t) => t.id === e) && (s({
 							type: "REMOVE_STATUS",
 							pos: {
-								r: n,
-								c: d
+								r: d,
+								c: p
 							},
 							statusId: e
-						});
+						}), a || U.emit(G, {
+							key: "status_cleansed",
+							value: 1,
+							isLifetimeOnly: !0
+						}));
 					}), s({
 						type: "ADD_STATUS",
 						pos: {
-							r: n,
-							c: d
+							r: d,
+							c: p
 						},
-						statusId: i.HOLY_DOMAIN_AURA,
+						statusId: r.HOLY_DOMAIN_AURA,
 						duration: 2
 					}));
 				}
@@ -1841,7 +1870,7 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KING_STASIS",
 		name: "时空锁定",
 		tier: "LEGENDARY",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "主动：使王周围 3 格内的所有单位（不论敌我，除自己外）进入“石化”状态（每局限一次）。",
 		activeSpec: {
 			targeting: "self",
@@ -1882,15 +1911,15 @@ const q = () => crypto.randomUUID(), X = [
 					for (let s = -3; s <= 3; s++) for (let a = -3; a <= 3; a++) {
 						if (0 === s && 0 === a) continue;
 						const n = t + s, d = o + a;
-						if (C.isValidPos(n, d)) {
+						if (D.isValidPos(n, d)) {
 							const t = e[n][d];
-							t && t.type !== r.KING && c({
+							t && t.type !== i.KING && c({
 								type: "ADD_STATUS",
 								pos: {
 									r: n,
 									c: d
 								},
-								statusId: i.PETRIFIED,
+								statusId: r.PETRIFIED,
 								duration: 99,
 								visualMeta: { delayBefore: 200 }
 							});
@@ -1921,14 +1950,14 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KING_ROYAL_PATH",
 		name: "御道",
 		tier: "COMMON",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "如果王所在的行和列没有任何敌方棋子，王的移动范围提升至 2 格（不可吃子）。",
 		modifiers: { movement: (e, t) => {
-			const { board: o, piece: r, r: i, c: s, isControlSquares: a } = e;
+			const { board: o, piece: i, r, c: s, isControlSquares: a } = e;
 			let c = !1;
 			for (let n = 0; n < 8; n++) {
-				const e = o[i][n], t = o[n][s];
-				if (e && e.color !== r.color && (c = !0), t && t.color !== r.color && (c = !0), c) break;
+				const e = o[r][n], t = o[n][s];
+				if (e && e.color !== i.color && (c = !0), t && t.color !== i.color && (c = !0), c) break;
 			}
 			return c || [
 				[-1, 0],
@@ -1940,10 +1969,10 @@ const q = () => crypto.randomUUID(), X = [
 				[1, -1],
 				[1, 1]
 			].forEach(([e, c]) => {
-				const n = i + 2 * e, d = s + 2 * c, p = i + e, E = s + c;
-				if (C.isValidPos(n, d) && !o[p][E]) {
+				const n = r + 2 * e, d = s + 2 * c, p = r + e, E = s + c;
+				if (D.isValidPos(n, d) && !o[p][E]) {
 					const e = o[n][d];
-					(!e || a && e.color === r.color) && t.push({
+					(!e || a && e.color === i.color) && t.push({
 						r: n,
 						c: d
 					});
@@ -1955,11 +1984,11 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KING_LOGISTICS",
 		name: "统筹",
 		tier: "COMMON",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "部署任何棋子到王相邻的格子时，立即返还 3 金币。",
 		tags: ["GLOBAL"],
-		hooks: { onDeploy: ({ r: e, c: o, piece: i, ownerPos: s, subject: a, emit: c }) => {
-			s && a && i.type === r.KING && i.color === t && i.skills.includes("KING_LOGISTICS") && 1 === Math.max(Math.abs(e - s.r), Math.abs(o - s.c)) && a.color === t && (c({
+		hooks: { onDeploy: ({ r: e, c: o, piece: r, ownerPos: s, subject: a, emit: c }) => {
+			s && a && r.type === i.KING && r.color === t && r.skills.includes("KING_LOGISTICS") && 1 === Math.max(Math.abs(e - s.r), Math.abs(o - s.c)) && a.color === t && (c({
 				type: "MODIFY_GOLD",
 				amount: 3,
 				reason: "LOGISTICS"
@@ -1979,7 +2008,7 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KING_DECOY_DOUBLE",
 		name: "影武者",
 		tier: "EPIC",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "移动后，在起始位置留下一个提供信号的“影终端”，持续 1 回合（无法移动或战斗）。",
 		hooks: {
 			onAfterMove: ({ from: e, piece: t, emit: o }) => {
@@ -1987,13 +2016,13 @@ const q = () => crypto.randomUUID(), X = [
 					type: "SPAWN",
 					pos: e,
 					piece: {
-						id: `decoy-${q()}`,
-						type: r.PAWN,
+						id: `decoy-${Z()}`,
+						type: i.PAWN,
 						color: t.color,
 						level: 1,
 						skills: ["PAWN_SIGNAL_TOWER"],
 						statuses: [{
-							id: i.ENCRYPTED,
+							id: r.ENCRYPTED,
 							duration: 1
 						}],
 						maxSlots: 0,
@@ -2008,8 +2037,8 @@ const q = () => crypto.randomUUID(), X = [
 					pos: e
 				}));
 			},
-			onTurnStart: ({ r: e, c: t, piece: o, emit: r }) => {
-				o.metadata?.isDecoyTerminal && r({
+			onTurnStart: ({ r: e, c: t, piece: o, emit: i }) => {
+				o.metadata?.isDecoyTerminal && i({
 					type: "REMOVE_PIECE",
 					pos: {
 						r: e,
@@ -2023,18 +2052,18 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KING_MARTYRDOM",
 		name: "牺牲",
 		tier: "LEGENDARY",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "王被吃掉时，若库存已空且场上有其他友军，则牺牲所有友军并自爆，清空周围 5x5 的敌军并重生（限一次）。",
-		hooks: { onDeath: ({ board: e, piece: t, r: o, c: i, cancelAction: s, emit: a, reserves: c }) => {
+		hooks: { onDeath: ({ board: e, piece: t, r: o, c: r, cancelAction: s, emit: a, reserves: c }) => {
 			if (t.metadata?.martyrdomUsed) return;
-			const n = c ? c[t.color] : {}, d = Object.values(n).every((e) => (e || 0) <= 0), p = C.findPieces(e, (e) => e.color === t.color && e.type !== r.KING);
+			const n = c ? c[t.color] : {}, d = Object.values(n).every((e) => (e || 0) <= 0), p = D.findPieces(e, (e) => e.color === t.color && e.type !== i.KING);
 			if (d && p.length > 0) {
 				a({
 					type: "ANIMATE",
 					name: "RIPPLE",
 					pos: {
 						r: o,
-						c: i
+						c: r
 					},
 					duration: 600,
 					metadata: { color: "#ef4444" }
@@ -2055,10 +2084,10 @@ const q = () => crypto.randomUUID(), X = [
 					});
 				});
 				for (let s = -2; s <= 2; s++) for (let c = -2; c <= 2; c++) {
-					const n = o + s, d = i + c;
-					if (C.isValidPos(n, d)) {
+					const n = o + s, d = r + c;
+					if (D.isValidPos(n, d)) {
 						const o = e[n][d];
-						o && o.color !== t.color && o.type !== r.KING && a({
+						o && o.color !== t.color && o.type !== i.KING && a({
 							type: "KILL",
 							pos: {
 								r: n,
@@ -2072,14 +2101,14 @@ const q = () => crypto.randomUUID(), X = [
 					name: "ITEM_USE_FLASH",
 					pos: {
 						r: o,
-						c: i
+						c: r
 					},
 					duration: 600
 				}), a({
 					type: "SPAWN",
 					pos: {
 						r: o,
-						c: i
+						c: r
 					},
 					piece: {
 						...t,
@@ -2098,12 +2127,12 @@ const q = () => crypto.randomUUID(), X = [
 			}
 		} }
 	}
-], $ = [
+], J = [
 	{
 		id: "KNIGHT_AURA",
 		name: "骑士光环",
 		tier: "COMMON",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "只要马处于联网状态，与其相邻的友方“兵”获得十字移动能力。",
 		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: s, emit: a, metadata: c }) => {
 			const { networked: n } = Ge(e, s.color, c);
@@ -2120,13 +2149,13 @@ const q = () => crypto.randomUUID(), X = [
 				const d = t + c, p = o + n;
 				if (d >= 0 && d < 8 && p >= 0 && p < 8) {
 					const t = e[d][p];
-					t && t.color === s.color && t.type === r.PAWN && a({
+					t && t.color === s.color && t.type === i.PAWN && a({
 						type: "ADD_STATUS",
 						pos: {
 							r: d,
 							c: p
 						},
-						statusId: i.CROSS_AURA,
+						statusId: r.CROSS_AURA,
 						duration: 2
 					});
 				}
@@ -2137,16 +2166,16 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_CROSS_JUMP",
 		name: "十字跳",
 		tier: "RARE",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "跳跃后如果没有吃子，该棋子可立刻在十字方向上再次行动一格（无视网络连接，不可吃子）。",
-		hooks: { onAfterMove: ({ victim: e, r: t, c: o, piece: r, emit: s }) => {
+		hooks: { onAfterMove: ({ victim: e, r: t, c: o, piece: i, emit: s }) => {
 			e || (s({
 				type: "ADD_STATUS",
 				pos: {
 					r: t,
 					c: o
 				},
-				statusId: i.CROSS_AURA,
+				statusId: r.CROSS_AURA,
 				duration: 2
 			}), s({
 				type: "ADD_STATUS",
@@ -2154,21 +2183,21 @@ const q = () => crypto.randomUUID(), X = [
 					r: t,
 					c: o
 				},
-				statusId: i.CANNOT_CAPTURE,
+				statusId: r.CANNOT_CAPTURE,
 				duration: 2
 			}), s({
 				type: "SET_EXTRA_MOVE",
 				active: !0
 			}), s({
 				type: "UPDATE_METADATA",
-				updates: { lockedActionUid: r.uid }
+				updates: { lockedActionUid: i.uid }
 			}), s({
 				type: "SET_UI_SELECTION",
 				pos: {
 					r: t,
 					c: o
 				},
-				uid: r.uid ?? null
+				uid: i.uid ?? null
 			}), s({
 				type: "SHOW_TEXT",
 				text: "Cross Double-Step",
@@ -2181,15 +2210,15 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_QUICK_ROUTING",
 		name: "极速寻址",
 		tier: "COMMON",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		atomicBits: ["MOVE_N"],
 		description: "即使该棋子因断网处于“瘫痪/冻结”状态，也允许它进行移动，但仅限跳向目前被己方网络覆盖的格子。",
 		modifiers: {
 			bypassFrozen: () => !0,
 			movement: (e, o) => {
-				const { r, c: i, piece: s, networkedMap: a, metadata: c, isControlSquares: n } = e;
+				const { r: i, c: r, piece: s, networkedMap: a, metadata: c, isControlSquares: n } = e;
 				if (n) return o;
-				if (a && a[r][i]) return o;
+				if (a && a[i][r]) return o;
 				if (!c?.cache) return o;
 				const d = s.color === t ? c.cache.whiteControl : c.cache.blackControl;
 				return o.filter((e) => d[e.r][e.c]);
@@ -2200,10 +2229,10 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_PHANTOM_STRIKE",
 		name: "幻影突袭",
 		tier: "COMMON",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		atomicBits: ["MOVE_N"],
 		description: "马吃子后可以马上回到原位。",
-		modifiers: { movement: ({ board: e, r: t, c: o, piece: r }, i) => ([
+		modifiers: { movement: ({ board: e, r: t, c: o, piece: i }, r) => ([
 			[-2, -1],
 			[-2, 1],
 			[-1, -2],
@@ -2214,16 +2243,16 @@ const q = () => crypto.randomUUID(), X = [
 			[2, 1]
 		].forEach(([s, a]) => {
 			const c = t + s, n = o + a;
-			if (C.isValidPos(c, n)) {
+			if (D.isValidPos(c, n)) {
 				const t = e[c][n];
-				t && t.color !== r.color && i.push({
+				t && t.color !== i.color && r.push({
 					r: c,
 					c: n
 				});
 			}
-		}), i) },
-		hooks: { onKill: ({ from: e, r: t, c: o, emit: r }) => {
-			e && (r({
+		}), r) },
+		hooks: { onKill: ({ from: e, r: t, c: o, emit: i }) => {
+			e && (i({
 				type: "MOVE",
 				from: {
 					r: t,
@@ -2234,7 +2263,7 @@ const q = () => crypto.randomUUID(), X = [
 					delayBefore: 200,
 					duration: 300
 				}
-			}), r({
+			}), i({
 				type: "SHOW_TEXT",
 				text: "Phantom Return",
 				textKey: "LOG_PHANTOM_RETURN",
@@ -2247,11 +2276,11 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_SCAVENGER",
 		name: "搜刮者",
 		tier: "COMMON",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "如果跳跃的目标格是敌方控制区，立即获得 1 金币。",
-		hooks: { onAfterMove: ({ board: e, piece: r, r: i, c: s, emit: a, metadata: c }) => {
-			const { control: n } = Ge(e, r.color === t ? o : t, c);
-			n[i][s] && r.color === t && a({
+		hooks: { onAfterMove: ({ board: e, piece: i, r, c: s, emit: a, metadata: c }) => {
+			const { control: n } = Ge(e, i.color === t ? o : t, c);
+			n[r][s] && i.color === t && a({
 				type: "MODIFY_GOLD",
 				amount: 1,
 				reason: "SCAVENGER"
@@ -2262,18 +2291,18 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_SIDE_STEP",
 		name: "侧步",
 		tier: "COMMON",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "允许马向相邻的空格移动一格（非吃子）。",
 		modifiers: { movement: (e, t) => {
-			const { board: o, r, c: i, piece: s, isControlSquares: a } = e;
+			const { board: o, r: i, c: r, piece: s, isControlSquares: a } = e;
 			return [
 				[-1, 0],
 				[1, 0],
 				[0, -1],
 				[0, 1]
 			].forEach(([e, c]) => {
-				const n = r + e, d = i + c;
-				if (C.isValidPos(n, d)) {
+				const n = i + e, d = r + c;
+				if (D.isValidPos(n, d)) {
 					const e = o[n][d];
 					(!e || a && e.color === s.color) && t.push({
 						r: n,
@@ -2287,9 +2316,9 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_HOT_SWAP",
 		name: "战术换位",
 		tier: "COMMON",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "允许跳向己方“兵”所在的格子，落地后与该兵互换位置。",
-		modifiers: { movement: ({ board: e, piece: t, r: o, c: i }, s) => ([
+		modifiers: { movement: ({ board: e, piece: t, r: o, c: r }, s) => ([
 			[-2, -1],
 			[-2, 1],
 			[-1, -2],
@@ -2299,18 +2328,18 @@ const q = () => crypto.randomUUID(), X = [
 			[2, -1],
 			[2, 1]
 		].forEach(([a, c]) => {
-			const n = o + a, d = i + c;
-			if (C.isValidPos(n, d)) {
+			const n = o + a, d = r + c;
+			if (D.isValidPos(n, d)) {
 				const o = e[n][d];
-				o && o.color === t.color && o.type === r.PAWN && s.push({
+				o && o.color === t.color && o.type === i.PAWN && s.push({
 					r: n,
 					c: d
 				});
 			}
 		}), s) },
 		hooks: { onAfterMove: ({ from: e, piece: t, emit: o }) => {
-			if (e && t.stackedPiece && t.stackedPiece.type === r.PAWN) {
-				const r = t.stackedPiece;
+			if (e && t.stackedPiece && t.stackedPiece.type === i.PAWN) {
+				const i = t.stackedPiece;
 				o({
 					type: "UPDATE_ROSTER_PIECE",
 					pieceUid: t.uid,
@@ -2319,7 +2348,7 @@ const q = () => crypto.randomUUID(), X = [
 					type: "SPAWN",
 					pos: e,
 					piece: {
-						...r,
+						...i,
 						stackedPiece: null
 					}
 				}), o({
@@ -2336,14 +2365,14 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_VALIANT",
 		name: "英勇",
 		tier: "RARE",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "马吃子后，若落点周围 1 格没有友军，该马获得一层“护盾”。",
-		hooks: { onKill: ({ board: e, r: t, c: o, piece: r, emit: s }) => {
+		hooks: { onKill: ({ board: e, r: t, c: o, piece: i, emit: s }) => {
 			let a = !1;
-			for (let i = -1; i <= 1; i++) for (let s = -1; s <= 1; s++) {
-				if (0 === i && 0 === s) continue;
-				const c = t + i, n = o + s;
-				if (C.isValidPos(c, n) && e[c][n]?.color === r.color) {
+			for (let r = -1; r <= 1; r++) for (let s = -1; s <= 1; s++) {
+				if (0 === r && 0 === s) continue;
+				const c = t + r, n = o + s;
+				if (D.isValidPos(c, n) && e[c][n]?.color === i.color) {
 					a = !0;
 					break;
 				}
@@ -2354,7 +2383,7 @@ const q = () => crypto.randomUUID(), X = [
 					r: t,
 					c: o
 				},
-				statusId: i.SHIELDED,
+				statusId: r.SHIELDED,
 				duration: 99
 			});
 		} }
@@ -2363,14 +2392,14 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_TROJAN_KERNEL",
 		name: "特洛伊内核",
 		tier: "LEGENDARY",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "终极骇客手段。当该棋子吃掉敌方的“车”或“后”时，收获一个一级兵加入你自己的库存中。",
-		hooks: { onKill: ({ piece: e, victim: t, emit: o }) => {
-			if (t && (t.type === r.QUEEN || t.type === r.ROOK)) {
+		hooks: { onKill: ({ piece: e, victim: t, emit: o, isAISimulation: r }) => {
+			if (t && (t.type === i.QUEEN || t.type === i.ROOK)) {
 				o({
 					type: "MODIFY_RESERVE",
 					color: e.color,
-					pieceType: r.PAWN,
+					pieceType: i.PAWN,
 					amount: 1
 				});
 				const t = Date.now();
@@ -2379,7 +2408,7 @@ const q = () => crypto.randomUUID(), X = [
 					piece: {
 						id: `bribe-${t}`,
 						uid: `u-${t}`,
-						type: r.PAWN,
+						type: i.PAWN,
 						color: e.color,
 						level: 1,
 						skills: [],
@@ -2387,6 +2416,10 @@ const q = () => crypto.randomUUID(), X = [
 						maxSlots: 1,
 						equippedItems: []
 					}
+				}), r || U.emit(G, {
+					key: "knight_kills_heavy",
+					value: 1,
+					isLifetimeOnly: !0
 				});
 			}
 		} }
@@ -2395,20 +2428,20 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_CHARGE",
 		name: "冲锋",
 		tier: "RARE",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "马跳跃吃子时，会对目标周围 1 格 of 敌方兵造成 1 回合冻结。",
 		hooks: { onKill: ({ board: e, r: t, c: o, piece: s, emit: a }) => {
 			for (let c = -1; c <= 1; c++) for (let n = -1; n <= 1; n++) {
 				const d = t + c, p = o + n;
-				if (C.isValidPos(d, p)) {
+				if (D.isValidPos(d, p)) {
 					const t = e[d][p];
-					t && t.color !== s.color && t.type !== r.KING && a({
+					t && t.color !== s.color && t.type !== i.KING && a({
 						type: "ADD_STATUS",
 						pos: {
 							r: d,
 							c: p
 						},
-						statusId: i.FROZEN,
+						statusId: r.FROZEN,
 						duration: 2
 					});
 				}
@@ -2419,7 +2452,7 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_FULL_DUPLEX",
 		name: "全双工响应",
 		tier: "EPIC",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "当部署该棋子直接上场后，本回合不结束，你可以立即再对场上的任意己方棋子执行一次“移动”操作。",
 		hooks: { onDeploy: ({ piece: e, emit: o }) => {
 			o({
@@ -2437,23 +2470,23 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_CHAIN",
 		name: "连锁闪电",
 		tier: "LEGENDARY",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "如果落点有敌方子力，吃掉后本回合不结束，该棋子可立刻再次行动（无视网络连接）。",
-		hooks: { onKill: ({ piece: e, r: o, c: r, emit: i }) => {
-			i({
+		hooks: { onKill: ({ piece: e, r: o, c: i, emit: r }) => {
+			r({
 				type: "SET_EXTRA_MOVE",
 				active: !0
-			}), i({
+			}), r({
 				type: "UPDATE_METADATA",
 				updates: { lockedActionUid: e.uid }
-			}), i({
+			}), r({
 				type: "SET_UI_SELECTION",
 				pos: {
 					r: o,
-					c: r
+					c: i
 				},
 				uid: e.uid ?? null
-			}), i({
+			}), r({
 				type: "SHOW_TEXT",
 				text: e.color === t ? "Chain Jump!" : "AI Chain Jump!",
 				textKey: e.color === t ? "LOG_CHAIN_JUMP" : "LOG_CHAIN_JUMP_AI",
@@ -2465,16 +2498,16 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_MIRAGE",
 		name: "幻影移形",
 		tier: "RARE",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "被吃掉时，如果周围 2 格内有己方兵，则与其交换，兵代替马消失。",
-		hooks: { onDeath: ({ piece: e, board: t, r: o, c: i, emit: s, cancelAction: a }) => {
+		hooks: { onDeath: ({ piece: e, board: t, r: o, c: r, emit: s, cancelAction: a }) => {
 			let c = null, n = null;
 			for (let d = -2; d <= 2; d++) {
 				for (let s = -2; s <= 2; s++) {
-					const a = o + d, p = i + s;
-					if (C.isValidPos(a, p)) {
+					const a = o + d, p = r + s;
+					if (D.isValidPos(a, p)) {
 						const o = t[a][p];
-						if (o && o.color === e.color && o.type === r.PAWN) {
+						if (o && o.color === e.color && o.type === i.PAWN) {
 							c = {
 								r: a,
 								c: p
@@ -2490,14 +2523,14 @@ const q = () => crypto.randomUUID(), X = [
 				name: "PHANTOM_MOVE",
 				pos: {
 					r: o,
-					c: i
+					c: r
 				},
 				duration: 400
 			}), s({
 				type: "REMOVE_PIECE",
 				pos: {
 					r: o,
-					c: i
+					c: r
 				}
 			}), s({
 				type: "REMOVE_PIECE",
@@ -2506,7 +2539,7 @@ const q = () => crypto.randomUUID(), X = [
 				type: "SPAWN",
 				pos: {
 					r: o,
-					c: i
+					c: r
 				},
 				piece: n
 			}), s({
@@ -2525,21 +2558,21 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_MIDAS_TOUCH",
 		name: "黄金铁蹄",
 		tier: "LEGENDARY",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "跳跃进入敌方领地或敌方控制区时产生金币（根据距离）。单关收益有上限。吃掉车/后可获得装备。",
 		hooks: {
-			onAfterMove: ({ from: e, r, c: i, piece: s, board: a, emit: c, metadata: n }) => {
+			onAfterMove: ({ from: e, r: i, c: r, piece: s, board: a, emit: c, metadata: n }) => {
 				if (!e) return;
-				const d = s.color === t ? r < 4 : r > 3, { control: p } = Ge(a, s.color === t ? o : t, n), E = p[r][i];
+				const d = s.color === t ? i < 4 : i > 3, { control: p } = Ge(a, s.color === t ? o : t, n), E = p[i][r];
 				if (!d && !E) return;
 				const l = s.metadata?.levelGoldEarned ?? 0;
 				if (l >= 40) return;
-				const u = Math.abs(r - e.r) + Math.abs(i - e.c), A = Math.min(u, 40 - l);
+				const u = Math.abs(i - e.r) + Math.abs(r - e.c), A = Math.min(u, 40 - l);
 				A <= 0 || (c({
 					type: "SPAWN",
 					pos: {
-						r,
-						c: i
+						r: i,
+						c: r
 					},
 					piece: {
 						...s,
@@ -2554,8 +2587,8 @@ const q = () => crypto.randomUUID(), X = [
 					reason: "MIDAS_TOUCH"
 				}));
 			},
-			onKill: ({ victim: e, piece: o, emit: i }) => {
-				!e || e.type !== r.QUEEN && e.type !== r.ROOK || o.color !== t || i({
+			onKill: ({ victim: e, piece: o, emit: r }) => {
+				!e || e.type !== i.QUEEN && e.type !== i.ROOK || o.color !== t || r({
 					type: "ADD_ITEM",
 					item: {
 						id: `eq-${Date.now()}`,
@@ -2572,12 +2605,12 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_SABOTAGE",
 		name: "破坏",
 		tier: "RARE",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "马跳跃落点 adjacent 1 格内 of 敌方陷阱和地块效果被销毁。",
-		hooks: { onAfterMove: ({ r: e, c: t, metadata: o, emit: r }) => {
-			if (o && o.squares) for (let i = -1; i <= 1; i++) for (let s = -1; s <= 1; s++) {
-				const a = e + i, c = t + s, n = `${a},${c}`;
-				o.squares[n] && r({
+		hooks: { onAfterMove: ({ r: e, c: t, metadata: o, emit: i }) => {
+			if (o && o.squares) for (let r = -1; r <= 1; r++) for (let s = -1; s <= 1; s++) {
+				const a = e + r, c = t + s, n = `${a},${c}`;
+				o.squares[n] && i({
 					type: "REMOVE_SQUARE",
 					pos: {
 						r: a,
@@ -2592,11 +2625,11 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_TRAMPLE",
 		name: "践踏",
 		tier: "RARE",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "跳跃过程中经过的敌方棋子，随机概率会被冻结 1 回合。",
-		hooks: { onAfterMove: ({ board: e, from: t, r: o, c: r, piece: s, emit: a, prng: c }) => {
+		hooks: { onAfterMove: ({ board: e, from: t, r: o, c: i, piece: s, emit: a, prng: c }) => {
 			if (!t || !c) return;
-			const n = [], d = o - t.r, p = r - t.c;
+			const n = [], d = o - t.r, p = i - t.c;
 			if (Math.abs(d) > Math.abs(p)) {
 				for (let e = 1; e <= Math.abs(d); e++) n.push({
 					r: t.r + Math.sign(d) * e,
@@ -2613,16 +2646,16 @@ const q = () => crypto.randomUUID(), X = [
 				});
 				n.push({
 					r: t.r + d,
-					c: r
+					c: i
 				});
 			}
 			n.forEach((t) => {
-				if (t.r === o && t.c === r) return;
+				if (t.r === o && t.c === i) return;
 				const n = e[t.r]?.[t.c];
 				n && n.color !== s.color && c.next() < .5 && (a({
 					type: "ADD_STATUS",
 					pos: t,
-					statusId: i.FROZEN,
+					statusId: r.FROZEN,
 					duration: 2
 				}), a({
 					type: "SHOW_TEXT",
@@ -2638,7 +2671,7 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_GHOST",
 		name: "离线协议",
 		tier: "RARE",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "该骑士免疫冻结状态，断网时仍可移动。",
 		modifiers: { bypassFrozen: () => !0 }
 	},
@@ -2646,10 +2679,10 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_HIT_AND_RUN",
 		name: "回旋镖",
 		tier: "RARE",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "吃子后返回原位。",
-		hooks: { onKill: ({ from: e, r: t, c: o, emit: r }) => {
-			e && r({
+		hooks: { onKill: ({ from: e, r: t, c: o, emit: i }) => {
+			e && i({
 				type: "MOVE",
 				from: {
 					r: t,
@@ -2663,7 +2696,7 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_GRAVITY_WELL",
 		name: "引力场",
 		tier: "EPIC",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "移动后对周围敌军施加冻结。",
 		hooks: { onAfterMove: ({ r: e, c: t, emit: o }) => {
 			[
@@ -2675,15 +2708,15 @@ const q = () => crypto.randomUUID(), X = [
 				[-1, 1],
 				[1, -1],
 				[1, 1]
-			].forEach(([r, s]) => {
-				const a = e + r, c = t + s;
+			].forEach(([i, s]) => {
+				const a = e + i, c = t + s;
 				a >= 0 && a < 8 && c >= 0 && c < 8 && o({
 					type: "ADD_STATUS",
 					pos: {
 						r: a,
 						c
 					},
-					statusId: i.FROZEN,
+					statusId: r.FROZEN,
 					duration: 2
 				});
 			});
@@ -2693,9 +2726,9 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_TROJAN",
 		name: "木马",
 		tier: "EPIC",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "死亡时生成两个兵作为殿后。",
-		hooks: { onDeath: ({ piece: e, board: t, r: o, c: i, emit: s, prng: a }) => {
+		hooks: { onDeath: ({ piece: e, board: t, r: o, c: r, emit: s, prng: a }) => {
 			if (!a) return;
 			let c = 0;
 			const n = [
@@ -2710,8 +2743,8 @@ const q = () => crypto.randomUUID(), X = [
 			].sort(() => a.next() - .5);
 			for (const [d, p] of n) {
 				if (c >= 2) break;
-				const a = o + d, n = i + p;
-				C.isValidPos(a, n) && !t[a][n] && (s({
+				const a = o + d, n = r + p;
+				D.isValidPos(a, n) && !t[a][n] && (s({
 					type: "SPAWN",
 					pos: {
 						r: a,
@@ -2720,7 +2753,7 @@ const q = () => crypto.randomUUID(), X = [
 					piece: {
 						...e,
 						id: `spawn-${Date.now()}-${c}`,
-						type: r.PAWN,
+						type: i.PAWN,
 						level: 1,
 						skills: [],
 						statuses: [],
@@ -2735,12 +2768,12 @@ const q = () => crypto.randomUUID(), X = [
 		id: "KNIGHT_RIFT",
 		name: "时空裂隙",
 		tier: "LEGENDARY",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "跳跃后，将起跳点相邻的一名【非王】友军传送到落点相邻的空格。",
-		hooks: { onAfterMove: ({ board: e, from: t, r: o, c: i, piece: s, emit: a, prng: c }) => {
+		hooks: { onAfterMove: ({ board: e, from: t, r: o, c: r, piece: s, emit: a, prng: c, isAISimulation: n }) => {
 			if (!t || !c) return;
-			let n = null;
-			const d = [
+			let d = null;
+			const p = [
 				[-1, 0],
 				[1, 0],
 				[0, -1],
@@ -2750,27 +2783,27 @@ const q = () => crypto.randomUUID(), X = [
 				[1, -1],
 				[1, 1]
 			];
-			for (const [p, E] of d) {
-				const o = t.r + p, i = t.c + E;
-				if (C.isValidPos(o, i)) {
-					const t = e[o][i];
-					if (t && t.color === s.color && t.type !== r.KING) {
-						n = {
+			for (const [E, l] of p) {
+				const o = t.r + E, r = t.c + l;
+				if (D.isValidPos(o, r)) {
+					const t = e[o][r];
+					if (t && t.color === s.color && t.type !== i.KING) {
+						d = {
 							r: o,
-							c: i
+							c: r
 						};
 						break;
 					}
 				}
 			}
-			if (n) {
-				const t = d.sort(() => c.next() - .5);
-				for (const [r, s] of t) {
-					const t = o + r, c = i + s;
-					if (C.isValidPos(t, c) && !e[t][c]) {
+			if (d) {
+				const t = p.sort(() => c.next() - .5);
+				for (const [i, s] of t) {
+					const t = o + i, c = r + s;
+					if (D.isValidPos(t, c) && !e[t][c]) {
 						a({
 							type: "MOVE",
-							from: n,
+							from: d,
 							to: {
 								r: t,
 								c
@@ -2784,6 +2817,10 @@ const q = () => crypto.randomUUID(), X = [
 								r: t,
 								c
 							}
+						}), n || U.emit(G, {
+							key: "swapOrTeleport",
+							value: 1,
+							isLifetimeOnly: !0
 						});
 						break;
 					}
@@ -2795,12 +2832,12 @@ const q = () => crypto.randomUUID(), X = [
 		id: "EQ_PLUNDER_HOOVES",
 		name: "掠夺马蹄",
 		tier: "RARE",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "跳跃经过敌方单位上方时，窃取每一个敌方 2 金币。",
-		hooks: { onAfterMove: ({ board: e, from: r, r: i, c: s, piece: a, emit: c }) => {
-			if (!r || a.color !== t) return;
-			const n = Math.round((r.r + i) / 2), d = Math.round((r.c + s) / 2);
-			[e[n]?.[r.c], e[r.r]?.[d]].forEach((e) => {
+		hooks: { onAfterMove: ({ board: e, from: i, r, c: s, piece: a, emit: c }) => {
+			if (!i || a.color !== t) return;
+			const n = Math.round((i.r + r) / 2), d = Math.round((i.c + s) / 2);
+			[e[n]?.[i.c], e[i.r]?.[d]].forEach((e) => {
 				e && e.color === o && (c({
 					type: "MODIFY_GOLD",
 					amount: 2,
@@ -2812,7 +2849,7 @@ const q = () => crypto.randomUUID(), X = [
 					textParams: { amount: 2 },
 					style: "gold",
 					pos: {
-						r: i,
+						r,
 						c: s
 					}
 				}));
@@ -2823,25 +2860,25 @@ const q = () => crypto.randomUUID(), X = [
 		id: "EQ_GHOST_RIDE",
 		name: "幽灵骑行",
 		tier: "EPIC",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "跳跃经过的所有敌方单位有 30% 概率被随机传送。",
-		hooks: { onAfterMove: ({ board: e, from: t, r: o, c: r, piece: i, emit: s, prng: a }) => {
+		hooks: { onAfterMove: ({ board: e, from: t, r: o, c: i, piece: r, emit: s, prng: a, isAISimulation: c }) => {
 			if (!t || !a) return;
-			const c = Math.round((t.r + o) / 2), n = Math.round((t.c + r) / 2);
+			const n = Math.round((t.r + o) / 2), d = Math.round((t.c + i) / 2);
 			[{
-				r: c,
+				r: n,
 				c: t.c
 			}, {
 				r: t.r,
-				c: n
+				c: d
 			}].forEach((t) => {
 				const o = e[t.r]?.[t.c];
-				if (o && o.color !== i.color && a.next() < .3) {
+				if (o && o.color !== r.color && a.next() < .3) {
 					const o = [];
-					if (e.forEach((e, t) => e.forEach((e, r) => {
+					if (e.forEach((e, t) => e.forEach((e, i) => {
 						e || o.push({
 							r: t,
-							c: r
+							c: i
 						});
 					})), o.length > 0) {
 						const e = o[Math.floor(a.next() * o.length)];
@@ -2855,28 +2892,32 @@ const q = () => crypto.randomUUID(), X = [
 							textKey: "LOG_GHOST_RIDE",
 							style: "system",
 							pos: e
+						}), c || U.emit(G, {
+							key: "swapOrTeleport",
+							value: 1,
+							isLifetimeOnly: !0
 						});
 					}
 				}
 			});
 		} }
 	}
-], Z = [
+], z = [
 	{
 		id: "PAWN_PATROL",
 		name: "巡逻",
 		tier: "COMMON",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "允许兵水平向左或向右移动 1 格（不可吃子）。",
 		tags: ["MOVEMENT"],
 		isUnique: !0,
 		modifiers: { movement: (e, t) => {
-			const { board: o, r, c: i, piece: s, isControlSquares: a } = e;
-			return [i - 1, i + 1].forEach((e) => {
+			const { board: o, r: i, c: r, piece: s, isControlSquares: a } = e;
+			return [r - 1, r + 1].forEach((e) => {
 				if (e >= 0 && e < 8) {
-					const i = o[r][e];
-					(!i || a && i.color === s.color) && t.push({
-						r,
+					const r = o[i][e];
+					(!r || a && r.color === s.color) && t.push({
+						r: i,
 						c: e
 					});
 				}
@@ -2887,14 +2928,14 @@ const q = () => crypto.randomUUID(), X = [
 		id: "PAWN_CHARGER",
 		name: "冲锋者",
 		tier: "COMMON",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "允许兵在任何位置向前直线移动两格（不可吃子，不可越子）。",
 		tags: ["MOVEMENT"],
 		isUnique: !0,
 		modifiers: { movement: (e, o) => {
-			const { board: r, r: i, c: s, piece: a, isControlSquares: c } = e, n = a.color === t ? -1 : 1, d = i + 2 * n;
-			if (d >= 0 && d < 8 && !r[i + n][s]) {
-				const e = r[d][s];
+			const { board: i, r, c: s, piece: a, isControlSquares: c } = e, n = a.color === t ? -1 : 1, d = r + 2 * n;
+			if (d >= 0 && d < 8 && !i[r + n][s]) {
+				const e = i[d][s];
 				(!e || c && e.color === a.color) && o.push({
 					r: d,
 					c: s
@@ -2907,12 +2948,12 @@ const q = () => crypto.randomUUID(), X = [
 		id: "PAWN_FRONTAL_SPIKE",
 		name: "锋刃",
 		tier: "COMMON",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "允许兵向前直行移动 1 格时吃子。",
 		modifiers: { movement: (e, o) => {
-			const { board: r, r: i, c: s, piece: a, isControlSquares: c } = e, n = i + (a.color === t ? -1 : 1);
+			const { board: i, r, c: s, piece: a, isControlSquares: c } = e, n = r + (a.color === t ? -1 : 1);
 			if (n >= 0 && n < 8) {
-				const e = r[n][s];
+				const e = i[n][s];
 				(e && e.color !== a.color || c && e && e.color === a.color) && o.push({
 					r: n,
 					c: s
@@ -2925,15 +2966,15 @@ const q = () => crypto.randomUUID(), X = [
 		id: "PAWN_BACKSTEP",
 		name: "后撤步",
 		tier: "COMMON",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "允许向左后或右后方斜向退一格（不吃子）。",
 		tags: ["MOVEMENT"],
 		isUnique: !0,
 		modifiers: { movement: (e, o) => {
-			const { board: r, r: i, c: s, piece: a, isControlSquares: c } = e, n = i + (a.color === t ? 1 : -1);
+			const { board: i, r, c: s, piece: a, isControlSquares: c } = e, n = r + (a.color === t ? 1 : -1);
 			return n >= 0 && n < 8 && [s - 1, s + 1].forEach((e) => {
 				if (e >= 0 && e < 8) {
-					const t = r[n][e];
+					const t = i[n][e];
 					(!t || c && t.color === a.color) && o.push({
 						r: n,
 						c: e
@@ -2946,13 +2987,13 @@ const q = () => crypto.randomUUID(), X = [
 		id: "PAWN_RESOURCEFUL",
 		name: "补给包",
 		tier: "COMMON",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "被吃掉时，有 30% 概率随机返还一个“兵”到你的库存中。",
 		hooks: { onDeath: ({ piece: e, emit: t, prng: o }) => {
 			o && o.next() < .3 && t({
 				type: "MODIFY_RESERVE",
 				color: e.color,
-				pieceType: r.PAWN,
+				pieceType: i.PAWN,
 				amount: 1
 			});
 		} }
@@ -2961,10 +3002,10 @@ const q = () => crypto.randomUUID(), X = [
 		id: "PAWN_VENGEANCE",
 		name: "牺牲闪击",
 		tier: "COMMON",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "被吃掉时，随机冻结对方一名非王棋子 2 回合。",
 		hooks: { onDeath: ({ board: e, piece: t, emit: o, prng: s }) => {
-			const a = C.findPieces(e, (e) => e.color !== t.color && e.type !== r.KING);
+			const a = D.findPieces(e, (e) => e.color !== t.color && e.type !== i.KING);
 			if (a.length > 0 && s) {
 				const e = a[Math.floor(s.next() * a.length)];
 				o({
@@ -2973,7 +3014,7 @@ const q = () => crypto.randomUUID(), X = [
 						r: e.r,
 						c: e.c
 					},
-					statusId: i.FROZEN,
+					statusId: r.FROZEN,
 					duration: 2
 				}), o({
 					type: "SHOW_TEXT",
@@ -2992,20 +3033,20 @@ const q = () => crypto.randomUUID(), X = [
 		id: "PAWN_ASSASSIN",
 		name: "刺客代码",
 		tier: "RARE",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "吃掉敌方的“后”或“车”时，在原地进化为随机高级棋子。",
-		hooks: { onKill: ({ piece: e, victim: t, r: o, c: i, emit: s, prng: a }) => {
-			if (t && (t.type === r.QUEEN || t.type === r.ROOK) && a) {
+		hooks: { onKill: ({ piece: e, victim: t, r: o, c: r, emit: s, prng: a }) => {
+			if (t && (t.type === i.QUEEN || t.type === i.ROOK) && a) {
 				const t = [
-					r.KNIGHT,
-					r.BISHOP,
-					r.ROOK
+					i.KNIGHT,
+					i.BISHOP,
+					i.ROOK
 				];
 				s({
 					type: "SPAWN",
 					pos: {
 						r: o,
-						c: i
+						c: r
 					},
 					piece: {
 						...e,
@@ -3019,7 +3060,7 @@ const q = () => crypto.randomUUID(), X = [
 					style: "gold",
 					pos: {
 						r: o,
-						c: i
+						c: r
 					}
 				});
 			}
@@ -3029,13 +3070,13 @@ const q = () => crypto.randomUUID(), X = [
 		id: "PAWN_PROMOTE",
 		name: "晉階之路",
 		tier: "RARE",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "每吃掉一个敌方子力，等级 +1；达到 3 级时进化。",
-		hooks: { onLevelUp: ({ piece: e, r: t, c: o, emit: i }) => {
+		hooks: { onLevelUp: ({ piece: e, r: t, c: o, emit: r }) => {
 			const s = [
-				r.KNIGHT,
-				r.BISHOP,
-				r.ROOK
+				i.KNIGHT,
+				i.BISHOP,
+				i.ROOK
 			], a = s[Math.floor(Math.random() * s.length)], c = e.skills.filter((e) => "PAWN_PROMOTE" !== e), n = e.learnedSkills?.filter((e) => "PAWN_PROMOTE" !== e) || [], d = {
 				...e,
 				type: a,
@@ -3049,14 +3090,14 @@ const q = () => crypto.randomUUID(), X = [
 					targetCaptures: void 0
 				}
 			};
-			i({
+			r({
 				type: "SPAWN",
 				pos: {
 					r: t,
 					c: o
 				},
 				piece: d
-			}), i({
+			}), r({
 				type: "UPDATE_ROSTER_PIECE",
 				pieceUid: e.uid,
 				updates: {
@@ -3067,7 +3108,7 @@ const q = () => crypto.randomUUID(), X = [
 					learnedSkills: n,
 					metadata: d.metadata
 				}
-			}), i({
+			}), r({
 				type: "SHOW_TEXT",
 				text: "Pawn Evolution!",
 				textKey: "LOG_PAWN_EVOLVE",
@@ -3083,7 +3124,7 @@ const q = () => crypto.randomUUID(), X = [
 		id: "PAWN_SIGNAL_TOWER",
 		name: "信号塔",
 		tier: "RARE",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "即使断网，也会为周围 1 格的己方棋子提供网络连接。",
 		tags: ["NETWORK"],
 		isUnique: !0,
@@ -3093,18 +3134,18 @@ const q = () => crypto.randomUUID(), X = [
 		id: "PAWN_PHALANX",
 		name: "兄弟会",
 		tier: "RARE",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "当两个兵左右相邻时，不能被对方的马或兵吃掉。",
-		modifiers: { invulnerable: ({ board: e, r: t, c: o, piece: i }, s) => (o > 0 && e[t][o - 1]?.color === i.color && e[t][o - 1]?.type === r.PAWN || o < 7 && e[t][o + 1]?.color === i.color && e[t][o + 1]?.type === r.PAWN) && (s.type === r.PAWN || s.type === r.KNIGHT) }
+		modifiers: { invulnerable: ({ board: e, r: t, c: o, piece: r }, s) => (o > 0 && e[t][o - 1]?.color === r.color && e[t][o - 1]?.type === i.PAWN || o < 7 && e[t][o + 1]?.color === r.color && e[t][o + 1]?.type === i.PAWN) && (s.type === i.PAWN || s.type === i.KNIGHT) }
 	},
 	{
 		id: "PAWN_DETONATOR",
 		name: "炸弹兵",
 		tier: "RARE",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "被吃掉时，炸毁周围 3x3 范围内的所有棋子。",
-		hooks: { onDeath: ({ r: e, c: t, piece: o, victim: i, board: s, emit: a }) => {
-			if (i && o.uid === i.uid) {
+		hooks: { onDeath: ({ r: e, c: t, piece: o, victim: r, board: s, emit: a }) => {
+			if (r && o.uid === r.uid) {
 				a({
 					type: "ANIMATE",
 					name: "SCREEN_SHAKE",
@@ -3118,9 +3159,9 @@ const q = () => crypto.randomUUID(), X = [
 					},
 					duration: 600
 				});
-				for (let o = -1; o <= 1; o++) for (let i = -1; i <= 1; i++) {
-					const c = e + o, n = t + i;
-					C.isValidPos(c, n) && s[c][n] && s[c][n]?.type !== r.KING && a({
+				for (let o = -1; o <= 1; o++) for (let r = -1; r <= 1; r++) {
+					const c = e + o, n = t + r;
+					D.isValidPos(c, n) && s[c][n] && s[c][n]?.type !== i.KING && a({
 						type: "KILL",
 						pos: {
 							r: c,
@@ -3136,16 +3177,16 @@ const q = () => crypto.randomUUID(), X = [
 		id: "PAWN_UNSTABLE_CORE",
 		name: "不可靠的炸弹兵",
 		tier: "EPIC",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "死亡必自爆(5x5)；吃子50%概率自爆并引发尸体连锁反应。不论敌我，毁灭一切。",
 		hooks: {
 			onDeath: (e) => {
 				const { piece: t, victim: o } = e;
-				o && t.uid === o.uid && j(e.r, e.c, 1, e);
+				o && t.uid === o.uid && ee(e.r, e.c, 1, e);
 			},
 			onKill: (e) => {
-				const { r: t, c: o, piece: r, emit: i, prng: s } = e;
-				s && s.next() < .5 && (i({
+				const { r: t, c: o, piece: i, emit: r, prng: s } = e;
+				s && s.next() < .5 && (r({
 					type: "SHOW_TEXT",
 					text: "Core Overloaded!",
 					textKey: "LOG_CORE_OVERLOAD",
@@ -3154,13 +3195,13 @@ const q = () => crypto.randomUUID(), X = [
 						r: t,
 						c: o
 					}
-				}), i({
+				}), r({
 					type: "KILL",
 					pos: {
 						r: t,
 						c: o
 					},
-					targetId: r.id
+					targetId: i.id
 				}));
 			}
 		}
@@ -3169,13 +3210,13 @@ const q = () => crypto.randomUUID(), X = [
 		id: "PAWN_RELAY",
 		name: "中继站",
 		tier: "EPIC",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "该棋子的网络覆盖范围提升至 2 格。",
 		modifiers: { networkRange: ({ r: e, c: t }) => {
 			const o = [];
-			for (let r = -2; r <= 2; r++) for (let i = -2; i <= 2; i++) 0 === r && 0 === i || e + r >= 0 && e + r < 8 && t + i >= 0 && t + i < 8 && o.push({
-				r: e + r,
-				c: t + i
+			for (let i = -2; i <= 2; i++) for (let r = -2; r <= 2; r++) 0 === i && 0 === r || e + i >= 0 && e + i < 8 && t + r >= 0 && t + r < 8 && o.push({
+				r: e + i,
+				c: t + r
 			});
 			return o;
 		} }
@@ -3184,9 +3225,9 @@ const q = () => crypto.randomUUID(), X = [
 		id: "PAWN_SACRIFICE",
 		name: "牺牲契约",
 		tier: "EPIC",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "被吃掉时获得 2 次额外存档机会，并在王周围生成一个兵。",
-		hooks: { onDeath: ({ piece: e, board: t, emit: o, prng: i }) => {
+		hooks: { onDeath: ({ piece: e, board: t, emit: o, prng: r }) => {
 			o({
 				type: "UPDATE_CONSTRAINTS",
 				maxSavesOffset: 2
@@ -3197,11 +3238,11 @@ const q = () => crypto.randomUUID(), X = [
 				textParams: { amount: 2 },
 				style: "system"
 			});
-			const s = C.findPieces(t, (t) => t.type === r.KING && t.color === e.color)[0], a = s ? {
+			const s = D.findPieces(t, (t) => t.type === i.KING && t.color === e.color)[0], a = s ? {
 				r: s.r,
 				c: s.c
 			} : null;
-			if (a && i) {
+			if (a && r) {
 				const s = a, c = [
 					[-1, -1],
 					[-1, 0],
@@ -3212,10 +3253,10 @@ const q = () => crypto.randomUUID(), X = [
 					[-1, 1],
 					[1, -1],
 					[1, 1]
-				].sort(() => i.next() - .5);
-				for (const [i, a] of c) {
-					const c = s.r + i, n = s.c + a;
-					if (C.isValidPos(c, n) && !t[c][n]) {
+				].sort(() => r.next() - .5);
+				for (const [r, a] of c) {
+					const c = s.r + r, n = s.c + a;
+					if (D.isValidPos(c, n) && !t[c][n]) {
 						o({
 							type: "SPAWN",
 							pos: {
@@ -3223,8 +3264,8 @@ const q = () => crypto.randomUUID(), X = [
 								c: n
 							},
 							piece: {
-								id: q(),
-								type: r.PAWN,
+								id: Z(),
+								type: i.PAWN,
 								color: e.color,
 								level: 1,
 								skills: [],
@@ -3243,15 +3284,15 @@ const q = () => crypto.randomUUID(), X = [
 		id: "PAWN_INTERLOCK",
 		name: "联锁装甲",
 		tier: "EPIC",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "左右 1 格有友军时，无法被对方的“后”或“车”吃掉。",
-		modifiers: { invulnerable: ({ board: e, r: t, c: o, piece: i }, s) => (o > 0 && e[t][o - 1]?.color === i.color || o < 7 && e[t][o + 1]?.color === i.color) && (s.type === r.QUEEN || s.type === r.ROOK) }
+		modifiers: { invulnerable: ({ board: e, r: t, c: o, piece: r }, s) => (o > 0 && e[t][o - 1]?.color === r.color || o < 7 && e[t][o + 1]?.color === r.color) && (s.type === i.QUEEN || s.type === i.ROOK) }
 	},
 	{
 		id: "PAWN_PARASITE",
 		name: "寄生算法",
 		tier: "EPIC",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "移动到敌方棋子相邻时，使其下回合无法移动。",
 		hooks: { onAfterMove: ({ board: e, piece: t, r: o, c: s, emit: a }) => {
 			[
@@ -3265,15 +3306,15 @@ const q = () => crypto.randomUUID(), X = [
 				[1, 1]
 			].forEach(([c, n]) => {
 				const d = o + c, p = s + n;
-				if (C.isValidPos(d, p)) {
+				if (D.isValidPos(d, p)) {
 					const o = e[d][p];
-					o && o.color !== t.color && o.type !== r.KING && (a({
+					o && o.color !== t.color && o.type !== i.KING && (a({
 						type: "ADD_STATUS",
 						pos: {
 							r: d,
 							c: p
 						},
-						statusId: i.FROZEN,
+						statusId: r.FROZEN,
 						duration: 2
 					}), a({
 						type: "ANIMATE",
@@ -3293,7 +3334,7 @@ const q = () => crypto.randomUUID(), X = [
 		id: "PAWN_VANGUARD",
 		name: "先锋",
 		tier: "RARE",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "该兵只要处于敌方半场，即视为“永远联网”。",
 		modifiers: { alwaysNetworked: ({ r: e, piece: o }) => o.color === t ? e < 4 : e > 3 }
 	},
@@ -3301,17 +3342,17 @@ const q = () => crypto.randomUUID(), X = [
 		id: "PAWN_TRAITOR",
 		name: "背叛者",
 		tier: "EPIC",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "被吃掉时，有 50% 概率将攻击者（非王）变为你的颜色并施加“被策反”状态 1 回合。",
 		hooks: { onDeath: ({ attacker: e, attackerPos: t, piece: o, emit: s, prng: a }) => {
-			e && t && e.type !== r.KING && a && a.next() < .5 && s({
+			e && t && e.type !== i.KING && a && a.next() < .5 && s({
 				type: "SPAWN",
 				pos: t,
 				piece: {
 					...e,
 					color: o.color,
 					statuses: [...e.statuses || [], {
-						id: i.BETRAYED,
+						id: r.BETRAYED,
 						duration: 2
 					}]
 				}
@@ -3322,38 +3363,38 @@ const q = () => crypto.randomUUID(), X = [
 		id: "PAWN_SWARM",
 		name: "蜂群意识",
 		tier: "LEGENDARY",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "只要有一个联网，全场所有的兵均视为已联网。"
 	},
 	{
 		id: "PAWN_OMEGA_MIRROR",
 		name: "终局镜像",
 		tier: "LEGENDARY",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "模拟其网络连线上己方高级棋子的移动和攻击方式。",
-		modifiers: { movement: ({ board: e, piece: t, r: o, c: i, metadata: s, networkedMap: a, isControlSquares: c }, n) => {
+		modifiers: { movement: ({ board: e, piece: t, r: o, c: r, metadata: s, networkedMap: a, isControlSquares: c }, n) => {
 			if (!a) return n;
-			if (!a[o][i]) return n;
+			if (!a[o][r]) return n;
 			const d = [];
-			return C.findPieces(e, (e, o, i) => e.color === t.color && e.type !== r.PAWN && e.type !== r.KING && !!a?.[o]?.[i]).forEach(({ r, c: n }) => {
-				(function(e, t, o, r, i, s) {
-					return De.getPseudoLegalMoves(e, t, o, r, i, s);
-				})(e, r, n, s, a).forEach((s) => {
-					const a = s.r - r, p = s.c - n, E = o + a, l = i + p;
-					if (C.isValidPos(E, l)) {
-						let r = !1;
+			return D.findPieces(e, (e, o, r) => e.color === t.color && e.type !== i.PAWN && e.type !== i.KING && !!a?.[o]?.[r]).forEach(({ r: i, c: n }) => {
+				(function(e, t, o, i, r, s) {
+					return Le.getPseudoLegalMoves(e, t, o, i, r, s);
+				})(e, i, n, s, a).forEach((s) => {
+					const a = s.r - i, p = s.c - n, E = o + a, l = r + p;
+					if (D.isValidPos(E, l)) {
+						let i = !1;
 						const s = Math.abs(a), n = Math.abs(p);
 						if ((0 === a || 0 === p || s === n) && Math.max(s, n) > 1) {
 							const t = Math.sign(a), c = Math.sign(p), d = Math.max(s, n);
 							for (let s = 1; s < d; s++) {
-								const a = i + s * c;
+								const a = r + s * c;
 								if (e[o + s * t][a]) {
-									r = !0;
+									i = !0;
 									break;
 								}
 							}
 						}
-						if (!r) {
+						if (!i) {
 							const o = e[E][l];
 							o && o.color === t.color && !c || d.push({
 								r: E,
@@ -3369,7 +3410,7 @@ const q = () => crypto.randomUUID(), X = [
 		id: "PAWN_SATELLITE",
 		name: "卫星链路",
 		tier: "LEGENDARY",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "永远不需要网络连接，且国王死后可作为代理王（proxy king）。",
 		modifiers: {
 			alwaysNetworked: () => !0,
@@ -3377,8 +3418,8 @@ const q = () => crypto.randomUUID(), X = [
 		},
 		tags: ["GLOBAL"],
 		hooks: { onDeath: (e) => {
-			const { piece: t, ownerPos: o, subject: i, r: s, c: a, emit: c, cancelAction: n } = e;
-			i && i.type === r.KING && i.color === t.color && o && (n?.(), c({
+			const { piece: t, ownerPos: o, subject: r, r: s, c: a, emit: c, cancelAction: n } = e;
+			r && r.type === i.KING && r.color === t.color && o && (n?.(), c({
 				type: "REMOVE_PIECE",
 				pos: {
 					r: s,
@@ -3388,7 +3429,7 @@ const q = () => crypto.randomUUID(), X = [
 				type: "UPDATE_ROSTER_PIECE",
 				pieceUid: t.uid,
 				updates: {
-					type: r.KING,
+					type: i.KING,
 					level: 1,
 					skills: [],
 					learnedSkills: [],
@@ -3404,9 +3445,9 @@ const q = () => crypto.randomUUID(), X = [
 				type: "SPAWN",
 				pos: o,
 				piece: {
-					id: q(),
+					id: Z(),
 					uid: t.uid,
-					type: r.KING,
+					type: i.KING,
 					color: t.color,
 					level: 1,
 					skills: [],
@@ -3435,16 +3476,16 @@ const q = () => crypto.randomUUID(), X = [
 		id: "EQ_HIVE_CORE",
 		name: "蜂巢核心",
 		tier: "EPIC",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "只要该兵连通，其移动力增加 1 格（可前移 2 格）。",
 		modifiers: { movement: (e, o) => {
-			const { board: r, piece: i, r: s, c: a, networkedMap: c, isControlSquares: n } = e;
+			const { board: i, piece: r, r: s, c: a, networkedMap: c, isControlSquares: n } = e;
 			if (!c) return o;
 			if (!c[s][a]) return o;
-			const d = i.color === t ? -1 : 1, p = s + 2 * d;
-			if (p >= 0 && p < 8 && !r[s + d][a]) {
-				const e = r[p][a];
-				(!e || n && e.color === i.color) && o.push({
+			const d = r.color === t ? -1 : 1, p = s + 2 * d;
+			if (p >= 0 && p < 8 && !i[s + d][a]) {
+				const e = i[p][a];
+				(!e || n && e.color === r.color) && o.push({
 					r: p,
 					c: a
 				});
@@ -3456,14 +3497,14 @@ const q = () => crypto.randomUUID(), X = [
 		id: "EQ_CHEAP_BOOSTER",
 		name: "廉价增频器",
 		tier: "RARE",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "该兵的网络延伸距离提升至 3 格，但无法进行攻击（吃子）。",
 		modifiers: {
 			networkRange: ({ r: e, c: t }) => {
 				const o = [];
-				for (let r = -3; r <= 3; r++) for (let i = -3; i <= 3; i++) if (Math.abs(r) + Math.abs(i) <= 3) {
-					const s = e + r, a = t + i;
-					C.isValidPos(s, a) && o.push({
+				for (let i = -3; i <= 3; i++) for (let r = -3; r <= 3; r++) if (Math.abs(i) + Math.abs(r) <= 3) {
+					const s = e + i, a = t + r;
+					D.isValidPos(s, a) && o.push({
 						r: s,
 						c: a
 					});
@@ -3477,15 +3518,15 @@ const q = () => crypto.randomUUID(), X = [
 		id: "EQ_CHAIN_MINE",
 		name: "连锁地雷",
 		tier: "RARE",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "被吃掉时，若周围 1 格有其他“兵”，触发连锁爆炸（3x3）。",
-		hooks: { onDeath: ({ board: e, r: t, c: o, emit: r }) => {} }
+		hooks: { onDeath: ({ board: e, r: t, c: o, emit: i }) => {} }
 	}
 ];
-function j(e, t, o, i) {
-	const s = i.metadata;
+function ee(e, t, o, r) {
+	const s = r.metadata;
 	if (s && (s.unstableCount = (s.unstableCount || 0) + 1, s.unstableCount > 10)) return;
-	const { emit: a, board: c, prng: n } = i;
+	const { emit: a, board: c, prng: n } = r;
 	a({
 		type: "ANIMATE",
 		name: "EXPLOSION",
@@ -3497,9 +3538,9 @@ function j(e, t, o, i) {
 	});
 	for (let d = -1; d <= 1; d++) for (let s = -1; s <= 1; s++) {
 		const p = e + d, E = t + s;
-		if (!C.isValidPos(p, E) || 0 === d && 0 === s) continue;
+		if (!D.isValidPos(p, E) || 0 === d && 0 === s) continue;
 		const l = c[p][E];
-		if (l && l.type !== r.KING && (a({
+		if (l && l.type !== i.KING && (a({
 			type: "KILL",
 			pos: {
 				r: p,
@@ -3511,18 +3552,18 @@ function j(e, t, o, i) {
 			n.next() < e && (a({
 				type: "DELAY",
 				duration: 100
-			}), j(p, E, e, i));
+			}), ee(p, E, e, r));
 		}
 	}
 }
-const J = {
+const te = {
 	PIECE: {
-		[r.PAWN]: 10,
-		[r.KNIGHT]: 25,
-		[r.BISHOP]: 25,
-		[r.ROOK]: 40,
-		[r.QUEEN]: 80,
-		[r.KING]: 50
+		[i.PAWN]: 10,
+		[i.KNIGHT]: 25,
+		[i.BISHOP]: 25,
+		[i.ROOK]: 40,
+		[i.QUEEN]: 80,
+		[i.KING]: 50
 	},
 	ITEM_TIER: {
 		COMMON: 20,
@@ -3538,11 +3579,11 @@ const J = {
 	},
 	LEVEL_MULTIPLIER: .05
 };
-r.PAWN, r.KNIGHT, r.BISHOP, r.ROOK, r.QUEEN, r.KING, r.PAWN, r.KNIGHT, r.BISHOP, r.ROOK, r.QUEEN, r.KING;
-function z(e, o = t) {
+i.PAWN, i.KNIGHT, i.BISHOP, i.ROOK, i.QUEEN, i.KING, i.PAWN, i.KNIGHT, i.BISHOP, i.ROOK, i.QUEEN, i.KING;
+function oe(e, o = t) {
 	return {
-		id: q(),
-		uid: `u-${q()}`,
+		id: Z(),
+		uid: `u-${Z()}`,
 		type: e,
 		color: o,
 		level: 1,
@@ -3550,44 +3591,44 @@ function z(e, o = t) {
 		learnedSkills: [],
 		traits: [],
 		statuses: [],
-		maxSlots: e === r.KING ? 3 : 1,
+		maxSlots: e === i.KING ? 3 : 1,
 		equippedItems: [],
 		metadata: {}
 	};
 }
-function ee(e, t) {
-	const o = J.PIECE[e] || 10;
+function ie(e, t) {
+	const o = te.PIECE[e] || 10;
 	return Math.floor(o / 20) + t;
 }
-function te(e, t, o, r, i) {
-	const s = Math.abs(o - e), a = Math.abs(r - t);
+function re(e, t, o, i, r) {
+	const s = Math.abs(o - e), a = Math.abs(i - t);
 	if (s !== a && 0 !== s && 0 !== a) return !1;
-	const c = o > e ? 1 : o < e ? -1 : 0, n = r > t ? 1 : r < t ? -1 : 0;
+	const c = o > e ? 1 : o < e ? -1 : 0, n = i > t ? 1 : i < t ? -1 : 0;
 	let d = e + c, p = t + n;
-	for (; d !== o || p !== r;) {
-		if (i[d][p]) return !1;
+	for (; d !== o || p !== i;) {
+		if (r[d][p]) return !1;
 		d += c, p += n;
 	}
 	return !0;
 }
-function oe(e, t, o, r, i) {
+function se(e, t, o, i, r) {
 	let s = null, a = Infinity;
-	return C.findPieces(e, (e) => e.color === r && e.type === i).forEach(({ r: e, c: r }) => {
-		const i = Math.max(Math.abs(t - e), Math.abs(o - r));
-		i < a && i > 0 && (a = i, s = {
+	return D.findPieces(e, (e) => e.color === i && e.type === r).forEach(({ r: e, c: i }) => {
+		const r = Math.max(Math.abs(t - e), Math.abs(o - i));
+		r < a && r > 0 && (a = r, s = {
 			r: e,
-			c: r
+			c: i
 		});
 	}), s;
 }
-const re = [
+const ae = [
 	{
 		id: "QUEEN_COMMAND",
 		name: "统率",
 		tier: "COMMON",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "周围 1 格 of 友军可获得全向 1 格 of 移动能力。若周围无友军，自身获得 1 金币战备金。",
-		hooks: { onTurnStart: ({ board: e, r: o, c: r, piece: s, emit: a }) => {
+		hooks: { onTurnStart: ({ board: e, r: o, c: i, piece: s, emit: a }) => {
 			const c = [
 				[-1, 0],
 				[1, 0],
@@ -3600,7 +3641,7 @@ const re = [
 			];
 			let n = !1;
 			for (const [t, d] of c) {
-				const c = o + t, p = r + d;
+				const c = o + t, p = i + d;
 				if (c >= 0 && c < 8 && p >= 0 && p < 8) {
 					const t = e[c][p];
 					t && t.color === s.color && (a({
@@ -3609,7 +3650,7 @@ const re = [
 							r: c,
 							c: p
 						},
-						statusId: i.COMMAND_AURA,
+						statusId: r.COMMAND_AURA,
 						duration: 2
 					}), n = !0);
 				}
@@ -3625,20 +3666,20 @@ const re = [
 		id: "QUEEN_AURA",
 		name: "威压",
 		tier: "COMMON",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "周围 2 格内 of 敌方“车”和“象”移动范围限制为两格。",
 		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: s, emit: a }) => {
 			for (let c = -2; c <= 2; c++) for (let n = -2; n <= 2; n++) {
 				const d = t + c, p = o + n;
 				if (d >= 0 && d < 8 && p >= 0 && p < 8) {
 					const t = e[d][p];
-					!t || t.color === s.color || t.type !== r.ROOK && t.type !== r.BISHOP || a({
+					!t || t.color === s.color || t.type !== i.ROOK && t.type !== i.BISHOP || a({
 						type: "ADD_STATUS",
 						pos: {
 							r: d,
 							c: p
 						},
-						statusId: i.AURA_SUPPRESSED,
+						statusId: r.AURA_SUPPRESSED,
 						duration: 2
 					});
 				}
@@ -3649,11 +3690,11 @@ const re = [
 		id: "QUEEN_PROVISION",
 		name: "皇家补给",
 		tier: "COMMON",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "每回合开始时，若后联网，增加 2 金币。",
-		hooks: { onTurnStart: ({ board: e, r: o, c: r, piece: i, emit: s, metadata: a }) => {
-			const { networked: c } = Ge(e, i.color, a);
-			c[o][r] && i.color === t && s({
+		hooks: { onTurnStart: ({ board: e, r: o, c: i, piece: r, emit: s, metadata: a }) => {
+			const { networked: c } = Ge(e, r.color, a);
+			c[o][i] && r.color === t && s({
 				type: "MODIFY_GOLD",
 				amount: 2,
 				reason: "PROVISION"
@@ -3664,17 +3705,17 @@ const re = [
 		id: "QUEEN_GRACE",
 		name: "优雅",
 		tier: "COMMON",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "吃子后，若落点还是敌人控制区，该棋子可立刻再次行动一次（无视网络连接，仅限移动1格）。",
-		hooks: { onKill: ({ board: e, r, c: s, piece: a, emit: c, metadata: n }) => {
+		hooks: { onKill: ({ board: e, r: i, c: s, piece: a, emit: c, metadata: n }) => {
 			const { control: d } = Ge(e, a.color === t ? o : t, n);
-			d[r][s] && (c({
+			d[i][s] && (c({
 				type: "ADD_STATUS",
 				pos: {
-					r,
+					r: i,
 					c: s
 				},
-				statusId: i.GRACE_LIMIT,
+				statusId: r.GRACE_LIMIT,
 				duration: 2
 			}), c({
 				type: "SET_EXTRA_MOVE",
@@ -3685,7 +3726,7 @@ const re = [
 			}), c({
 				type: "SET_UI_SELECTION",
 				pos: {
-					r,
+					r: i,
 					c: s
 				},
 				uid: a.uid ?? null
@@ -3701,7 +3742,7 @@ const re = [
 		id: "QUEEN_DOMINATE",
 		name: "霸道",
 		tier: "RARE",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "相邻 of 敌方棋子失去所有非基础技能。",
 		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: s, emit: a }) => {
 			for (const [c, n] of [
@@ -3717,13 +3758,13 @@ const re = [
 				const d = t + c, p = o + n;
 				if (d >= 0 && d < 8 && p >= 0 && p < 8) {
 					const t = e[d][p];
-					t && t.color !== s.color && t.type !== r.KING && a({
+					t && t.color !== s.color && t.type !== i.KING && a({
 						type: "ADD_STATUS",
 						pos: {
 							r: d,
 							c: p
 						},
-						statusId: i.SILENCED,
+						statusId: r.SILENCED,
 						duration: 2
 					});
 				}
@@ -3734,10 +3775,10 @@ const re = [
 		id: "QUEEN_DECOY",
 		name: "幻影",
 		tier: "RARE",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "被攻击死亡时，如果库存有“兵”，自动消耗一个兵来抵消本次死亡并随机传送。",
-		hooks: { onDeath: ({ r: e, c: t, piece: o, board: i, roster: s, deployedUids: a, cancelAction: c, emit: n, prng: d }) => {
-			const p = s?.find((e) => e.type === r.PAWN && !a?.includes(e.uid));
+		hooks: { onDeath: ({ r: e, c: t, piece: o, board: r, roster: s, deployedUids: a, cancelAction: c, emit: n, prng: d }) => {
+			const p = s?.find((e) => e.type === i.PAWN && !a?.includes(e.uid));
 			if (p && d) {
 				let s = null;
 				const a = [
@@ -3748,9 +3789,9 @@ const re = [
 					[-2, -2],
 					[2, 2]
 				].sort(() => d.next() - .5);
-				for (const [o, r] of a) {
-					const a = e + o, c = t + r;
-					if (a >= 0 && a < 8 && c >= 0 && c < 8 && !i[a][c]) {
+				for (const [o, i] of a) {
+					const a = e + o, c = t + i;
+					if (a >= 0 && a < 8 && c >= 0 && c < 8 && !r[a][c]) {
 						s = {
 							r: a,
 							c
@@ -3770,7 +3811,7 @@ const re = [
 				}), n({
 					type: "MODIFY_RESERVE",
 					color: o.color,
-					pieceType: r.PAWN,
+					pieceType: i.PAWN,
 					amount: -1
 				}), n({
 					type: "SPAWN",
@@ -3800,10 +3841,10 @@ const re = [
 		id: "QUEEN_LINKAGE",
 		name: "连锁部署",
 		tier: "RARE",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "部署时，可立即免费从库存部署最多两个“兵”在后身边。",
-		hooks: { onDeploy: ({ r: e, c: t, piece: o, board: i, reserves: s, emit: a, prng: c }) => {
-			const n = s?.[o.color]?.[r.PAWN] ?? 0;
+		hooks: { onDeploy: ({ r: e, c: t, piece: o, board: r, reserves: s, emit: a, prng: c }) => {
+			const n = s?.[o.color]?.[i.PAWN] ?? 0;
 			let d = 0;
 			if (!c) return;
 			const p = [
@@ -3819,10 +3860,10 @@ const re = [
 			for (const [E, l] of p) {
 				if (d >= 2 || d >= n) break;
 				const s = e + E, c = t + l;
-				s >= 0 && s < 8 && c >= 0 && c < 8 && !i[s][c] && (a({
+				s >= 0 && s < 8 && c >= 0 && c < 8 && !r[s][c] && (a({
 					type: "MODIFY_RESERVE",
 					color: o.color,
-					pieceType: r.PAWN,
+					pieceType: i.PAWN,
 					amount: -1
 				}), a({
 					type: "SPAWN",
@@ -3831,8 +3872,8 @@ const re = [
 						c
 					},
 					piece: {
-						id: q(),
-						type: r.PAWN,
+						id: Z(),
+						type: i.PAWN,
 						color: o.color,
 						level: 1,
 						skills: [],
@@ -3848,21 +3889,21 @@ const re = [
 		id: "QUEEN_BRIBE",
 		name: "策反",
 		tier: "RARE",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "吃掉敌方“兵”时，有 50% 概率将其转化为己方库存。",
-		hooks: { onKill: ({ piece: e, victim: t, r: o, c: i, emit: s, prng: a }) => {
-			if (t && t.type === r.PAWN && a && a.next() < .5) {
+		hooks: { onKill: ({ piece: e, victim: t, r: o, c: r, emit: s, prng: a }) => {
+			if (t && t.type === i.PAWN && a && a.next() < .5) {
 				s({
 					type: "MODIFY_RESERVE",
 					color: e.color,
-					pieceType: r.PAWN,
+					pieceType: i.PAWN,
 					amount: 1
 				}), s({
 					type: "ANIMATE",
 					name: "GOLD_SPARKLE",
 					pos: {
 						r: o,
-						c: i
+						c: r
 					},
 					duration: 600
 				});
@@ -3872,7 +3913,7 @@ const re = [
 					piece: {
 						id: `bribe-${t}`,
 						uid: `u-${t}`,
-						type: r.PAWN,
+						type: i.PAWN,
 						color: e.color,
 						level: 1,
 						skills: [],
@@ -3893,7 +3934,7 @@ const re = [
 		id: "QUEEN_MULTICAST",
 		name: "镜像维度",
 		tier: "EPIC",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "如果本回合移动没有吃子且在连线状态，该棋子可立刻再次行动一次（无视网络连接，但不能吃子）。",
 		hooks: {
 			onTurnStart: ({ piece: e, emit: t }) => {
@@ -3906,35 +3947,35 @@ const re = [
 					} }
 				});
 			},
-			onAfterMove: ({ board: e, r: t, c: o, piece: r, victim: s, emit: a, metadata: c }) => {
-				if (!s && !r.metadata?.multicastUsed) {
-					const { networked: s } = Ge(e, r.color, c);
+			onAfterMove: ({ board: e, r: t, c: o, piece: i, victim: s, emit: a, metadata: c }) => {
+				if (!s && !i.metadata?.multicastUsed) {
+					const { networked: s } = Ge(e, i.color, c);
 					s[t][o] && (a({
 						type: "ADD_STATUS",
 						pos: {
 							r: t,
 							c: o
 						},
-						statusId: i.CANNOT_CAPTURE,
+						statusId: r.CANNOT_CAPTURE,
 						duration: 1
 					}), a({
 						type: "SET_EXTRA_MOVE",
 						active: !0
 					}), a({
 						type: "UPDATE_METADATA",
-						updates: { lockedActionUid: r.uid }
+						updates: { lockedActionUid: i.uid }
 					}), a({
 						type: "SET_UI_SELECTION",
 						pos: {
 							r: t,
 							c: o
 						},
-						uid: r.uid ?? null
+						uid: i.uid ?? null
 					}), a({
 						type: "UPDATE_ROSTER_PIECE",
-						pieceUid: r.uid,
+						pieceUid: i.uid,
 						updates: { metadata: {
-							...r.metadata,
+							...i.metadata,
 							multicastUsed: !0
 						} }
 					}), a({
@@ -3951,32 +3992,38 @@ const re = [
 		id: "QUEEN_INSIGHT",
 		name: "洞察",
 		tier: "EPIC",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "只要后在场，敌方隐身单位自动显形。",
-		hooks: { onTurnStart: ({ board: e, piece: t, emit: o }) => {
-			C.findPieces(e, (e) => e.color !== t.color && e.statuses?.some((e) => e.id === i.INVISIBLE)).forEach(({ r: e, c: t }) => o({
-				type: "REMOVE_STATUS",
-				pos: {
-					r: e,
-					c: t
-				},
-				statusId: i.INVISIBLE
-			}));
+		hooks: { onTurnStart: ({ board: e, piece: t, emit: o, isAISimulation: i }) => {
+			D.findPieces(e, (e) => e.color !== t.color && e.statuses?.some((e) => e.id === r.INVISIBLE)).forEach(({ r: e, c: t }) => {
+				o({
+					type: "REMOVE_STATUS",
+					pos: {
+						r: e,
+						c: t
+					},
+					statusId: r.INVISIBLE
+				}), i || U.emit(G, {
+					key: "revealed_invis",
+					value: 1,
+					isLifetimeOnly: !0
+				});
+			});
 		} }
 	},
 	{
 		id: "QUEEN_RECALL",
 		name: "战术撤退",
 		tier: "EPIC",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "主动：将后立即瞬移回国王身边的空格（冷却 3 回合）。",
 		activeSpec: {
 			targeting: "self",
 			cooldownKey: "recallCooldown",
-			execute: (e, t, o, i, s, a) => {
-				if ((i.metadata?.recallCooldown || 0) > 0) return;
-				const c = C.findPieces(e, (e) => e.color === i.color && e.type === r.KING)[0], n = c ? c.r : -1, d = c ? c.c : -1;
-				if (-1 !== n) for (const [r, p] of [
+			execute: (e, t, o, r, s, a) => {
+				if ((r.metadata?.recallCooldown || 0) > 0) return;
+				const c = D.findPieces(e, (e) => e.color === r.color && e.type === i.KING)[0], n = c ? c.r : -1, d = c ? c.c : -1;
+				if (-1 !== n) for (const [i, p] of [
 					[-1, 0],
 					[1, 0],
 					[0, -1],
@@ -3986,12 +4033,12 @@ const re = [
 					[1, -1],
 					[1, 1]
 				]) {
-					const s = n + r, c = d + p;
+					const s = n + i, c = d + p;
 					if (s >= 0 && s < 8 && c >= 0 && c < 8 && !e[s][c]) return a({
 						type: "UPDATE_ROSTER_PIECE",
-						pieceUid: i.uid,
+						pieceUid: r.uid,
 						updates: { metadata: {
-							...i.metadata,
+							...r.metadata,
 							recallCooldown: 3
 						} }
 					}), a({
@@ -4052,19 +4099,19 @@ const re = [
 		id: "QUEEN_TIME_WARP",
 		name: "时间倒流",
 		tier: "LEGENDARY",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "每 10 个回合，可以获得一次免费 of “悔棋”机会而不消耗回合数。",
-		hooks: { onTurnStart: ({ piece: e, r: t, c: o, emit: r }) => {
-			const i = e.metadata?.warpTurns || 0;
-			i >= 10 ? (r({
+		hooks: { onTurnStart: ({ piece: e, r: t, c: o, emit: i }) => {
+			const r = e.metadata?.warpTurns || 0;
+			r >= 10 ? (i({
 				type: "UPDATE_CONSTRAINTS",
 				maxUndosOffset: 1
-			}), r({
+			}), i({
 				type: "SHOW_TEXT",
 				text: "Time Warp: +1 Undo",
 				textKey: "LOG_TIME_WARP",
 				style: "system"
-			}), r({
+			}), i({
 				type: "SPAWN",
 				pos: {
 					r: t,
@@ -4077,7 +4124,7 @@ const re = [
 						warpTurns: 0
 					}
 				}
-			})) : r({
+			})) : i({
 				type: "SPAWN",
 				pos: {
 					r: t,
@@ -4087,7 +4134,7 @@ const re = [
 					...e,
 					metadata: {
 						...e.metadata,
-						warpTurns: i + 1
+						warpTurns: r + 1
 					}
 				}
 			});
@@ -4097,15 +4144,22 @@ const re = [
 		id: "QUEEN_NEMESIS",
 		name: "复仇女神",
 		tier: "LEGENDARY",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "当国王被将军时，后可以移动至棋盘任何空格；若目标在原本攻击范围内，则允许吃子。",
-		modifiers: { movement: (e, i) => {
-			const { board: s, piece: a, r: c, c: n } = e, d = C.findPieces(s, (e) => e.type === r.KING && e.color === a.color)[0], p = d ? {
+		hooks: { onKill: (e) => {
+			e.isAISimulation || U.emit(G, {
+				key: "nemesisKills",
+				value: 1,
+				isLifetimeOnly: !0
+			});
+		} },
+		modifiers: { movement: (e, r) => {
+			const { board: s, piece: a, r: c, c: n } = e, d = D.findPieces(s, (e) => e.type === i.KING && e.color === a.color)[0], p = d ? {
 				r: d.r,
 				c: d.c
 			} : null;
 			if (p) {
-				const i = a.color === t ? o : t;
+				const r = a.color === t ? o : t;
 				let d = !1;
 				for (const [e, t] of [
 					[-1, 0],
@@ -4118,12 +4172,12 @@ const re = [
 					[1, 1]
 				]) {
 					let o = p.r + e, a = p.c + t;
-					for (; C.isValidPos(o, a);) {
+					for (; D.isValidPos(o, a);) {
 						const c = s[o][a];
 						if (c) {
-							if (c.color === i) {
-								const e = Math.max(Math.abs(o - p.r), Math.abs(a - p.c)), t = o === p.r || a === p.c, i = Math.abs(o - p.r) === Math.abs(a - p.c);
-								(t && (c.type === r.QUEEN || c.type === r.ROOK) || i && (c.type === r.QUEEN || c.type === r.BISHOP) || 1 === e) && (d = !0);
+							if (c.color === r) {
+								const e = Math.max(Math.abs(o - p.r), Math.abs(a - p.c)), t = o === p.r || a === p.c, r = Math.abs(o - p.r) === Math.abs(a - p.c);
+								(t && (c.type === i.QUEEN || c.type === i.ROOK) || r && (c.type === i.QUEEN || c.type === i.BISHOP) || 1 === e) && (d = !0);
 							}
 							break;
 						}
@@ -4141,45 +4195,45 @@ const re = [
 					[2, -1],
 					[2, 1]
 				]) {
-					const o = C.getPiece(s, p.r + e, p.c + t);
-					if (o && o.color === i && o.type === r.KNIGHT) {
+					const o = D.getPiece(s, p.r + e, p.c + t);
+					if (o && o.color === r && o.type === i.KNIGHT) {
 						d = !0;
 						break;
 					}
 				}
 				if (d) {
 					const t = [];
-					for (let o = 0; o < 8; o++) for (let r = 0; r < 8; r++) {
-						if (o === c && r === n) continue;
-						const i = s[o][r];
-						te(c, n, o, r, s) ? i && i.color === a.color && !e.isControlSquares || t.push({
+					for (let o = 0; o < 8; o++) for (let i = 0; i < 8; i++) {
+						if (o === c && i === n) continue;
+						const r = s[o][i];
+						re(c, n, o, i, s) ? r && r.color === a.color && !e.isControlSquares || t.push({
 							r: o,
-							c: r
-						}) : (!i || e.isControlSquares && i.color === a.color) && t.push({
+							c: i
+						}) : (!r || e.isControlSquares && r.color === a.color) && t.push({
 							r: o,
-							c: r
+							c: i
 						});
 					}
 					return t;
 				}
 			}
-			return i;
+			return r;
 		} }
 	},
 	{
 		id: "QUEEN_ROOK_AUTHORITY",
 		name: "战车主权",
 		tier: "LEGENDARY",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "只要后连通，离后最近的一名友方“车”强制变为“连通”状态。",
 		hooks: { onTurnStart: ({ board: e, piece: t, r: o, c: s, emit: a, metadata: c }) => {
 			const { networked: n } = Ge(e, t.color, c);
 			if (n[o][s]) {
-				const c = oe(e, o, s, t.color, r.ROOK);
+				const c = se(e, o, s, t.color, i.ROOK);
 				c && (a({
 					type: "ADD_STATUS",
 					pos: c,
-					statusId: i.GODHOOD_LINK,
+					statusId: r.GODHOOD_LINK,
 					duration: 2
 				}), a({
 					type: "SHOW_TEXT",
@@ -4195,16 +4249,16 @@ const re = [
 		id: "QUEEN_BISHOP_AUTHORITY",
 		name: "主教主权",
 		tier: "LEGENDARY",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "只要后连通，离后最近的一名友方“象”强制变为“连通”状态。",
 		hooks: { onTurnStart: ({ board: e, piece: t, r: o, c: s, emit: a, metadata: c }) => {
 			const { networked: n } = Ge(e, t.color, c);
 			if (n[o][s]) {
-				const c = oe(e, o, s, t.color, r.BISHOP);
+				const c = se(e, o, s, t.color, i.BISHOP);
 				c && (a({
 					type: "ADD_STATUS",
 					pos: c,
-					statusId: i.GODHOOD_LINK,
+					statusId: r.GODHOOD_LINK,
 					duration: 2
 				}), a({
 					type: "SHOW_TEXT",
@@ -4220,11 +4274,11 @@ const re = [
 		id: "QUEEN_GRAVITY_WELL",
 		name: "重力场",
 		tier: "EPIC",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "若相邻敌军不多于2个，这些敌军将被重力锁定，移动范围限制为1格。",
-		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: r, emit: s }) => {
+		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: i, emit: s }) => {
 			const a = [];
-			for (const [i, c] of [
+			for (const [r, c] of [
 				[-1, 0],
 				[1, 0],
 				[0, -1],
@@ -4234,10 +4288,10 @@ const re = [
 				[1, -1],
 				[1, 1]
 			]) {
-				const s = t + i, n = o + c;
+				const s = t + r, n = o + c;
 				if (s >= 0 && s < 8 && n >= 0 && n < 8) {
 					const t = e[s][n];
-					t && t.color !== r.color && a.push({
+					t && t.color !== i.color && a.push({
 						r: s,
 						c: n
 					});
@@ -4247,7 +4301,7 @@ const re = [
 				s({
 					type: "ADD_STATUS",
 					pos: e,
-					statusId: i.GRAVITY_LOCKED,
+					statusId: r.GRAVITY_LOCKED,
 					duration: 2
 				});
 			}), s({
@@ -4266,9 +4320,9 @@ const re = [
 		id: "QUEEN_CORONATION",
 		name: "皇家授勋",
 		tier: "RARE",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "回合开始时，赋予相邻且无技能的友方“兵”一个随机普通技能。",
-		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: i, emit: s, prng: a }) => {
+		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: r, emit: s, prng: a }) => {
 			const c = [
 				[-1, 0],
 				[1, 0],
@@ -4283,8 +4337,8 @@ const re = [
 				const c = t + n, p = o + d;
 				if (c >= 0 && c < 8 && p >= 0 && p < 8) {
 					const t = e[c][p];
-					if (t && t.color === i.color && t.type === r.PAWN && 0 === t.skills.length) {
-						const e = Z.filter((e) => "COMMON" === e.tier), o = e[Math.floor(a.next() * e.length)];
+					if (t && t.color === r.color && t.type === i.PAWN && 0 === t.skills.length) {
+						const e = z.filter((e) => "COMMON" === e.tier), o = e[Math.floor(a.next() * e.length)];
 						o && (s({
 							type: "UPDATE_ROSTER_PIECE",
 							pieceUid: t.uid,
@@ -4309,15 +4363,15 @@ const re = [
 		id: "QUEEN_REQUISITION",
 		name: "绝对征用",
 		tier: "EPIC",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "主动：消耗10金币，直接摧毁射程内一名“断网”的敌方单位（非王、非后），并回收其价值。",
 		activeSpec: {
 			targeting: "target",
-			getAlternatives: (e, i, s, a, c) => {
+			getAlternatives: (e, r, s, a, c) => {
 				const n = [];
 				if ((c?.gold || 0) < 10) return n;
 				const { control: d } = Ge(e, a.color, c?.metadata), { networked: p } = Ge(e, a.color === t ? o : t, c?.metadata);
-				return C.findPieces(e, (e, t, o) => e.color !== a.color && e.type !== r.KING && e.type !== r.QUEEN && d[t][o] && !p[t][o]).forEach(({ r: e, c: t, piece: o }) => {
+				return D.findPieces(e, (e, t, o) => e.color !== a.color && e.type !== i.KING && e.type !== i.QUEEN && d[t][o] && !p[t][o]).forEach(({ r: e, c: t, piece: o }) => {
 					n.push({
 						pos: {
 							r: e,
@@ -4331,37 +4385,37 @@ const re = [
 					});
 				}), n;
 			},
-			getAoE: (e, t, o, r, i) => i ? [{
-				r: i.r,
-				c: i.c
+			getAoE: (e, t, o, i, r) => r ? [{
+				r: r.r,
+				c: r.c
 			}] : [],
-			execute: (e, t, o, r, i, s) => {
-				if (i) {
-					const e = J.PIECE[i.type] || 10, r = [], a = i.r - t, c = i.c - o;
+			execute: (e, t, o, i, r, s) => {
+				if (r) {
+					const e = te.PIECE[r.type] || 10, i = [], a = r.r - t, c = r.c - o;
 					if (0 === a || 0 === c || Math.abs(a) === Math.abs(c)) {
 						const e = Math.sign(a), s = Math.sign(c);
 						let n = t, d = o, p = 0;
-						for (; (n !== i.r || d !== i.c) && p < 15;) r.push({
+						for (; (n !== r.r || d !== r.c) && p < 15;) i.push({
 							r: n,
 							c: d
 						}), n += e, d += s, p++;
-						r.push({
-							r: i.r,
-							c: i.c
+						i.push({
+							r: r.r,
+							c: r.c
 						});
-					} else r.push({
+					} else i.push({
 						r: t,
 						c: o
-					}), r.push({
-						r: i.r,
-						c: i.c
+					}), i.push({
+						r: r.r,
+						c: r.c
 					});
 					s({
 						type: "ANIMATE",
 						name: "SEMANTIC:NETWORK:EXECUTE:EPIC",
 						pos: {
-							r: i.r,
-							c: i.c
+							r: r.r,
+							c: r.c
 						},
 						duration: 900,
 						metadata: {
@@ -4369,7 +4423,7 @@ const re = [
 								r: t,
 								c: o
 							},
-							networkPath: r
+							networkPath: i
 						}
 					}), s({
 						type: "MODIFY_GOLD",
@@ -4378,8 +4432,8 @@ const re = [
 					}), s({
 						type: "KILL",
 						pos: {
-							r: i.r,
-							c: i.c
+							r: r.r,
+							c: r.c
 						}
 					}), s({
 						type: "MODIFY_GOLD",
@@ -4391,41 +4445,41 @@ const re = [
 						textKey: "LOG_REQUISITION_SUCCESS",
 						style: "gold",
 						pos: {
-							r: i.r,
-							c: i.c
+							r: r.r,
+							c: r.c
 						}
 					});
 				}
 			}
 		}
 	}
-], ie = (e, t) => Math.atan2(e, t) * (180 / Math.PI), se = [
+], ce = (e, t) => Math.atan2(e, t) * (180 / Math.PI), ne = [
 	{
 		id: "ROOK_VAULT",
 		name: "翻越",
 		tier: "COMMON",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "允许跳过路径上的第一个障碍物（友军或敌军）。",
 		modifiers: { movement: (e, t) => {
-			const { board: o, r, c: i, piece: s, isControlSquares: a } = e, c = [
+			const { board: o, r: i, c: r, piece: s, isControlSquares: a } = e, c = [
 				[-1, 0],
 				[1, 0],
 				[0, -1],
 				[0, 1]
 			], n = [];
 			for (const [d, p] of c) {
-				let e = r + d, t = i + p, c = !1;
-				for (; C.isValidPos(e, t);) {
-					const r = o[e][t];
-					if (r) {
+				let e = i + d, t = r + p, c = !1;
+				for (; D.isValidPos(e, t);) {
+					const i = o[e][t];
+					if (i) {
 						if (c) {
-							(r.color !== s.color || a) && n.push({
+							(i.color !== s.color || a) && n.push({
 								r: e,
 								c: t
 							});
 							break;
 						}
-						a && r.color === s.color && n.push({
+						a && i.color === s.color && n.push({
 							r: e,
 							c: t
 						}), c = !0;
@@ -4443,15 +4497,15 @@ const re = [
 		id: "ROOK_RAILWAY",
 		name: "铁轨",
 		tier: "COMMON",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "在车移动过的直线路径上，留下铁轨，友方“兵”移动力+1。",
-		hooks: { onAfterMove: ({ from: e, r: t, c: o, emit: r }) => {
+		hooks: { onAfterMove: ({ from: e, r: t, c: o, emit: i }) => {
 			if (!e) return;
-			const i = Math.sign(t - e.r), s = Math.sign(o - e.c);
-			if (0 === i || 0 === s) {
-				const a = 0 !== i;
+			const r = Math.sign(t - e.r), s = Math.sign(o - e.c);
+			if (0 === r || 0 === s) {
+				const a = 0 !== r;
 				let c = e.r, d = e.c;
-				for (; c !== t || d !== o;) r({
+				for (; c !== t || d !== o;) i({
 					type: "SET_SQUARE",
 					pos: {
 						r: c,
@@ -4462,8 +4516,8 @@ const re = [
 						duration: 3,
 						metadata: { vertical: a }
 					}
-				}), c += i, d += s;
-				r({
+				}), c += r, d += s;
+				i({
 					type: "SET_SQUARE",
 					pos: {
 						r: t,
@@ -4482,7 +4536,7 @@ const re = [
 		id: "ROOK_PRESS",
 		name: "压制",
 		tier: "COMMON",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "处于车直线上的敌方“兵”无法移动。",
 		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: s, emit: a }) => {
 			for (const [c, n] of [
@@ -4492,15 +4546,15 @@ const re = [
 				[0, 1]
 			]) {
 				let d = t + c, p = o + n;
-				for (; C.isValidPos(d, p);) {
+				for (; D.isValidPos(d, p);) {
 					const t = e[d][p];
-					if (t && t.color !== s.color && t.type === r.PAWN && a({
+					if (t && t.color !== s.color && t.type === i.PAWN && a({
 						type: "ADD_STATUS",
 						pos: {
 							r: d,
 							c: p
 						},
-						statusId: i.ROOTED,
+						statusId: r.ROOTED,
 						duration: 2
 					}), t) break;
 					d += c, p += n;
@@ -4512,7 +4566,7 @@ const re = [
 		id: "ROOK_AEGIS",
 		name: "塔盾",
 		tier: "COMMON",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "只要车与国王靠在一起，国王获得远程免疫。",
 		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: s, emit: a }) => {
 			[
@@ -4528,13 +4582,13 @@ const re = [
 				const d = t + c, p = o + n;
 				if (d >= 0 && d < 8 && p >= 0 && p < 8) {
 					const t = e[d][p];
-					t && t.type === r.KING && t.color === s.color && a({
+					t && t.type === i.KING && t.color === s.color && a({
 						type: "ADD_STATUS",
 						pos: {
 							r: d,
 							c: p
 						},
-						statusId: i.SMOKE_SCREEN,
+						statusId: r.SMOKE_SCREEN,
 						duration: 2
 					});
 				}
@@ -4545,7 +4599,7 @@ const re = [
 		id: "ROOK_CONCUSSION",
 		name: "震荡",
 		tier: "COMMON",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "长距离移动（超过 3 格）后，落点周围 1 格内的敌方“兵”将被冻结 1 回合。",
 		hooks: { onAfterMove: ({ board: e, from: t, r: o, c: s, piece: a, emit: c }) => {
 			t && Math.abs(o - t.r) + Math.abs(s - t.c) > 3 && (c({
@@ -4567,15 +4621,15 @@ const re = [
 				[1, 1]
 			].forEach(([t, n]) => {
 				const d = o + t, p = s + n;
-				if (C.isValidPos(d, p)) {
+				if (D.isValidPos(d, p)) {
 					const t = e[d][p];
-					t && t.color !== a.color && t.type === r.PAWN && c({
+					t && t.color !== a.color && t.type === i.PAWN && c({
 						type: "ADD_STATUS",
 						pos: {
 							r: d,
 							c: p
 						},
-						statusId: i.FROZEN,
+						statusId: r.FROZEN,
 						duration: 2
 					});
 				}
@@ -4586,7 +4640,7 @@ const re = [
 		id: "ROOK_COVER",
 		name: "掩体",
 		tier: "COMMON",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "只要车处于联网状态，与其相邻的友方“兵”获得一层护盾（抵消一次伤害）。",
 		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: s, emit: a, metadata: c }) => {
 			const { networked: n } = Ge(e, s.color, c);
@@ -4601,15 +4655,15 @@ const re = [
 				[1, 1]
 			].forEach(([c, n]) => {
 				const d = t + c, p = o + n;
-				if (C.isValidPos(d, p)) {
+				if (D.isValidPos(d, p)) {
 					const t = e[d][p];
-					t && t.color === s.color && t.type === r.PAWN && a({
+					t && t.color === s.color && t.type === i.PAWN && a({
 						type: "ADD_STATUS",
 						pos: {
 							r: d,
 							c: p
 						},
-						statusId: i.SHIELDED,
+						statusId: r.SHIELDED,
 						duration: 2
 					});
 				}
@@ -4620,17 +4674,17 @@ const re = [
 		id: "ROOK_BASTION",
 		name: "堡垒形态",
 		tier: "RARE",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "主动：切换为堡垒，不可移动，保护周围十字 1 格友军免受远程伤害。",
 		activeSpec: {
 			targeting: "self",
-			execute: (e, t, o, r, i, s) => {
-				const a = !r.metadata?.isBastion;
+			execute: (e, t, o, i, r, s) => {
+				const a = !i.metadata?.isBastion;
 				s({
 					type: "UPDATE_ROSTER_PIECE",
-					pieceUid: r.uid,
+					pieceUid: i.uid,
 					updates: { metadata: {
-						...r.metadata,
+						...i.metadata,
 						isBastion: a
 					} }
 				}), s({
@@ -4642,16 +4696,16 @@ const re = [
 			}
 		},
 		modifiers: { movement: ({ piece: e }, t) => e.metadata?.isBastion ? [] : t },
-		hooks: { onTurnStart: ({ piece: e, r: t, c: o, emit: r }) => {
+		hooks: { onTurnStart: ({ piece: e, r: t, c: o, emit: i }) => {
 			e.metadata?.isBastion && [
 				[0, 0],
 				[-1, 0],
 				[1, 0],
 				[0, -1],
 				[0, 1]
-			].forEach(([e, i]) => {
-				const s = t + e, a = o + i;
-				C.isValidPos(s, a) && r({
+			].forEach(([e, r]) => {
+				const s = t + e, a = o + r;
+				D.isValidPos(s, a) && i({
 					type: "SET_SQUARE",
 					pos: {
 						r: s,
@@ -4676,15 +4730,15 @@ const re = [
 		id: "ROOK_HEAVY_ARMOR",
 		name: "重装铠甲",
 		tier: "RARE",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "不能被对方的“兵”或“马”吃掉。",
-		modifiers: { invulnerable: (e, t) => t.type === r.PAWN || t.type === r.KNIGHT }
+		modifiers: { invulnerable: (e, t) => t.type === i.PAWN || t.type === i.KNIGHT }
 	},
 	{
 		id: "ROOK_SWEEPER",
 		name: "横扫",
 		tier: "RARE",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "移动经过敌方单位旁时，使其本回合断网（冻结）。",
 		hooks: { onAfterMove: ({ board: e, from: t, r: o, c: s, piece: a, emit: c }) => {
 			if (!t) return;
@@ -4697,15 +4751,15 @@ const re = [
 				[0, 1]
 			].forEach(([t, o]) => {
 				const s = p + t, n = E + o;
-				if (C.isValidPos(s, n)) {
+				if (D.isValidPos(s, n)) {
 					const t = e[s][n];
-					t && t.color !== a.color && t.type !== r.KING && c({
+					t && t.color !== a.color && t.type !== i.KING && c({
 						type: "ADD_STATUS",
 						pos: {
 							r: s,
 							c: n
 						},
-						statusId: i.FROZEN,
+						statusId: r.FROZEN,
 						duration: 2
 					});
 				}
@@ -4716,24 +4770,24 @@ const re = [
 		id: "ROOK_SUPPLY_DEPOT",
 		name: "补给站",
 		tier: "RARE",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "移动路径变为补给地块（2回合）：友军在此部署返还 5 金币（单局上限 30G）。无法覆盖已有特殊地块。",
-		hooks: { onAfterMove: ({ from: e, r: t, c: o, piece: r, metadata: i, emit: s }) => {
+		hooks: { onAfterMove: ({ from: e, r: t, c: o, piece: i, metadata: r, emit: s }) => {
 			if (!e) return;
 			const a = Math.sign(t - e.r), c = Math.sign(o - e.c);
 			let n = e.r, d = e.c;
 			for (; n !== t || d !== o;) {
 				const e = `${n},${d}`;
-				i?.squares?.[e] && i.squares[e].length > 0 || s({
+				r?.squares?.[e] && r.squares[e].length > 0 || s({
 					type: "SET_SQUARE",
 					pos: {
 						r: n,
 						c: d
 					},
 					status: {
-						id: I,
+						id: m,
 						duration: 2,
-						metadata: { ownerUid: r.uid }
+						metadata: { ownerUid: i.uid }
 					}
 				}), n += a, d += c;
 			}
@@ -4743,11 +4797,11 @@ const re = [
 		id: "ROOK_MAGNET",
 		name: "磁吸",
 		tier: "EPIC",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "主动：不移动，将直线上一名友军拉到自己身边。",
 		activeSpec: {
 			targeting: "target",
-			getAlternatives: (e, t, o, i) => {
+			getAlternatives: (e, t, o, r) => {
 				const s = [];
 				for (const [a, c] of [
 					[-1, 0],
@@ -4756,10 +4810,10 @@ const re = [
 					[0, 1]
 				]) {
 					let n = t + a, d = o + c;
-					for (; C.isValidPos(n, d);) {
+					for (; D.isValidPos(n, d);) {
 						const t = e[n][d];
 						if (t) {
-							t.color !== i.color || t.type === r.KING || Pe.isSteady(t, e, n, d) || s.push({
+							t.color !== r.color || t.type === i.KING || Pe.isSteady(t, e, n, d) || s.push({
 								pos: {
 									r: n,
 									c: d
@@ -4778,26 +4832,30 @@ const re = [
 				}
 				return s;
 			},
-			getAoE: (e, t, o, r, i) => i ? [{
-				r: i.r,
-				c: i.c
+			getAoE: (e, t, o, i, r) => r ? [{
+				r: r.r,
+				c: r.c
 			}] : [],
-			execute: (e, t, o, r, i, s) => {
-				i && (s({
+			execute: (e, t, o, i, r, s, a) => {
+				r && (s({
 					type: "MOVE",
 					from: {
-						r: i.r,
-						c: i.c
+						r: r.r,
+						c: r.c
 					},
 					to: {
-						r: t + i.dr,
-						c: o + i.dc
+						r: t + r.dr,
+						c: o + r.dc
 					}
 				}), s({
 					type: "SHOW_TEXT",
 					text: "Magnet",
 					textKey: "LOG_MAGNET",
 					style: "system"
+				}), a && !a.isAISimulation && U.emit(G, {
+					key: "forcedMoves",
+					value: 1,
+					isLifetimeOnly: !0
 				}));
 			}
 		}
@@ -4806,15 +4864,15 @@ const re = [
 		id: "ROOK_CARRIER",
 		name: "运输机",
 		tier: "EPIC",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "移动时，如果有扁平的棋子在同一格，可以携带一起移动。",
-		hooks: { onAfterMove: ({ board: e, from: t, piece: o, r, c: s, emit: a }) => {
+		hooks: { onAfterMove: ({ board: e, from: t, piece: o, r: i, c: s, emit: a }) => {
 			if (!t) return;
 			const c = e[t.r][t.c];
-			c && c.statuses?.some((e) => e.id === i.FLATTENED) && (a({
+			c && c.statuses?.some((e) => e.id === r.FLATTENED) && (a({
 				type: "SPAWN",
 				pos: {
-					r,
+					r: i,
 					c: s
 				},
 				piece: {
@@ -4831,11 +4889,11 @@ const re = [
 		id: "ROOK_EJECTION",
 		name: "弹射",
 		tier: "EPIC",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "主动：将相邻十字方向的一个友方兵向外弹射到最远端。",
 		activeSpec: {
 			targeting: "direction",
-			getAlternatives: (e, t, o, i) => {
+			getAlternatives: (e, t, o, r) => {
 				const s = [];
 				for (const [a, c] of [
 					[-1, 0],
@@ -4844,7 +4902,7 @@ const re = [
 					[0, 1]
 				]) {
 					const n = t + a, d = o + c, p = e[n]?.[d];
-					p && p.type === r.PAWN && p.color === i.color && !Pe.isSteady(p, e, n, d) && s.push({
+					p && p.type === i.PAWN && p.color === r.color && !Pe.isSteady(p, e, n, d) && s.push({
 						pos: {
 							r: n,
 							c: d
@@ -4859,29 +4917,33 @@ const re = [
 				}
 				return s;
 			},
-			getAoE: (e, t, o, r, i) => i ? [{
-				r: i.r,
-				c: i.c
+			getAoE: (e, t, o, i, r) => r ? [{
+				r: r.r,
+				c: r.c
 			}] : [],
-			execute: (e, t, o, r, i, s) => {
-				if (i) {
-					let t = i.r + i.dr, o = i.c + i.dc, r = null;
-					for (; t >= 0 && t < 8 && o >= 0 && o < 8 && !e[t][o];) r = {
+			execute: (e, t, o, i, r, s, a) => {
+				if (r) {
+					let t = r.r + r.dr, o = r.c + r.dc, i = null;
+					for (; t >= 0 && t < 8 && o >= 0 && o < 8 && !e[t][o];) i = {
 						r: t,
 						c: o
-					}, t += i.dr, o += i.dc;
-					r && (s({
+					}, t += r.dr, o += r.dc;
+					i && (s({
 						type: "MOVE",
 						from: {
-							r: i.r,
-							c: i.c
+							r: r.r,
+							c: r.c
 						},
-						to: r
+						to: i
 					}), s({
 						type: "SHOW_TEXT",
 						text: "Ejected!",
 						textKey: "LOG_EJECTION",
 						style: "system"
+					}), a && !a.isAISimulation && U.emit(G, {
+						key: "forcedMoves",
+						value: 1,
+						isLifetimeOnly: !0
 					}));
 				}
 			}
@@ -4891,11 +4953,11 @@ const re = [
 		id: "ROOK_CATAPULT",
 		name: "抛射",
 		tier: "EPIC",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "主动：将相邻十字的一个友方兵发射过车身，飞向同一直线的另一端。",
 		activeSpec: {
 			targeting: "direction",
-			getAlternatives: (e, t, o, i) => {
+			getAlternatives: (e, t, o, r) => {
 				const s = [];
 				for (const [a, c] of [
 					[-1, 0],
@@ -4904,7 +4966,7 @@ const re = [
 					[0, 1]
 				]) {
 					const n = t + a, d = o + c, p = e[n]?.[d];
-					p && p.type === r.PAWN && p.color === i.color && !Pe.isSteady(p, e, n, d) && s.push({
+					p && p.type === i.PAWN && p.color === r.color && !Pe.isSteady(p, e, n, d) && s.push({
 						pos: {
 							r: n,
 							c: d
@@ -4919,30 +4981,34 @@ const re = [
 				}
 				return s;
 			},
-			getAoE: (e, t, o, r, i) => i ? [{
-				r: i.r,
-				c: i.c
+			getAoE: (e, t, o, i, r) => r ? [{
+				r: r.r,
+				c: r.c
 			}] : [],
-			execute: (e, t, o, r, i, s) => {
-				if (i) {
-					const r = -i.dr, a = -i.dc;
-					let c = t + r, n = o + a, d = null;
-					for (; c >= 0 && c < 8 && n >= 0 && n < 8 && !e[c][n];) d = {
-						r: c,
-						c: n
-					}, c += r, n += a;
-					d && (s({
+			execute: (e, t, o, i, r, s, a) => {
+				if (r) {
+					const i = -r.dr, c = -r.dc;
+					let n = t + i, d = o + c, p = null;
+					for (; n >= 0 && n < 8 && d >= 0 && d < 8 && !e[n][d];) p = {
+						r: n,
+						c: d
+					}, n += i, d += c;
+					p && (s({
 						type: "MOVE",
 						from: {
-							r: i.r,
-							c: i.c
+							r: r.r,
+							c: r.c
 						},
-						to: d
+						to: p
 					}), s({
 						type: "SHOW_TEXT",
 						text: "Catapulted!",
 						textKey: "LOG_CATAPULT",
 						style: "system"
+					}), a && !a.isAISimulation && U.emit(G, {
+						key: "forcedMoves",
+						value: 1,
+						isLifetimeOnly: !0
 					}));
 				}
 			}
@@ -4952,26 +5018,26 @@ const re = [
 		id: "ROOK_FORBIDDEN_ZONE",
 		name: "领土主权",
 		tier: "LEGENDARY",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "任何敌方棋子进入车所在的行或列时，移动力强行降为 1。",
 		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: s, emit: a }) => {
 			for (let c = 0; c < 8; c++) {
 				const n = e[t][c], d = e[c][o];
-				n && n.color !== s.color && n.type !== r.KING && a({
+				n && n.color !== s.color && n.type !== i.KING && a({
 					type: "ADD_STATUS",
 					pos: {
 						r: t,
 						c
 					},
-					statusId: i.GRAVITY_LOCKED,
+					statusId: r.GRAVITY_LOCKED,
 					duration: 2
-				}), d && d.color !== s.color && d.type !== r.KING && a({
+				}), d && d.color !== s.color && d.type !== i.KING && a({
 					type: "ADD_STATUS",
 					pos: {
 						r: c,
 						c: o
 					},
-					statusId: i.GRAVITY_LOCKED,
+					statusId: r.GRAVITY_LOCKED,
 					duration: 2
 				});
 			}
@@ -4981,7 +5047,7 @@ const re = [
 		id: "ROOK_ION_CANNON",
 		name: "轨道炮",
 		tier: "LEGENDARY",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "主动：原地不动，摧毁正方向直线上的所有单位（冷却 5 回合）。",
 		activeSpec: {
 			targeting: "direction",
@@ -4991,18 +5057,18 @@ const re = [
 				[1, 0],
 				[0, -1],
 				[0, 1]
-			].map(([e, r]) => ({
+			].map(([e, i]) => ({
 				pos: {
 					r: t + e,
-					c: o + r
+					c: o + i
 				},
 				value: {
 					dr: e,
-					dc: r
+					dc: i
 				}
-			})).filter((e) => C.isValidPos(e.pos.r, e.pos.c)),
-			getAoE: (e, o, r, i, s) => {
-				s || (s = i.color === t ? {
+			})).filter((e) => D.isValidPos(e.pos.r, e.pos.c)),
+			getAoE: (e, o, i, r, s) => {
+				s || (s = r.color === t ? {
 					dr: -1,
 					dc: 0
 				} : {
@@ -5010,14 +5076,14 @@ const re = [
 					dc: 0
 				});
 				const { dr: a, dc: c } = s, n = [];
-				let d = o + a, p = r + c;
-				for (; C.isValidPos(d, p);) n.push({
+				let d = o + a, p = i + c;
+				for (; D.isValidPos(d, p);) n.push({
 					r: d,
 					c: p
 				}), d += a, p += c;
 				return n;
 			},
-			execute: (e, o, i, s, a, c) => {
+			execute: (e, o, r, s, a, c, n) => {
 				if ((s.metadata?.ionCooldown || 0) > 0) return;
 				c({
 					type: "UPDATE_ROSTER_PIECE",
@@ -5033,34 +5099,38 @@ const re = [
 					dr: 1,
 					dc: 0
 				});
-				const { dr: n, dc: d } = a;
+				const { dr: d, dc: p } = a;
 				c({
 					type: "ANIMATE",
 					name: "LINEAR_BEAM",
 					pos: {
 						r: o,
-						c: i
+						c: r
 					},
 					duration: 600,
-					metadata: { angle: ie(n, d) }
+					metadata: { angle: ce(d, p) }
 				}), c({
 					type: "ANIMATE",
 					name: "SCREEN_SHAKE",
 					duration: 400
 				});
-				let p = o + n, E = i + d;
-				for (; C.isValidPos(p, E);) e[p][E] && e[p][E]?.type !== r.KING && c({
+				let E = o + d, l = r + p, u = 0;
+				for (; D.isValidPos(E, l);) e[E][l] && e[E][l]?.type !== i.KING && (c({
 					type: "KILL",
 					pos: {
-						r: p,
-						c: E
+						r: E,
+						c: l
 					}
-				}), p += n, E += d;
+				}), u++), E += d, l += p;
 				c({
 					type: "SHOW_TEXT",
 					text: "Orbital Cannon",
 					textKey: "LOG_ION_CANNON",
 					style: "danger"
+				}), n && !n.isAISimulation && u > 0 && U.emit(G, {
+					key: "rookCrossBoard",
+					value: 1,
+					isLifetimeOnly: !0
 				});
 			}
 		},
@@ -5089,18 +5159,18 @@ const re = [
 		id: "ROOK_IRON_CURTAIN",
 		name: "铁幕",
 		tier: "LEGENDARY",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "主动：锁定车所在的行，敌方单位本回合无法穿越该行（冷却 3 回合）。",
 		activeSpec: {
 			targeting: "self",
 			cooldownKey: "ironCooldown",
-			execute: (e, t, o, r, i, s) => {
-				if (!((r.metadata?.ironCooldown || 0) > 0)) {
+			execute: (e, t, o, i, r, s) => {
+				if (!((i.metadata?.ironCooldown || 0) > 0)) {
 					s({
 						type: "UPDATE_ROSTER_PIECE",
-						pieceUid: r.uid,
+						pieceUid: i.uid,
 						updates: { metadata: {
-							...r.metadata,
+							...i.metadata,
 							ironCooldown: 3
 						} }
 					});
@@ -5149,7 +5219,7 @@ const re = [
 		id: "ROOK_VOID_FISSURE",
 		name: "虚空裂解炮",
 		tier: "LEGENDARY",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "主动：摧毁直线上首个目标并永久摧毁该空格（一局 3 次，冷却 5 回合）。",
 		activeSpec: {
 			targeting: "target",
@@ -5157,17 +5227,17 @@ const re = [
 			usesKey: "fissureUses",
 			maxUses: 3,
 			getAlternatives: (e, t, o) => {
-				const r = [];
-				for (const [i, s] of [
+				const i = [];
+				for (const [r, s] of [
 					[-1, 0],
 					[1, 0],
 					[0, -1],
 					[0, 1]
 				]) {
-					let a = t + i, c = o + s;
-					for (; C.isValidPos(a, c);) {
+					let a = t + r, c = o + s;
+					for (; D.isValidPos(a, c);) {
 						if (e[a][c]) {
-							r.push({
+							i.push({
 								pos: {
 									r: a,
 									c
@@ -5179,34 +5249,34 @@ const re = [
 							});
 							break;
 						}
-						a += i, c += s;
+						a += r, c += s;
 					}
 				}
-				return r;
+				return i;
 			},
-			getAoE: (e, t, o, r, i) => i ? [{
-				r: i.r,
-				c: i.c
+			getAoE: (e, t, o, i, r) => r ? [{
+				r: r.r,
+				c: r.c
 			}] : [],
-			execute: (e, t, o, r, i, s) => {
-				const a = r.metadata?.fissureUses || 0;
-				if (!(a >= 3 || (r.metadata?.fissureCd || 0) > 0) && i) {
+			execute: (e, t, o, i, r, s) => {
+				const a = i.metadata?.fissureUses || 0;
+				if (!(a >= 3 || (i.metadata?.fissureCd || 0) > 0) && r) {
 					const e = a + 1;
 					s({
 						type: "KILL",
-						pos: i
+						pos: r
 					}), s({
 						type: "SET_SQUARE",
-						pos: i,
+						pos: r,
 						status: {
 							id: A,
 							duration: 999
 						}
 					}), s({
 						type: "UPDATE_ROSTER_PIECE",
-						pieceUid: r.uid,
+						pieceUid: i.uid,
 						updates: { metadata: {
-							...r.metadata,
+							...i.metadata,
 							fissureUses: e,
 							fissureCd: 5
 						} }
@@ -5221,7 +5291,7 @@ const re = [
 					}), s({
 						type: "ANIMATE",
 						name: "ION_FIRE",
-						pos: i,
+						pos: r,
 						duration: 500
 					});
 				}
@@ -5238,15 +5308,15 @@ const re = [
 			});
 		} },
 		getDisplayStatus: (e, t) => {
-			const o = e.metadata?.fissureCd || 0, r = e.metadata?.fissureUses || 0;
-			return r >= 3 ? {
+			const o = e.metadata?.fissureCd || 0, i = e.metadata?.fissureUses || 0;
+			return i >= 3 ? {
 				text: t("depleted"),
 				colorClass: "text-red-500"
 			} : o > 0 ? {
-				text: `${t("cooldown")}: ${t("turnsRemaining", { n: o })} (${t("remainingUses", { n: 3 - r })})`,
+				text: `${t("cooldown")}: ${t("turnsRemaining", { n: o })} (${t("remainingUses", { n: 3 - i })})`,
 				colorClass: "text-slate-500"
 			} : {
-				text: `${t("ready")} (${t("remainingUses", { n: 3 - r })})`,
+				text: `${t("ready")} (${t("remainingUses", { n: 3 - i })})`,
 				colorClass: "text-cyan-400 animate-pulse"
 			};
 		}
@@ -5255,14 +5325,14 @@ const re = [
 		id: "EQ_EM_SHIELD",
 		name: "电磁屏蔽罩",
 		tier: "RARE",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "只要车在国王边上一格，国王免疫来自“马”的攻击。",
-		modifiers: { invulnerable: ({ board: e, r: t, c: o, piece: i }, s) => {
-			if (i.type === r.KING) for (let a = -1; a <= 1; a++) for (let c = -1; c <= 1; c++) {
+		modifiers: { invulnerable: ({ board: e, r: t, c: o, piece: r }, s) => {
+			if (r.type === i.KING) for (let a = -1; a <= 1; a++) for (let c = -1; c <= 1; c++) {
 				const n = t + a, d = o + c;
 				if (n >= 0 && n < 8 && d >= 0 && d < 8) {
 					const t = e[n][d];
-					if (t && t.color === i.color && t.type === r.ROOK && t.equippedItems?.some((e) => "EQ_EM_SHIELD" === e.effectId)) return s.type === r.KNIGHT;
+					if (t && t.color === r.color && t.type === i.ROOK && t.equippedItems?.some((e) => "EQ_EM_SHIELD" === e.effectId)) return s.type === i.KNIGHT;
 				}
 			}
 			return !1;
@@ -5272,11 +5342,11 @@ const re = [
 		id: "EQ_TOW_HOOK",
 		name: "远程牵引钩",
 		tier: "EPIC",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "主动：不移动，直接拉取并吃掉距离自己 2 格直线上的一个敌军。",
 		activeSpec: {
 			targeting: "target",
-			getAlternatives: (e, t, o, i) => {
+			getAlternatives: (e, t, o, r) => {
 				const s = [];
 				return [
 					[0, 2],
@@ -5287,7 +5357,7 @@ const re = [
 					const n = t + a, d = o + c;
 					if (n >= 0 && n < 8 && d >= 0 && d < 8) {
 						const p = e[n][d];
-						p && p.color !== i.color && p.type !== r.KING && !e[t + a / 2][o + c / 2] && s.push({
+						p && p.color !== r.color && p.type !== i.KING && !e[t + a / 2][o + c / 2] && s.push({
 							pos: {
 								r: n,
 								c: d
@@ -5302,16 +5372,16 @@ const re = [
 					}
 				}), s;
 			},
-			getAoE: (e, t, o, r, i) => i ? [{
-				r: i.r,
-				c: i.c
+			getAoE: (e, t, o, i, r) => r ? [{
+				r: r.r,
+				c: r.c
 			}] : [],
-			execute: (e, t, o, r, i, s) => {
-				i && (s({
+			execute: (e, t, o, i, r, s, a) => {
+				r && (s({
 					type: "KILL",
 					pos: {
-						r: i.r,
-						c: i.c
+						r: r.r,
+						c: r.c
 					}
 				}), s({
 					type: "SHOW_TEXT",
@@ -5319,26 +5389,30 @@ const re = [
 					textKey: "LOG_TOW_HOOK_KILL",
 					style: "danger",
 					pos: {
-						r: i.r,
-						c: i.c
+						r: r.r,
+						c: r.c
 					}
+				}), a && !a.isAISimulation && U.emit(G, {
+					key: "forcedMoves",
+					value: 1,
+					isLifetimeOnly: !0
 				}));
 			}
 		}
 	}
 ];
-let ae = null;
-function ce() {
-	return ae || (ae = {
-		[r.PAWN]: [...Z, ...ge],
-		[r.KNIGHT]: [...$, ...ge],
-		[r.BISHOP]: [...U, ...ge],
-		[r.ROOK]: [...se, ...ge],
-		[r.QUEEN]: [...re, ...ge],
-		[r.KING]: [...X, ...ge]
-	}), ae;
+let de = null;
+function pe() {
+	return de || (de = {
+		[i.PAWN]: [...z, ...ge],
+		[i.KNIGHT]: [...J, ...ge],
+		[i.BISHOP]: [...K, ...ge],
+		[i.ROOK]: [...ne, ...ge],
+		[i.QUEEN]: [...ae, ...ge],
+		[i.KING]: [...j, ...ge]
+	}), de;
 }
-const ne = [
+const Ee = [
 	{
 		type: "CONSUMABLE",
 		tier: "RARE",
@@ -5434,238 +5508,238 @@ const ne = [
 		tier: "COMMON",
 		id: "EQ_BAYONET",
 		effectId: "EQ_BAYONET",
-		pieceType: r.PAWN
+		pieceType: i.PAWN
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "RARE",
 		id: "EQ_SCOUT_RADAR",
 		effectId: "EQ_SCOUT_RADAR",
-		pieceType: r.PAWN
+		pieceType: i.PAWN
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "RARE",
 		id: "EQ_SIGNAL_BACKPACK",
 		effectId: "EQ_SIGNAL_BACKPACK",
-		pieceType: r.PAWN
+		pieceType: i.PAWN
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "EPIC",
 		id: "EQ_HIVE_CORE",
 		effectId: "EQ_HIVE_CORE",
-		pieceType: r.PAWN
+		pieceType: i.PAWN
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "RARE",
 		id: "EQ_CHEAP_BOOSTER",
 		effectId: "EQ_CHEAP_BOOSTER",
-		pieceType: r.PAWN
+		pieceType: i.PAWN
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "RARE",
 		id: "EQ_CHAIN_MINE",
 		effectId: "EQ_CHAIN_MINE",
-		pieceType: r.PAWN
+		pieceType: i.PAWN
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "LEGENDARY",
 		id: "EQ_SWARM_INTELLIGENCE",
 		effectId: "EQ_SWARM_INTELLIGENCE",
-		pieceType: r.PAWN
+		pieceType: i.PAWN
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "RARE",
 		id: "EQ_HOOF_ARMOR",
 		effectId: "EQ_HOOF_ARMOR",
-		pieceType: r.KNIGHT
+		pieceType: i.KNIGHT
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "RARE",
 		id: "EQ_TELESCOPIC_LEGS",
 		effectId: "EQ_TELESCOPIC_LEGS",
-		pieceType: r.KNIGHT
+		pieceType: i.KNIGHT
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "EPIC",
 		id: "EQ_SHOCK_STIRRUPS",
 		effectId: "EQ_SHOCK_STIRRUPS",
-		pieceType: r.KNIGHT
+		pieceType: i.KNIGHT
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "RARE",
 		id: "EQ_PLUNDER_HOOVES",
 		effectId: "EQ_PLUNDER_HOOVES",
-		pieceType: r.KNIGHT
+		pieceType: i.KNIGHT
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "EPIC",
 		id: "EQ_GHOST_RIDE",
 		effectId: "EQ_GHOST_RIDE",
-		pieceType: r.KNIGHT
+		pieceType: i.KNIGHT
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "RARE",
 		id: "EQ_PRISM_SHIELD",
 		effectId: "EQ_PRISM_SHIELD",
-		pieceType: r.BISHOP
+		pieceType: i.BISHOP
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "COMMON",
 		id: "EQ_HIGH_POWER_SCOPE",
 		effectId: "EQ_HIGH_POWER_SCOPE",
-		pieceType: r.BISHOP
+		pieceType: i.BISHOP
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "RARE",
 		id: "EQ_PURIFICATION_STAFF",
 		effectId: "EQ_PURIFICATION_STAFF",
-		pieceType: r.BISHOP
+		pieceType: i.BISHOP
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "RARE",
 		id: "EQ_REFRACTION_LENS",
 		effectId: "EQ_REFRACTION_LENS",
-		pieceType: r.BISHOP
+		pieceType: i.BISHOP
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "RARE",
 		id: "EQ_FAITH_SIPHON",
 		effectId: "EQ_FAITH_SIPHON",
-		pieceType: r.BISHOP
+		pieceType: i.BISHOP
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "RARE",
 		id: "EQ_HOVER_TREAD",
 		effectId: "EQ_HOVER_TREAD",
-		pieceType: r.ROOK
+		pieceType: i.ROOK
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "EPIC",
 		id: "EQ_BASE_STATION",
 		effectId: "EQ_BASE_STATION",
-		pieceType: r.ROOK
+		pieceType: i.ROOK
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "EPIC",
 		id: "EQ_REACTIVE_ARMOR",
 		effectId: "EQ_REACTIVE_ARMOR",
-		pieceType: r.ROOK
+		pieceType: i.ROOK
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "RARE",
 		id: "EQ_EM_SHIELD",
 		effectId: "EQ_EM_SHIELD",
-		pieceType: r.ROOK
+		pieceType: i.ROOK
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "EPIC",
 		id: "EQ_TOW_HOOK",
 		effectId: "EQ_TOW_HOOK",
-		pieceType: r.ROOK
+		pieceType: i.ROOK
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "LEGENDARY",
 		id: "EQ_PHOENIX_FEATHER",
 		effectId: "EQ_PHOENIX_FEATHER",
-		pieceType: r.QUEEN
+		pieceType: i.QUEEN
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "EPIC",
 		id: "EQ_BLOOD_DRESS",
 		effectId: "EQ_BLOOD_DRESS",
-		pieceType: r.QUEEN
+		pieceType: i.QUEEN
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "LEGENDARY",
 		id: "EQ_SCEPTER_OF_CHARM",
 		effectId: "EQ_SCEPTER_OF_CHARM",
-		pieceType: r.QUEEN
+		pieceType: i.QUEEN
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "LEGENDARY",
 		id: "EQ_QUEEN_ROOK_LINK",
 		effectId: "QUEEN_ROOK_AUTHORITY",
-		pieceType: r.QUEEN
+		pieceType: i.QUEEN
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "LEGENDARY",
 		id: "EQ_QUEEN_BISHOP_LINK",
 		effectId: "QUEEN_BISHOP_AUTHORITY",
-		pieceType: r.QUEEN
+		pieceType: i.QUEEN
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "EPIC",
 		id: "EQ_ROYAL_SALUTE",
 		effectId: "EQ_ROYAL_SALUTE",
-		pieceType: r.QUEEN
+		pieceType: i.QUEEN
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "RARE",
 		id: "EQ_LIGHTNING_ROD",
 		effectId: "EQ_LIGHTNING_ROD",
-		pieceType: r.KING
+		pieceType: i.KING
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "COMMON",
 		id: "EQ_MEGAPHONE",
 		effectId: "EQ_MEGAPHONE",
-		pieceType: r.KING
+		pieceType: i.KING
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "LEGENDARY",
 		id: "EQ_ROYAL_GUARD",
 		effectId: "EQ_ROYAL_GUARD",
-		pieceType: r.KING
+		pieceType: i.KING
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "LEGENDARY",
 		id: "EQ_RELIC_OF_KINGS",
 		effectId: "EQ_RELIC_OF_KINGS",
-		pieceType: r.KING
+		pieceType: i.KING
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "LEGENDARY",
 		id: "EQ_ARROGANT_CREED",
 		effectId: "EQ_ARROGANT_CREED",
-		pieceType: r.KING
+		pieceType: i.KING
 	},
 	{
 		type: "EQUIPMENT",
 		tier: "EPIC",
 		id: "EQ_GOLDEN_THRONE",
 		effectId: "EQ_GOLDEN_THRONE",
-		pieceType: r.KING
+		pieceType: i.KING
 	},
 	{
 		type: "EQUIPMENT",
@@ -5775,7 +5849,7 @@ const ne = [
 		id: "EQ_SPYWARE",
 		effectId: "EQ_SPYWARE"
 	}
-], de = [
+], le = [
 	{
 		id: "DEFAULT",
 		nameKey: "monarchDefaultName",
@@ -5831,21 +5905,21 @@ const ne = [
 		isImplemented: !0
 	}
 ];
-const pe = {
+const ue = {
 	DEFAULT: { getInitialRoster: (e) => [
-		e(r.KING, "wk"),
-		e(r.PAWN, "p"),
-		e(r.PAWN, "p"),
-		e(r.PAWN, "p"),
-		e(r.ROOK, "r"),
-		e(r.KNIGHT, "n"),
-		e(r.BISHOP, "b")
+		e(i.KING, "wk"),
+		e(i.PAWN, "p"),
+		e(i.PAWN, "p"),
+		e(i.PAWN, "p"),
+		e(i.ROOK, "r"),
+		e(i.KNIGHT, "n"),
+		e(i.BISHOP, "b")
 	] },
 	[M]: {
 		getInitialRoster: (e) => {
-			const t = pe.DEFAULT.getInitialRoster(e), o = t.find((e) => e.type === r.KING);
+			const t = ue.DEFAULT.getInitialRoster(e), o = t.find((e) => e.type === i.KING);
 			return o && (o.traits = ["HAPPY_PRINCE_IMMORTAL"], o.skills = ["HAPPY_PRINCE_IMMORTAL"]), [...t, {
-				...e(r.KNIGHT, "swallow"),
+				...e(i.KNIGHT, "swallow"),
 				customName: "unitSwallow",
 				metadata: { isSwallow: !0 },
 				traits: ["SWALLOW_TRAIT"],
@@ -5853,16 +5927,16 @@ const pe = {
 			}];
 		},
 		setupBoard: (e, t, o) => {
-			const i = t.find((e) => e.metadata?.isSwallow);
-			if (i) {
+			const r = t.find((e) => e.metadata?.isSwallow);
+			if (r) {
 				const t = {
-					...i,
-					id: q()
+					...r,
+					id: Z()
 				};
-				t.traits = Array.from(new Set([...t.traits || [], "SWALLOW_TRAIT"])), t.skills = Array.from(new Set([...t.skills || [], "SWALLOW_TRAIT"])), e[7][3] = t, o.push(i.uid);
+				t.traits = Array.from(new Set([...t.traits || [], "SWALLOW_TRAIT"])), t.skills = Array.from(new Set([...t.skills || [], "SWALLOW_TRAIT"])), e[7][3] = t, o.push(r.uid);
 			}
 			const s = e[7][4];
-			s && s.type === r.KING && (s.traits = Array.from(new Set([...s.traits || [], "HAPPY_PRINCE_IMMORTAL"])), s.skills = Array.from(new Set([...s.skills || [], "HAPPY_PRINCE_IMMORTAL"])));
+			s && s.type === i.KING && (s.traits = Array.from(new Set([...s.traits || [], "HAPPY_PRINCE_IMMORTAL"])), s.skills = Array.from(new Set([...s.skills || [], "HAPPY_PRINCE_IMMORTAL"])));
 		},
 		interceptAction: (e) => "MODIFY_GOLD" === e.type && e.amount > 0 && !R.includes(e.reason) ? {
 			...e,
@@ -5871,30 +5945,30 @@ const pe = {
 		checkGameOverOverride: (e, o) => {
 			if (o === t) {
 				let t = !1;
-				const r = (e) => {
-					e && (e.color === o && e.metadata?.isSwallow && (t = !0), e.stackedPiece && r(e.stackedPiece));
+				const i = (e) => {
+					e && (e.color === o && e.metadata?.isSwallow && (t = !0), e.stackedPiece && i(e.stackedPiece));
 				};
-				return e.forEach((e) => e.forEach(r)), !t;
+				return e.forEach((e) => e.forEach(i)), !t;
 			}
 			return null;
 		}
 	},
 	[N]: { getInitialRoster: (e) => {
-		const t = e(r.KING, "wk"), o = e(r.BISHOP, "b");
+		const t = e(i.KING, "wk"), o = e(i.BISHOP, "b");
 		o.level = 3, o.customName = "unitMerlin", o.maxSlots = 2;
-		const i = e(r.KNIGHT, "n");
-		return i.level = 3, i.customName = "unitLancelot", i.maxSlots = 2, [
+		const r = e(i.KNIGHT, "n");
+		return r.level = 3, r.customName = "unitLancelot", r.maxSlots = 2, [
 			t,
 			o,
-			i,
-			e(r.PAWN, "p"),
-			e(r.PAWN, "p"),
-			e(r.PAWN, "p"),
-			e(r.ROOK, "r")
+			r,
+			e(i.PAWN, "p"),
+			e(i.PAWN, "p"),
+			e(i.PAWN, "p"),
+			e(i.ROOK, "r")
 		];
 	} },
 	[h]: { getInitialRoster: (e) => {
-		const t = pe.DEFAULT.getInitialRoster(e), o = t.find((e) => e.type === r.KING);
+		const t = ue.DEFAULT.getInitialRoster(e), o = t.find((e) => e.type === i.KING);
 		if (o) {
 			const e = ["ODYSSEUS_TROJAN_ACTIVE"];
 			o.traits = [...o.traits || [], ...e], o.skills = [...new Set([...o.skills, ...e])], o.maxSkillSlots = 3;
@@ -5903,29 +5977,29 @@ const pe = {
 	} },
 	[P]: {
 		getInitialRoster: (e) => {
-			const t = pe.DEFAULT.getInitialRoster(e), o = t.find((e) => e.type === r.KING);
+			const t = ue.DEFAULT.getInitialRoster(e), o = t.find((e) => e.type === i.KING);
 			if (o) {
 				const e = ["LOUIS_ABSOLUTE_CORONA"];
 				o.traits = e, o.skills = [...new Set([...o.skills, ...e])], o.maxSkillSlots = 3;
 			}
-			const s = e(r.BISHOP, "ironmask");
+			const s = e(i.BISHOP, "ironmask");
 			s.customName = "unitIronMask", s.traits = ["LOUIS_IRON_MASK"], s.skills = ["LOUIS_IRON_MASK"], s.maxSlots = 3, s.statuses = [{
-				id: i.SILENCED,
+				id: r.SILENCED,
 				duration: 999
 			}];
-			const a = t.findIndex((e) => e.type === r.BISHOP);
+			const a = t.findIndex((e) => e.type === i.BISHOP);
 			return -1 !== a ? t[a] = s : t.push(s), t;
 		},
 		setupBoard: (e, t, o) => {
-			const r = t.find((e) => "unitIronMask" === e.customName);
-			r && (e[7][3] = {
-				...r,
-				id: q()
-			}, o.push(r.uid));
+			const i = t.find((e) => "unitIronMask" === e.customName);
+			i && (e[7][3] = {
+				...i,
+				id: Z()
+			}, o.push(i.uid));
 		}
 	},
-	[D]: { getInitialRoster: (e) => {
-		const t = pe.DEFAULT.getInitialRoster(e), o = t.find((e) => e.type === r.KING);
+	[L]: { getInitialRoster: (e) => {
+		const t = ue.DEFAULT.getInitialRoster(e), o = t.find((e) => e.type === i.KING);
 		if (o) {
 			const e = ["RICHARD_FORWARD_ONLY"];
 			o.traits = e, o.skills = [...new Set([...o.skills, ...e])], o.maxSkillSlots = 3;
@@ -5933,7 +6007,7 @@ const pe = {
 		return t;
 	} }
 };
-var Ee = class {
+var Ae = class {
 	static filterGoldGain(e, t, o) {
 		return t <= 0 ? t : e === M ? R.includes(o) ? t : 0 : t;
 	}
@@ -5943,16 +6017,16 @@ var Ee = class {
 				...t,
 				amount: 0
 			};
-			if ("UPDATE_ROSTER_PIECE" === t.type && (o.roster || []).find((e) => e.uid === t.pieceUid)?.type === r.KING && t.updates.equippedItems?.length) {
-				const e = ne.filter((e) => "LEGENDARY" === e.tier && "EQUIPMENT" === e.type), r = e[Math.floor(o.prng.next() * e.length)];
+			if ("UPDATE_ROSTER_PIECE" === t.type && (o.roster || []).find((e) => e.uid === t.pieceUid)?.type === i.KING && t.updates.equippedItems?.length) {
+				const e = Ee.filter((e) => "LEGENDARY" === e.tier && "EQUIPMENT" === e.type), i = e[Math.floor(o.prng.next() * e.length)];
 				o.emit && (o.emit({
 					type: "ADD_ITEM",
 					item: {
-						id: `trans-${q()}`,
+						id: `trans-${Z()}`,
 						type: "EQUIPMENT",
-						name: r.id,
+						name: i.id,
 						desc: "由王子的金箔转化而来",
-						effectId: r.effectId,
+						effectId: i.effectId,
 						tier: "LEGENDARY"
 					}
 				}), o.emit({
@@ -5963,25 +6037,25 @@ var Ee = class {
 				})), t.updates.equippedItems = [];
 			}
 		}
-		const i = pe[e] || pe.DEFAULT;
-		return i.interceptAction ? i.interceptAction(t) : t;
+		const r = ue[e] || ue.DEFAULT;
+		return r.interceptAction ? r.interceptAction(t) : t;
 	}
 	static onRunInit(e) {
-		return { gold: (de.find((t) => t.id === e) || de[0]).initialGold };
+		return { gold: (le.find((t) => t.id === e) || le[0]).initialGold };
 	}
 	static onRosterInit(e, t) {
-		return (pe[e] || pe.DEFAULT).getInitialRoster(t);
+		return (ue[e] || ue.DEFAULT).getInitialRoster(t);
 	}
-	static onBoardSetup(e, t, o, r) {
-		const i = pe[e] || pe.DEFAULT;
-		i.setupBoard && i.setupBoard(t, o, r);
+	static onBoardSetup(e, t, o, i) {
+		const r = ue[e] || ue.DEFAULT;
+		r.setupBoard && r.setupBoard(t, o, i);
 	}
 	static checkGameOverOverride(e, t, o) {
-		const r = pe[e] || pe.DEFAULT;
-		return r.checkGameOverOverride ? r.checkGameOverOverride(t, o) : null;
+		const i = ue[e] || ue.DEFAULT;
+		return i.checkGameOverOverride ? i.checkGameOverOverride(t, o) : null;
 	}
 };
-function le(e) {
+function me(e) {
 	const t = (e) => {
 		if (!e) return null;
 		const o = {
@@ -5997,9 +6071,9 @@ function le(e) {
 	};
 	return e.map((e) => e.map((e) => t(e)));
 }
-function ue(e) {
+function Ie(e) {
 	const t = {};
-	if (e.squares) for (const r in e.squares) t[r] = e.squares[r].map((e) => ({
+	if (e.squares) for (const i in e.squares) t[i] = e.squares[i].map((e) => ({
 		...e,
 		metadata: e.metadata ? { ...e.metadata } : void 0
 	}));
@@ -6014,70 +6088,52 @@ function ue(e) {
 		sirenSongEnabled: e.sirenSongEnabled
 	};
 }
-const Ae = "undefined" != typeof window ? window : "undefined" != typeof self ? self : globalThis, Ie = Ae.gameEvents || new class {
-	constructor() {
-		this.events = {};
-	}
-	on(e, t) {
-		return this.events[e] || (this.events[e] = []), this.events[e].push(t), () => this.off(e, t);
-	}
-	off(e, t) {
-		this.events[e] && (this.events[e] = this.events[e].filter((e) => e !== t));
-	}
-	emit(e, t) {
-		this.events[e] && this.events[e].forEach((e) => e(t));
-	}
-	once(e, t) {
-		const o = (r) => {
-			this.off(e, o), t(r);
-		};
-		return this.on(e, o);
-	}
-}();
-void 0 !== Ae && (Ae.gameEvents = Ie);
-const me = "STAT_TRACK";
 var Te = class {
-	static handleKillExp(e, o, i, s) {
-		if (!e.uid || e.color !== t || e.type === r.KING) return;
-		const a = H.hasSkill(e, "PAWN_PROMOTE"), c = e.level || 1;
-		if (!(c >= ("ARTHUR" === s ? 3 : 5)) || a) {
-			let t = e.metadata?.currentCaptures || 0, r = e.metadata?.targetCaptures;
-			if (r || (r = a ? 1 : ee(e.type, c)), t++, t >= r) {
-				const t = c + 1, r = Math.max(e.maxSlots || 1, Math.floor((t + 1) / 2)), s = a ? 1 : ee(e.type, t);
-				i({
+	static handleKillExp(e, o, r, s, a) {
+		if (!e.uid || e.color !== t || e.type === i.KING) return;
+		const c = W.hasSkill(e, "PAWN_PROMOTE"), n = e.level || 1;
+		if (!(n >= ("ARTHUR" === s ? 3 : 5)) || c) {
+			let t = e.metadata?.currentCaptures || 0, i = e.metadata?.targetCaptures;
+			if (i || (i = c ? 1 : ie(e.type, n)), t++, t >= i) {
+				const t = n + 1, i = Math.max(e.maxSlots || 1, Math.floor((t + 1) / 2)), s = c ? 1 : ie(e.type, t);
+				r({
 					type: "UPDATE_ROSTER_PIECE",
 					pieceUid: e.uid,
 					updates: {
 						level: t,
-						maxSlots: r,
+						maxSlots: i,
 						metadata: {
 							...e.metadata,
 							currentCaptures: 0,
 							targetCaptures: s
 						}
 					}
-				}), i({
+				}), r({
 					type: "SHOW_TEXT",
 					text: "LV UP!",
 					textKey: "LOG_LEVEL_UP",
 					style: "gold",
 					pos: o
-				}), i({
+				}), r({
 					type: "LEVEL_UP",
 					pos: o
-				}), Ie.emit(me, {
+				}), U.emit(G, {
 					key: "maxLevelReached",
 					value: t,
 					type: "max",
 					isLifetimeOnly: !0
+				}), !a && t >= 3 && U.emit(G, {
+					key: "level3_reached",
+					value: 1,
+					isLifetimeOnly: !0
 				});
-			} else i({
+			} else r({
 				type: "UPDATE_ROSTER_PIECE",
 				pieceUid: e.uid,
 				updates: { metadata: {
 					...e.metadata,
 					currentCaptures: t,
-					targetCaptures: r
+					targetCaptures: i
 				} }
 			});
 		}
@@ -6089,16 +6145,16 @@ var Te = class {
 	static {
 		this.MAX_ACTIONS = 100;
 	}
-	static checkGameOver(e, t, i, s) {
+	static checkGameOver(e, t, r, s) {
 		if (0 === e.flat().filter(Boolean).length) return !1;
-		const a = i || "DEFAULT", c = Ee.checkGameOverOverride(a, e, t);
+		const a = r || "DEFAULT", c = Ae.checkGameOverOverride(a, e, t);
 		if (null !== c) return c;
 		let n = !1;
 		if (s?.proxyKing && t === o) n = e.flat().some((e) => e && e.color === t);
 		else for (let o = 0; o < 8; o++) {
-			for (let i = 0; i < 8; i++) {
-				const s = e[o][i];
-				if (s && s.color === t && (s.type === r.KING || Pe.isProxyKing(s))) {
+			for (let r = 0; r < 8; r++) {
+				const s = e[o][r];
+				if (s && s.color === t && (s.type === i.KING || Pe.isProxyKing(s))) {
 					n = !0;
 					break;
 				}
@@ -6107,13 +6163,13 @@ var Te = class {
 		}
 		return !n;
 	}
-	static produceScript(i, s, a) {
-		Ne.build(s.board, s.metadata), s.interceptors = w.build(s.board, s.metadata);
-		const c = new Q(s.currentSeed || Date.now()), n = [...i], d = [], p = /* @__PURE__ */ new Set();
+	static produceScript(r, s, a) {
+		Ne.build(s.board, s.metadata), s.interceptors = $.build(s.board, s.metadata);
+		const c = new w(s.currentSeed || Date.now()), n = [...r], d = [], p = /* @__PURE__ */ new Set();
 		s.depth = 0, s.actionCount = 0;
 		let E = !1;
 		for (; n.length > 0 && !(s.actionCount > e.MAX_ACTIONS || s.depth > e.MAX_DEPTH);) {
-			const e = n.shift(), t = s.activeMonarchId ? Ee.interceptSync(s.activeMonarchId, e, {
+			const e = n.shift(), t = s.activeMonarchId ? Ae.interceptSync(s.activeMonarchId, e, {
 				...s,
 				prng: c
 			}) : e;
@@ -6142,7 +6198,7 @@ var Te = class {
 					continue;
 				}
 			}
-			let i = !1, l = t._preservedVictim || null, u = null;
+			let r = !1, l = t._preservedVictim || null, u = null;
 			if ("KILL" === t.type) {
 				const e = this.resolvePos(t, s.board);
 				if (e) {
@@ -6150,11 +6206,11 @@ var Te = class {
 					const o = s.board[e.r][e.c];
 					if (o) {
 						l = o;
-						const r = o.uid ? `UID:${o.uid}` : `POS:${e.r},${e.c}`;
-						if (!p.has(r)) {
-							p.add(r);
+						const i = o.uid ? `UID:${o.uid}` : `POS:${e.r},${e.c}`;
+						if (!p.has(i)) {
+							p.add(i);
 							const d = () => {
-								i = !0;
+								r = !0;
 							}, E = [];
 							Pe.handleHook("onDeath", {
 								board: s.board,
@@ -6174,9 +6230,9 @@ var Te = class {
 					}
 				}
 			}
-			if (i) continue;
+			if (r) continue;
 			if (fe.apply(t, s), s.script && s.script.length > 0) {
-				const e = le(s.board), t = ue(s.metadata);
+				const e = me(s.board), t = Ie(s.metadata);
 				for (const o of s.script) d.push({
 					action: o,
 					boardSnapshot: e,
@@ -6192,20 +6248,20 @@ var Te = class {
 				"UPDATE_ROSTER_PIECE",
 				"SET_SQUARE",
 				"REMOVE_SQUARE"
-			].includes(t.type) && (s.interceptors = w.build(s.board, s.metadata)), d.push({
+			].includes(t.type) && (s.interceptors = $.build(s.board, s.metadata)), d.push({
 				action: t,
-				boardSnapshot: le(s.board),
-				metadataSnapshot: ue(s.metadata)
+				boardSnapshot: me(s.board),
+				metadataSnapshot: Ie(s.metadata)
 			}), "DELAY" !== t.type && "SHOW_TEXT" !== t.type && s.actionCount++;
 			const A = t.pos || t.to || null;
 			if (this.triggerHooksSync(t, s, (e) => {
 				"DELAY" !== e.type && "SHOW_TEXT" !== e.type && s.actionCount++, n.push(e);
-			}, a || null, l, A, c), "KILL" === t.type && l?.type === r.KING) {
+			}, a || null, l, A, c), "KILL" === t.type && l?.type === i.KING) {
 				let e = !1;
 				for (let t = 0; t < 8; t++) {
 					for (let o = 0; o < 8; o++) {
-						const i = s.board[t][o];
-						if (i && i.color === l.color && i.id !== l.id && (i.type === r.KING || Pe.isProxyKing(i))) {
+						const r = s.board[t][o];
+						if (r && r.color === l.color && r.id !== l.id && (r.type === i.KING || Pe.isProxyKing(r))) {
 							e = !0;
 							break;
 						}
@@ -6224,8 +6280,8 @@ var Te = class {
 						const e = n.shift();
 						fe.apply(e, s), d.push({
 							action: e,
-							boardSnapshot: le(s.board),
-							metadataSnapshot: ue(s.metadata)
+							boardSnapshot: me(s.board),
+							metadataSnapshot: Ie(s.metadata)
 						});
 					}
 					break;
@@ -6241,8 +6297,8 @@ var Te = class {
 				};
 				d.push({
 					action: e,
-					boardSnapshot: le(s.board),
-					metadataSnapshot: ue(s.metadata)
+					boardSnapshot: me(s.board),
+					metadataSnapshot: Ie(s.metadata)
 				});
 			} else if (this.checkGameOver(s.board, t, s.activeMonarchId, s.levelConstraints)) {
 				s.winner = o;
@@ -6252,17 +6308,17 @@ var Te = class {
 				};
 				d.push({
 					action: e,
-					boardSnapshot: le(s.board),
-					metadataSnapshot: ue(s.metadata)
+					boardSnapshot: me(s.board),
+					metadataSnapshot: Ie(s.metadata)
 				});
 			}
 		}
 		return d;
 	}
-	static triggerHooksSync(e, t, o, r, i, s, a) {
-		const { board: c } = t, n = {
-			board: c,
-			prng: a,
+	static triggerHooksSync(e, t, o, r, s, a, c) {
+		const { board: n } = t, d = {
+			board: n,
+			prng: c,
 			emit: o,
 			metadata: t.metadata,
 			gold: t.gold,
@@ -6274,40 +6330,77 @@ var Te = class {
 			isAISimulation: t.isAISimulation
 		};
 		if ("MOVE" === e.type && r) {
-			const t = r.uid && this.findPieceByUid(c, r.uid) || r;
-			Pe.handleHook("onAfterMove", {
-				...n,
+			const t = r.uid && this.findPieceByUid(n, r.uid) || r;
+			if (Pe.handleHook("onAfterMove", {
+				...d,
 				piece: t,
 				r: e.to.r,
 				c: e.to.c,
 				from: e.from,
-				victim: i || void 0
-			});
+				victim: s || void 0
+			}), !d.isAISimulation && (U.emit(G, {
+				key: `moves_by_${t.type}`,
+				value: 1,
+				isLifetimeOnly: !0
+			}), U.emit(G, {
+				key: `run_moves_by_${t.type}`,
+				value: 1
+			}), t.type === i.BISHOP && e.from && e.to)) {
+				const t = Math.max(Math.abs(e.to.r - e.from.r), Math.abs(e.to.c - e.from.c));
+				U.emit(G, {
+					key: "bishopMovedDist",
+					value: t,
+					isLifetimeOnly: !0
+				});
+			}
 		} else if ("KILL" === e.type && r) {
-			const a = s || this.resolvePos(e, c), d = i || (a ? c[a.r][a.c] : null);
-			if (d && d.color !== r.color && a) {
-				const i = r.uid && this.findPieceByUid(c, r.uid) || r;
+			const c = a || this.resolvePos(e, n), p = s || (c ? n[c.r][c.c] : null);
+			if (p && p.color !== r.color && c) {
+				const s = r.uid && this.findPieceByUid(n, r.uid) || r;
 				Pe.handleHook("onKill", {
-					...n,
-					piece: i,
-					victim: d,
-					r: a.r,
-					c: a.c,
+					...d,
+					piece: s,
+					victim: p,
+					r: c.r,
+					c: c.c,
 					from: e.from
-				}), Te.handleKillExp(i, a, o, t.activeMonarchId);
+				}), Te.handleKillExp(s, c, o, t.activeMonarchId, d.isAISimulation), d.isAISimulation || (U.emit(G, {
+					key: `kills_by_${s.type}`,
+					value: 1,
+					isLifetimeOnly: !0
+				}), U.emit(G, {
+					key: `deaths_by_${p.type}`,
+					value: 1,
+					isLifetimeOnly: !0
+				}), s.type === i.KING && p.type === i.KING && U.emit(G, {
+					key: "kingKilledByKing",
+					value: 1
+				}), p.type === i.PAWN && U.emit(G, {
+					key: "enemy_pawns_killed",
+					value: 1,
+					isLifetimeOnly: !0
+				}), p.type !== i.PAWN && p.type !== i.KNIGHT && p.type !== i.BISHOP && (d.historyLength || 0) <= 4 && U.emit(G, {
+					key: "fastHighTierKills",
+					value: 1,
+					isLifetimeOnly: !0
+				}), (d.historyLength || 0) <= 6 && U.emit(G, {
+					key: "earlyKills",
+					value: 1,
+					isLifetimeOnly: !0
+				}));
 			}
 		} else if ("SPAWN" === e.type) {
-			const t = this.resolvePos(e, c);
+			const t = this.resolvePos(e, n);
 			t && Pe.handleHook("onDeploy", {
-				...n,
+				...d,
 				piece: e.piece,
 				r: t.r,
 				c: t.c
 			});
 		} else if ("LEVEL_UP" === e.type) {
-			const t = e.pos, o = c[t.r][t.c];
+			const t = e.pos, o = n[t.r][t.c];
 			o && Pe.handleHook("onLevelUp", {
-				...n,
+				...d,
 				piece: o,
 				r: t.r,
 				c: t.c
@@ -6315,7 +6408,7 @@ var Te = class {
 		}
 	}
 	static calculateSequence(e, t, o) {
-		const r = {
+		const i = {
 			...t,
 			script: [],
 			depth: 0,
@@ -6323,28 +6416,28 @@ var Te = class {
 			emit: () => {},
 			activeMonarchId: t.activeMonarchId || "DEFAULT"
 		};
-		return this.produceScript(e, r, o);
+		return this.produceScript(e, i, o);
 	}
 	static findPieceByUid(e, t) {
-		for (let o = 0; o < 8; o++) for (let r = 0; r < 8; r++) {
-			const i = e[o][r];
-			if (i) {
-				if (i.uid === t) return i;
-				if (i.stackedPiece && i.stackedPiece.uid === t) return i.stackedPiece;
+		for (let o = 0; o < 8; o++) for (let i = 0; i < 8; i++) {
+			const r = e[o][i];
+			if (r) {
+				if (r.uid === t) return r;
+				if (r.stackedPiece && r.stackedPiece.uid === t) return r.stackedPiece;
 			}
 		}
 		return null;
 	}
 	static resolvePos(e, t) {
-		if (e.targetId) for (let o = 0; o < 8; o++) for (let r = 0; r < 8; r++) {
-			const i = t[o][r];
-			if (i && (i.id === e.targetId || i.uid === e.targetId)) return {
+		if (e.targetId) for (let o = 0; o < 8; o++) for (let i = 0; i < 8; i++) {
+			const r = t[o][i];
+			if (r && (r.id === e.targetId || r.uid === e.targetId)) return {
 				r: o,
-				c: r
+				c: i
 			};
-			if (i && i.stackedPiece && (i.stackedPiece.id === e.targetId || i.stackedPiece.uid === e.targetId)) return {
+			if (r && r.stackedPiece && (r.stackedPiece.id === e.targetId || r.stackedPiece.uid === e.targetId)) return {
 				r: o,
-				c: r
+				c: i
 			};
 		}
 		if (e.pos) return e.pos;
@@ -6352,19 +6445,19 @@ var Te = class {
 };
 const _e = {
 	MOVE: (e, t) => {
-		const { board: o } = t, r = o[e.from.r][e.from.c];
-		if (r) {
-			const i = o[e.to.r][e.to.c], s = { ...r };
-			if (i && i.id !== r.id && !t.isAISimulation) {
+		const { board: o } = t, i = o[e.from.r][e.from.c];
+		if (i) {
+			const r = o[e.to.r][e.to.c], s = { ...i };
+			if (r && r.id !== i.id && !t.isAISimulation) {
 				let e = s;
 				for (; e.stackedPiece;) e.stackedPiece = { ...e.stackedPiece }, e = e.stackedPiece;
-				e.stackedPiece = i;
+				e.stackedPiece = r;
 			}
-			o[e.from.r][e.from.c] = r.stackedPiece || null, s.stackedPiece = s.stackedPiece || void 0, o[e.to.r][e.to.c] = s, s.abilityMask = F.resolveMask(s);
+			o[e.from.r][e.from.c] = i.stackedPiece || null, s.stackedPiece = s.stackedPiece || void 0, o[e.to.r][e.to.c] = s, s.abilityMask = V.resolveMask(s);
 		}
 	},
 	KILL: (e, t) => {
-		const o = ye(e, t.board);
+		const o = Se(e, t.board);
 		if (o) {
 			const e = t.board[o.r][o.c];
 			e && (t.metadata.recentDeaths = {
@@ -6374,30 +6467,38 @@ const _e = {
 		}
 	},
 	SPAWN: (e, t) => {
-		const o = ye(e, t.board);
+		const o = Se(e, t.board);
 		if (o) {
-			const r = { ...e.piece };
-			r.skills = [...new Set([
-				...r.skills || [],
-				...r.learnedSkills || [],
-				...r.traits || []
-			])], r.abilityMask = F.resolveMask(r), t.board[o.r][o.c] = r;
+			const i = { ...e.piece };
+			i.skills = [...new Set([
+				...i.skills || [],
+				...i.learnedSkills || [],
+				...i.traits || []
+			])], i.abilityMask = V.resolveMask(i), t.board[o.r][o.c] = i;
 		}
 	},
 	SWAP_PIECES: (e, t) => {
-		const { board: o } = t, r = o[e.posA.r][e.posA.c], i = o[e.posB.r][e.posB.c];
-		o[e.posA.r][e.posA.c] = i ? { ...i } : null, o[e.posB.r][e.posB.c] = r ? { ...r } : null;
+		const { board: o } = t, i = o[e.posA.r][e.posA.c], r = o[e.posB.r][e.posB.c];
+		o[e.posA.r][e.posA.c] = r ? { ...r } : null, o[e.posB.r][e.posB.c] = i ? { ...i } : null, t.isAISimulation || U.emit(G, {
+			key: "swapOrTeleport",
+			value: 1,
+			isLifetimeOnly: !0
+		});
 	},
 	ADD_STATUS: (e, t) => {
-		const o = ye(e, t.board);
+		const o = Se(e, t.board);
 		if (o) {
-			const r = t.board[o.r][o.c];
-			if (r) {
-				const i = {
-					...r,
-					statuses: [...r.statuses || []]
+			const i = t.board[o.r][o.c];
+			if (i) {
+				const r = {
+					...i,
+					statuses: [...i.statuses || []]
 				};
-				Pe.applyStatus(i, e.statusId, e.duration, e.metadata), i.abilityMask = F.resolveMask(i), t.board[o.r][o.c] = i, t.roster && (t.roster = t.roster.map((e) => e.uid === r.uid ? i : e)), t.script && ("FROZEN" === e.statusId ? t.script.push({
+				Pe.applyStatus(r, e.statusId, e.duration, e.metadata), r.abilityMask = V.resolveMask(r), t.board[o.r][o.c] = r, t.isAISimulation || U.emit(G, {
+					key: `status_applied_${e.statusId}`,
+					value: 1,
+					isLifetimeOnly: !0
+				}), t.roster && (t.roster = t.roster.map((e) => e.uid === i.uid ? r : e)), t.script && ("FROZEN" === e.statusId ? t.script.push({
 					type: "ANIMATE",
 					name: "RIPPLE",
 					pos: o,
@@ -6413,15 +6514,15 @@ const _e = {
 		}
 	},
 	REMOVE_STATUS: (e, t) => {
-		const o = ye(e, t.board);
+		const o = Se(e, t.board);
 		if (o) {
-			const r = t.board[o.r][o.c];
-			if (r && r.statuses) {
-				const i = {
-					...r,
-					statuses: r.statuses.filter((t) => t.id !== e.statusId)
+			const i = t.board[o.r][o.c];
+			if (i && i.statuses) {
+				const r = {
+					...i,
+					statuses: i.statuses.filter((t) => t.id !== e.statusId)
 				};
-				i.abilityMask = F.resolveMask(i), t.board[o.r][o.c] = i, t.roster && (t.roster = t.roster.map((e) => e.uid === r.uid ? i : e));
+				r.abilityMask = V.resolveMask(r), t.board[o.r][o.c] = r, t.roster && (t.roster = t.roster.map((e) => e.uid === i.uid ? r : e));
 			}
 		}
 	},
@@ -6447,7 +6548,7 @@ const _e = {
 		t.deployedUids = t.deployedUids.filter((t) => t !== e.uid);
 	},
 	REMOVE_PIECE: (e, t) => {
-		const o = ye(e, t.board);
+		const o = Se(e, t.board);
 		if (o) {
 			const e = t.board[o.r][o.c];
 			e && (t.metadata.recentDeaths = {
@@ -6457,7 +6558,11 @@ const _e = {
 		}
 	},
 	SET_EXTRA_MOVE: (e, t) => {
-		t.extraMoveActive = e.active;
+		t.extraMoveActive = e.active, e.active && !t.isAISimulation && U.emit(G, {
+			key: "extraMoves",
+			value: 1,
+			isLifetimeOnly: !0
+		});
 	},
 	SET_WINNER: (e, t) => {
 		t.winner = e.winner;
@@ -6465,8 +6570,8 @@ const _e = {
 	TICK_PIECE: (e, t) => {
 		const o = t.board[e.pos.r][e.pos.c];
 		if (o) {
-			const r = Re(o);
-			r.abilityMask = F.resolveMask(r), t.board[e.pos.r][e.pos.c] = r, t.roster && (t.roster = t.roster.map((e) => e.uid === o.uid ? r : e));
+			const i = Re(o);
+			i.abilityMask = V.resolveMask(i), t.board[e.pos.r][e.pos.c] = i, t.roster && (t.roster = t.roster.map((e) => e.uid === o.uid ? i : e));
 		}
 	},
 	SWITCH_TURN: (e, t) => {
@@ -6478,12 +6583,12 @@ const _e = {
 	LEVEL_UP: (e, t) => {
 		const o = t.board[e.pos.r][e.pos.c];
 		if (o) {
-			const r = (o.level || 1) + 1, i = Math.max(o.maxSlots || 1, Math.floor((r + 1) / 2)), s = {
+			const i = (o.level || 1) + 1, r = Math.max(o.maxSlots || 1, Math.floor((i + 1) / 2)), s = {
 				...o,
-				level: r,
-				maxSlots: i
+				level: i,
+				maxSlots: r
 			};
-			s.abilityMask = F.resolveMask(s), t.board[e.pos.r][e.pos.c] = s, t.roster && (t.roster = t.roster.map((e) => e.uid === o.uid ? s : e)), t.script && t.script.push({
+			s.abilityMask = V.resolveMask(s), t.board[e.pos.r][e.pos.c] = s, t.roster && (t.roster = t.roster.map((e) => e.uid === o.uid ? s : e)), t.script && t.script.push({
 				type: "ANIMATE",
 				name: "LEVEL_UP",
 				pos: e.pos,
@@ -6493,7 +6598,7 @@ const _e = {
 	},
 	UPDATE_ROSTER_PIECE: (e, t) => {
 		const o = fe.getActivePieces(t.board);
-		for (const { r, c: i, piece: s } of o) if (s.uid === e.pieceUid) {
+		for (const { r: i, c: r, piece: s } of o) if (s.uid === e.pieceUid) {
 			const o = {
 				...s,
 				...e.updates
@@ -6502,7 +6607,7 @@ const _e = {
 				...o.skills || [],
 				...o.learnedSkills || [],
 				...o.traits || []
-			])], o.abilityMask = F.resolveMask(o), t.board[r][i] = o;
+			])], o.abilityMask = V.resolveMask(o), t.board[i][r] = o;
 		}
 		t.roster && (t.roster = t.roster.map((t) => t.uid === e.pieceUid ? {
 			...t,
@@ -6524,8 +6629,8 @@ const _e = {
 				...o.learnedSkills || [],
 				...o.traits || []
 			])], t.roster = [...t.roster, o];
-			const r = o.color;
-			t.reserves && t.reserves[r] && (t.reserves[r][o.type] = (t.reserves[r][o.type] || 0) + 1);
+			const i = o.color;
+			t.reserves && t.reserves[i] && (t.reserves[i][o.type] = (t.reserves[i][o.type] || 0) + 1);
 		}
 	},
 	REMOVE_FROM_ROSTER: (e, t) => {
@@ -6546,107 +6651,107 @@ const _e = {
 var fe = class e {
 	static finalizeInference(e) {
 		for (let o = 0; o < 8; o++) for (let t = 0; t < 8; t++) {
-			const r = e.board[o][t];
-			r && (r.abilityMask = F.resolveMask(r));
+			const i = e.board[o][t];
+			i && (i.abilityMask = V.resolveMask(i));
 		}
 		const t = e.isAISimulation || !0 === globalThis.isAISimulation;
-		e.metadata.cache = V.apply(e.metadata.cache, e.board, e.metadata, e.turn, [], e.levelConstraints, t);
+		e.metadata.cache = X.apply(e.metadata.cache, e.board, e.metadata, e.turn, [], e.levelConstraints, t);
 	}
 	static refreshAbilityMasks(e) {
 		for (let t = 0; t < 8; t++) for (let o = 0; o < 8; o++) {
-			const r = e[t][o];
-			r && (r.abilityMask = F.resolveMask(r));
+			const i = e[t][o];
+			i && (i.abilityMask = V.resolveMask(i));
 		}
 	}
 	static updateCache(e) {
 		const t = e.isAISimulation || !0 === globalThis.isAISimulation;
-		e.metadata.cache = V.apply(e.metadata.cache, e.board, e.metadata, e.turn, [], e.levelConstraints, t);
+		e.metadata.cache = X.apply(e.metadata.cache, e.board, e.metadata, e.turn, [], e.levelConstraints, t);
 	}
 	static apply(t, o) {
-		const r = _e[t.type];
-		r && r(t, o);
-		const i = [];
-		"pos" in t && t.pos && i.push(t.pos), "from" in t && t.from && i.push(t.from), "to" in t && t.to && i.push(t.to), "posA" in t && t.posA && i.push(t.posA), "posB" in t && t.posB && i.push(t.posB);
-		for (const e of i) {
+		const i = _e[t.type];
+		i && i(t, o);
+		const r = [];
+		"pos" in t && t.pos && r.push(t.pos), "from" in t && t.from && r.push(t.from), "to" in t && t.to && r.push(t.to), "posA" in t && t.posA && r.push(t.posA), "posB" in t && t.posB && r.push(t.posB);
+		for (const e of r) {
 			const t = o.board[e.r][e.c];
-			t && (t.abilityMask = F.resolveMask(t));
+			t && (t.abilityMask = V.resolveMask(t));
 		}
 		if ("UPDATE_ROSTER_PIECE" === t.type) {
-			const r = e.getActivePieces(o.board);
-			for (const { r: e, c: o, piece: i } of r) i.uid === t.pieceUid && (i.abilityMask = F.resolveMask(i));
+			const i = e.getActivePieces(o.board);
+			for (const { r: e, c: o, piece: r } of i) r.uid === t.pieceUid && (r.abilityMask = V.resolveMask(r));
 		}
-		o.metadata.cache = V.apply(o.metadata.cache, o.board, o.metadata, o.turn, [t], o.levelConstraints, o.isAISimulation);
+		o.metadata.cache = X.apply(o.metadata.cache, o.board, o.metadata, o.turn, [t], o.levelConstraints, o.isAISimulation);
 	}
-	static simulateAIActionWithUndo(r, i, s) {
+	static simulateAIActionWithUndo(i, r, s) {
 		const a = {
-			boardSnapshot: i.board.map((e) => [...e]),
+			boardSnapshot: r.board.map((e) => [...e]),
 			metadataSnapshot: {
-				...i.metadata,
-				squares: { ...i.metadata.squares },
-				recentDeaths: i.metadata.recentDeaths ? { ...i.metadata.recentDeaths } : void 0
+				...r.metadata,
+				squares: { ...r.metadata.squares },
+				recentDeaths: r.metadata.recentDeaths ? { ...r.metadata.recentDeaths } : void 0
 			},
 			reservesSnapshot: {
-				[t]: { ...i.reserves[t] },
-				[o]: { ...i.reserves[o] }
+				[t]: { ...r.reserves[t] },
+				[o]: { ...r.reserves[o] }
 			},
-			turnSnapshot: i.turn,
-			winnerSnapshot: i.winner,
-			extraMoveSnapshot: i.extraMoveActive,
-			hasDeployedSnapshot: i.hasDeployedThisTurn,
-			deployedUidsSnapshot: [...i.deployedUids],
-			seedSnapshot: i.currentSeed
+			turnSnapshot: r.turn,
+			winnerSnapshot: r.winner,
+			extraMoveSnapshot: r.extraMoveActive,
+			hasDeployedSnapshot: r.hasDeployedThisTurn,
+			deployedUidsSnapshot: [...r.deployedUids],
+			seedSnapshot: r.currentSeed
 		};
-		i.isAISimulation = !0, globalThis.isAISimulation = !0;
-		const c = new Q(i.currentSeed || Date.now());
+		r.isAISimulation = !0, globalThis.isAISimulation = !0;
+		const c = new w(r.currentSeed || Date.now());
 		try {
-			i.interceptors = w.build(i.board, i.metadata), Oe.calculateSequence(r, i, s);
+			r.interceptors = $.build(r.board, r.metadata), Oe.calculateSequence(i, r, s);
 			for (let t = 0; t < 8; t++) for (let o = 0; o < 8; o++) {
-				const r = i.board[t][o];
-				r && (r.statuses && r.statuses.length > 0 || r.stackedPiece) && e.apply({
+				const i = r.board[t][o];
+				i && (i.statuses && i.statuses.length > 0 || i.stackedPiece) && e.apply({
 					type: "TICK_PIECE",
 					pos: {
 						r: t,
 						c: o
 					}
-				}, i);
+				}, r);
 			}
-			if (i.metadata.squares) {
-				const e = { ...i.metadata.squares };
+			if (r.metadata.squares) {
+				const e = { ...r.metadata.squares };
 				for (const [t, o] of Object.entries(e)) e[t] = o.map((e) => e.duration >= 99 ? e : {
 					...e,
 					duration: e.duration - 1
 				}).filter((e) => e.duration > 0);
-				i.metadata.squares = e;
+				r.metadata.squares = e;
 			}
-			if (i.metadata.lockedActionUid && !i.extraMoveActive && (i.metadata.lockedActionUid = void 0), i.metadata.recentDeaths) {
+			if (r.metadata.lockedActionUid && !r.extraMoveActive && (r.metadata.lockedActionUid = void 0), r.metadata.recentDeaths) {
 				const e = {};
-				for (const [t, o] of Object.entries(i.metadata.recentDeaths)) o > 1 && (e[t] = o - 1);
-				i.metadata.recentDeaths = e;
+				for (const [t, o] of Object.entries(r.metadata.recentDeaths)) o > 1 && (e[t] = o - 1);
+				r.metadata.recentDeaths = e;
 			}
-			i.turn = i.extraMoveActive ? i.turn : i.turn === t ? o : t, i.extraMoveActive = !1, i.hasDeployedThisTurn = !1;
+			r.turn = r.extraMoveActive ? r.turn : r.turn === t ? o : t, r.extraMoveActive = !1, r.hasDeployedThisTurn = !1;
 			const a = [];
 			for (let e = 0; e < 8; e++) for (let t = 0; t < 8; t++) {
-				const o = i.board[e][t];
-				o && o.color === i.turn && Pe.handleHook("onTurnStart", {
-					board: i.board,
+				const o = r.board[e][t];
+				o && o.color === r.turn && Pe.handleHook("onTurnStart", {
+					board: r.board,
 					r: e,
 					c: t,
 					piece: o,
 					prng: c,
 					emit: (e) => a.push(e),
-					metadata: i.metadata,
-					gold: i.gold,
-					roster: i.roster,
-					deployedUids: i.deployedUids,
-					historyLength: i.historyLength ?? 0,
-					reserves: i.reserves,
-					levelConstraints: i.levelConstraints,
-					isAISimulation: i.isAISimulation
+					metadata: r.metadata,
+					gold: r.gold,
+					roster: r.roster,
+					deployedUids: r.deployedUids,
+					historyLength: r.historyLength ?? 0,
+					reserves: r.reserves,
+					levelConstraints: r.levelConstraints,
+					isAISimulation: r.isAISimulation
 				});
 			}
-			a.length > 0 && Oe.calculateSequence(a, i), i.currentSeed = c.getSeed(), i.metadata.cache = V.apply(i.metadata.cache, i.board, i.metadata, i.turn, [], i.levelConstraints, !0);
+			a.length > 0 && Oe.calculateSequence(a, r), r.currentSeed = c.getSeed(), r.metadata.cache = X.apply(r.metadata.cache, r.board, r.metadata, r.turn, [], r.levelConstraints, !0);
 		} catch (n) {
-			if ("ACTION_QUEUE_OVERFLOW" === n.message) return e.undo(i, a), a;
+			if ("ACTION_QUEUE_OVERFLOW" === n.message) return e.undo(r, a), a;
 			throw n;
 		} finally {
 			globalThis.isAISimulation = !1;
@@ -6658,14 +6763,14 @@ var fe = class e {
 	}
 	static getActivePieces(e) {
 		const t = [];
-		for (let o = 0; o < 8; o++) for (let r = 0; r < 8; r++) e[o][r] && t.push({
+		for (let o = 0; o < 8; o++) for (let i = 0; i < 8; i++) e[o][i] && t.push({
 			r: o,
-			c: r,
-			piece: e[o][r]
+			c: i,
+			piece: e[o][i]
 		});
 		return t;
 	}
-}, Se = class {
+}, ye = class {
 	static computeActionResults(e, t, o) {
 		return {
 			nextContext: t,
@@ -6673,7 +6778,7 @@ var fe = class e {
 		};
 	}
 	static fastCloneContext(e) {
-		const r = (e) => {
+		const i = (e) => {
 			if (!e) return null;
 			const t = {
 				...e,
@@ -6684,18 +6789,18 @@ var fe = class e {
 				equippedItems: e.equippedItems ? [...e.equippedItems] : [],
 				metadata: e.metadata ? { ...e.metadata } : {}
 			};
-			return t.stackedPiece && (t.stackedPiece = r(t.stackedPiece)), t;
-		}, i = e.board.map((e) => e.map((e) => r(e))), s = {};
+			return t.stackedPiece && (t.stackedPiece = i(t.stackedPiece)), t;
+		}, r = e.board.map((e) => e.map((e) => i(e))), s = {};
 		if (e.metadata.squares) for (const t in e.metadata.squares) s[t] = e.metadata.squares[t].map((e) => ({
 			...e,
 			metadata: e.metadata ? { ...e.metadata } : void 0
 		}));
-		const a = e.roster ? e.roster.map((e) => r(e)) : [], c = e.consumables ? [...e.consumables] : [], n = e.equipments ? [...e.equipments] : [], d = {
+		const a = e.roster ? e.roster.map((e) => i(e)) : [], c = e.consumables ? [...e.consumables] : [], n = e.equipments ? [...e.equipments] : [], d = {
 			[t]: { ...e.reserves[t] },
 			[o]: { ...e.reserves[o] }
 		}, p = e.deployedUids ? [...e.deployedUids] : [], E = e.fatalBlow ? { ...e.fatalBlow } : null;
 		return {
-			board: i,
+			board: r,
 			metadata: {
 				...e.metadata,
 				squares: s,
@@ -6724,17 +6829,17 @@ var fe = class e {
 		};
 	}
 };
-function ye(e, t) {
+function Se(e, t) {
 	if (e.targetId) {
 		const o = fe.getActivePieces(t);
-		for (const { r: t, c: r, piece: i } of o) {
-			if (i.id === e.targetId || i.uid === e.targetId) return {
+		for (const { r: t, c: i, piece: r } of o) {
+			if (r.id === e.targetId || r.uid === e.targetId) return {
 				r: t,
-				c: r
+				c: i
 			};
-			if (i.stackedPiece && (i.stackedPiece.id === e.targetId || i.stackedPiece.uid === e.targetId)) return {
+			if (r.stackedPiece && (r.stackedPiece.id === e.targetId || r.stackedPiece.uid === e.targetId)) return {
 				r: t,
-				c: r
+				c: i
 			};
 		}
 	}
@@ -6746,11 +6851,11 @@ function Re(e) {
 		statuses: e.statuses ? e.statuses.map((e) => ({ ...e })) : [],
 		traits: e.traits ? [...e.traits] : []
 	};
-	t.type === r.KING && (t.statuses = t.statuses.filter((e) => e.id !== i.INVISIBLE && e.id !== i.PETRIFIED)), t.stackedPiece && (t.stackedPiece = Re(t.stackedPiece)), t.statuses.length > 0 && (t.statuses = t.statuses.map((e) => e.duration >= 99 ? e : (e.duration <= 1 && e.id === i.BETRAYED && e.originalColor && (t.color = e.originalColor), {
+	t.type === i.KING && (t.statuses = t.statuses.filter((e) => e.id !== r.INVISIBLE && e.id !== r.PETRIFIED)), t.stackedPiece && (t.stackedPiece = Re(t.stackedPiece)), t.statuses.length > 0 && (t.statuses = t.statuses.map((e) => e.duration >= 99 ? e : (e.duration <= 1 && e.id === r.BETRAYED && e.originalColor && (t.color = e.originalColor), {
 		...e,
 		duration: e.duration - 1
 	})).filter((e) => e.duration > 0));
-	const o = [i.GRACE_LIMIT, i.CANNOT_CAPTURE];
+	const o = [r.GRACE_LIMIT, r.CANNOT_CAPTURE];
 	return t.traits && t.traits.length > 0 && (t.traits = t.traits.filter((e) => !o.includes(e))), t.skills = [...new Set([
 		...t.skills || [],
 		...t.learnedSkills || [],
@@ -6767,41 +6872,41 @@ var Ne = class {
 	static build(e, t) {
 		this.globalInvulnerabilityMods = [], this.globalSquareBlockMods = [];
 		const o = fe.getActivePieces(e);
-		for (const { piece: r, r: i, c: s } of o) {
-			const t = x.getModifiers(r, e, i, s);
+		for (const { piece: i, r, c: s } of o) {
+			const t = F.getModifiers(i, e, r, s);
 			for (const e of t) e.invulnerable && this.globalInvulnerabilityMods.push({
-				piece: r,
-				r: i,
+				piece: i,
+				r,
 				c: s,
 				fn: e.invulnerable
 			}), e.squareBlockMovement && this.globalSquareBlockMods.push({
-				piece: r,
-				r: i,
+				piece: i,
+				r,
 				c: s,
 				fn: e.squareBlockMovement
 			});
 		}
-		if (t?.squares) for (const [r, i] of Object.entries(t.squares)) {
-			const [o, i] = r.split(",").map(Number), s = x.getSquareModifiers(e, o, i, t);
+		if (t?.squares) for (const [i, r] of Object.entries(t.squares)) {
+			const [o, r] = i.split(",").map(Number), s = F.getSquareModifiers(e, o, r, t);
 			for (const e of s) e.squareBlockMovement && this.globalSquareBlockMods.push({
 				piece: null,
 				r: o,
-				c: i,
+				c: r,
 				fn: e.squareBlockMovement
 			});
 		}
 	}
 }, he = class {
 	static isSteady(e) {
-		return !!e && (F.has(e, "KING_STEADY") || F.has(e, "EQ_STABILIZER"));
+		return !!e && (V.has(e, "KING_STEADY") || V.has(e, "EQ_STABILIZER"));
 	}
-	static isHidden(e, t, o, r, s) {
-		if (!e.statuses?.some((e) => e.id === i.INVISIBLE || e.id === i.CAMOUFLAGED)) return !1;
+	static isHidden(e, t, o, i, s) {
+		if (!e.statuses?.some((e) => e.id === r.INVISIBLE || e.id === r.CAMOUFLAGED)) return !1;
 		let a = !1;
-		for (let i = 0; i < 8; i++) {
+		for (let r = 0; r < 8; r++) {
 			for (let e = 0; e < 8; e++) {
-				const c = o[i][e];
-				if (c && c.color === t && c.equippedItems?.some((e) => "EQ_SCOUT_RADAR" === e.effectId) && Math.max(Math.abs(r - i), Math.abs(s - e)) <= 2) {
+				const c = o[r][e];
+				if (c && c.color === t && c.equippedItems?.some((e) => "EQ_SCOUT_RADAR" === e.effectId) && Math.max(Math.abs(i - r), Math.abs(s - e)) <= 2) {
 					a = !0;
 					break;
 				}
@@ -6810,40 +6915,49 @@ var Ne = class {
 		}
 		return !a;
 	}
-	static isInvulnerable(e, t, o, r, i, s, a) {
-		for (const c of Ne.globalInvulnerabilityMods) if ((c.piece.id === e.id || F.has(c.piece, "GENERIC_FIREWALL")) && c.fn({
+	static isInvulnerable(e, t, o, i, r, s, a) {
+		const c = !0 === globalThis.isAISimulation;
+		for (const n of Ne.globalInvulnerabilityMods) if ((n.piece.id === e.id || V.has(n.piece, "GENERIC_FIREWALL")) && n.fn({
 			board: o,
 			piece: e,
-			r,
-			c: i,
+			r: i,
+			c: r,
 			metadata: s,
 			networkedMap: a
-		}, t)) return !0;
+		}, t)) return c || U.emit(G, {
+			key: "shieldBlocks",
+			value: 1,
+			isLifetimeOnly: !0
+		}), !0;
 		if (s?.squares) {
-			const c = x.getSquareModifiers(o, r, i, s);
-			for (const n of c) if (n.invulnerable && n.invulnerable({
+			const n = F.getSquareModifiers(o, i, r, s);
+			for (const d of n) if (d.invulnerable && d.invulnerable({
 				board: o,
 				piece: e,
-				r,
-				c: i,
+				r: i,
+				c: r,
 				metadata: s,
 				networkedMap: a
-			}, t)) return !0;
+			}, t)) return c || U.emit(G, {
+				key: "shieldBlocks",
+				value: 1,
+				isLifetimeOnly: !0
+			}), !0;
 		}
 		return !1;
 	}
-	static canAct(e, t, o, r, s, a, c) {
-		return !!e && !e.statuses?.some((e) => e.id === i.PETRIFIED) && (!(!a?.lockedActionUid || a.lockedActionUid !== e.uid) || (e.statuses?.some((e) => e.id === i.FROZEN) ? !!F.has(e, "BYPASS_FROZEN") || x.getModifiers(e, o, r, s).some((t) => t.bypassFrozen && t.bypassFrozen({
+	static canAct(e, t, o, i, s, a, c) {
+		return !!e && !e.statuses?.some((e) => e.id === r.PETRIFIED) && (!(!a?.lockedActionUid || a.lockedActionUid !== e.uid) || (e.statuses?.some((e) => e.id === r.FROZEN) ? !!V.has(e, "BYPASS_FROZEN") || F.getModifiers(e, o, i, s).some((t) => t.bypassFrozen && t.bypassFrozen({
 			board: o,
 			piece: e,
-			r,
+			r: i,
 			c: s,
 			metadata: a,
 			networkedMap: c
-		})) : !!t || !!F.has(e, "BYPASS_FROZEN") || x.getModifiers(e, o, r, s).some((t) => t.bypassFrozen && t.bypassFrozen({
+		})) : !!t || !!V.has(e, "BYPASS_FROZEN") || F.getModifiers(e, o, i, s).some((t) => t.bypassFrozen && t.bypassFrozen({
 			board: o,
 			piece: e,
-			r,
+			r: i,
 			c: s,
 			metadata: a,
 			networkedMap: c
@@ -6860,17 +6974,17 @@ var Ne = class {
 		if (this.hookDepth > this.MAX_HOOK_DEPTH) return !1;
 		this.hookDepth++;
 		try {
-			let o = !1, r = !1;
-			const i = () => {
+			let o = !1, i = !1;
+			const r = () => {
 				o = !0, t.cancelAction && t.cancelAction();
 			}, s = () => {
-				r = !0, t.setNoSkip && t.setNoSkip();
+				i = !0, t.setNoSkip && t.setNoSkip();
 			};
-			"onDeath" === e && o && Ie.emit(me, {
+			"onDeath" === e && o && U.emit(G, {
 				key: "deathEvaded",
 				value: 1,
 				isLifetimeOnly: !0
-			}), "onUse" === e && t.prng && Ie.emit(me, {
+			}), "onUse" === e && t.prng && U.emit(G, {
 				key: "rngTriggers",
 				value: 1,
 				isLifetimeOnly: !0
@@ -6890,8 +7004,8 @@ var Ne = class {
 				emit: (e) => {
 					t.emit(e);
 				},
-				cancelAction: i,
-				noSkip: r,
+				cancelAction: r,
+				noSkip: i,
 				setNoSkip: s,
 				metadata: t.metadata || n?.metadata || {
 					squares: {},
@@ -6909,138 +7023,138 @@ var Ne = class {
 				isAISimulation: t.isAISimulation ?? n?.isAISimulation ?? !1
 			};
 			if (!t.piece && "onUse" !== e) return !1;
-			if (t.noSkip && (r = !0), t.piece) {
-				const r = v.isSilenced(t.piece), i = (r) => {
-					for (const i of r) {
-						const r = H.get(i);
-						if (r?.hooks?.[e] && (!r.pieceType || r.pieceType === t.piece.type) && (r.hooks[e](d), o)) return !0;
+			if (t.noSkip && (i = !0), t.piece) {
+				const i = B.isSilenced(t.piece), r = (i) => {
+					for (const r of i) {
+						const i = W.get(r);
+						if (i?.hooks?.[e] && (!i.pieceType || i.pieceType === t.piece.type) && (i.hooks[e](d), o)) return !0;
 					}
 					return !1;
 				};
-				if (t.piece.statuses && i(t.piece.statuses.map((e) => e.id))) return !0;
-				if (!r) {
-					if (i(H.getActiveSkillIds(t.piece))) return !0;
-					if (t.piece.equippedItems && i(t.piece.equippedItems.map((e) => e.effectId))) return !0;
+				if (t.piece.statuses && r(t.piece.statuses.map((e) => e.id))) return !0;
+				if (!i) {
+					if (r(W.getActiveSkillIds(t.piece))) return !0;
+					if (t.piece.equippedItems && r(t.piece.equippedItems.map((e) => e.effectId))) return !0;
 				}
 			}
 			if ("onUse" !== e && t.board && t.piece) {
-				const r = fe.getActivePieces(t.board);
-				for (const { piece: i, r: s, c: a } of r) {
-					if (i.uid === t.piece.uid) continue;
-					if (v.isSilenced(i)) continue;
-					const r = {
+				const i = fe.getActivePieces(t.board);
+				for (const { piece: r, r: s, c: a } of i) {
+					if (r.uid === t.piece.uid) continue;
+					if (B.isSilenced(r)) continue;
+					const i = {
 						...d,
-						piece: i,
+						piece: r,
 						ownerPos: {
 							r: s,
 							c: a
 						}
 					}, c = [
-						...i.statuses?.map((e) => e.id) || [],
-						...H.getActiveSkillIds(i),
-						...i.equippedItems?.map((e) => e.effectId) || []
+						...r.statuses?.map((e) => e.id) || [],
+						...W.getActiveSkillIds(r),
+						...r.equippedItems?.map((e) => e.effectId) || []
 					];
 					for (const t of c) {
-						const i = H.get(t);
-						if (i?.hooks?.[e] && i.tags?.includes("GLOBAL") && (i.hooks[e](r), o)) break;
+						const r = W.get(t);
+						if (r?.hooks?.[e] && r.tags?.includes("GLOBAL") && (r.hooks[e](i), o)) break;
 					}
 					if (o) break;
 				}
 			}
-			return t.noSkip = r, o;
+			return t.noSkip = i, o;
 		} finally {
 			this.hookDepth--;
 		}
 	}
-	static handleSquareHook(e, t, o, r, i) {
-		if (!i?.squares) return !1;
-		const s = i.squares[`${t},${o}`];
+	static handleSquareHook(e, t, o, i, r) {
+		if (!r?.squares) return !1;
+		const s = r.squares[`${t},${o}`];
 		if (!s) return !1;
 		let a = !1;
 		const c = {
-			...r,
+			...i,
 			cancelAction: () => {
 				a = !0;
 			}
 		};
 		for (const n of s) {
-			const t = H.get(n.id);
+			const t = W.get(n.id);
 			if (t?.hooks?.[e] && (t.hooks[e](c), a)) break;
 		}
 		return a;
 	}
 }, Pe = class {
 	static register(e) {
-		H.register(e);
+		W.register(e);
 	}
 	static getDefinition(e) {
-		return H.get(e);
+		return W.get(e);
 	}
 	static getRegisteredSkills() {
-		return H.getAllDefinitions();
+		return W.getAllDefinitions();
 	}
 	static getAllSkills(e) {
-		return H.getActiveSkillIds(e);
+		return W.getActiveSkillIds(e);
 	}
 	static hasSkill(e, t) {
-		return H.hasSkill(e, t);
+		return W.hasSkill(e, t);
 	}
-	static getModifiers(e, t, o, r) {
-		return x.getModifiers(e, t, o, r);
+	static getModifiers(e, t, o, i) {
+		return F.getModifiers(e, t, o, i);
 	}
-	static getSquareModifiers(e, t, o, r) {
-		return x.getSquareModifiers(e, t, o, r);
+	static getSquareModifiers(e, t, o, i) {
+		return F.getSquareModifiers(e, t, o, i);
 	}
 	static hasModifier(e, t) {
-		return x.hasModifier(e, t);
+		return F.hasModifier(e, t);
 	}
 	static isProxyKing(e) {
 		return this.hasModifier(e, "proxyKing");
 	}
-	static isSteady(e, t, o, r) {
+	static isSteady(e, t, o, i) {
 		return he.isSteady(e);
 	}
 	static isSilenced(e) {
-		return v.isSilenced(e);
+		return B.isSilenced(e);
 	}
-	static isPieceFunctional(e, t, o, r, i, s, a) {
-		return he.canAct(e, t, o, r, i, s, a);
+	static isPieceFunctional(e, t, o, i, r, s, a) {
+		return he.canAct(e, t, o, i, r, s, a);
 	}
-	static isSuppressed(e, t, o, r) {
+	static isSuppressed(e, t, o, i) {
 		return !1;
 	}
 	static isActionDestructive(e) {
-		return !!e && [...e.learnedSkills || [], ...e.traits || []].some((e) => S.DESTRUCTIVE_SKILLS.includes(e));
+		return !!e && [...e.learnedSkills || [], ...e.traits || []].some((e) => y.DESTRUCTIVE_SKILLS.includes(e));
 	}
-	static applyStatus(e, t, o, r) {
-		v.applyStatus(e, t, o, r);
+	static applyStatus(e, t, o, i) {
+		B.applyStatus(e, t, o, i);
 	}
 	static handleHook(e, t) {
 		return Me.handleHook(e, t);
 	}
-	static handleSquareHook(e, t, o, r, i) {
-		return Me.handleSquareHook(e, t, o, r, i);
+	static handleSquareHook(e, t, o, i, r) {
+		return Me.handleSquareHook(e, t, o, i, r);
 	}
-	static applyModifiers(e, t, o, r, s, a, c) {
-		const n = this.getModifiers(t, o, r, s), d = (t.statuses || []).some((e) => e.id === i.FROZEN || e.id === i.PETRIFIED), p = n.some((e) => e.bypassFrozen && e.bypassFrozen({
+	static applyModifiers(e, t, o, i, s, a, c) {
+		const n = this.getModifiers(t, o, i, s), d = (t.statuses || []).some((e) => e.id === r.FROZEN || e.id === r.PETRIFIED), p = n.some((e) => e.bypassFrozen && e.bypassFrozen({
 			board: o,
 			piece: t,
-			r,
+			r: i,
 			c: s,
 			metadata: a,
 			networkedMap: c
 		}));
 		if (d && !p) return [];
 		let E = [...e];
-		for (const i of n) i.movement && (E = i.movement({
+		for (const r of n) r.movement && (E = r.movement({
 			board: o,
 			piece: t,
-			r,
+			r: i,
 			c: s,
 			metadata: a,
 			networkedMap: c
 		}, E));
-		a && (E = E.filter((e) => !this.getSquareModifiers(o, e.r, e.c, a).some((r) => r.squareBlockMovement && r.squareBlockMovement({
+		a && (E = E.filter((e) => !this.getSquareModifiers(o, e.r, e.c, a).some((i) => i.squareBlockMovement && i.squareBlockMovement({
 			board: o,
 			piece: t,
 			r: e.r,
@@ -7048,58 +7162,58 @@ var Ne = class {
 			metadata: a
 		}))));
 		const l = [], u = /* @__PURE__ */ new Set();
-		for (const i of E) {
-			const e = `${i.r},${i.c}`;
-			u.has(e) || (u.add(e), l.push(i));
+		for (const r of E) {
+			const e = `${r.r},${r.c}`;
+			u.has(e) || (u.add(e), l.push(r));
 		}
 		return l.filter((e) => {
-			const r = o[e.r][e.c];
-			return !r || !r.statuses?.some((e) => e.id === i.PETRIFIED) && (!!r.statuses?.some((e) => e.id === i.FLATTENED) || (r.color === t.color || !he.isHidden(r, t.color, o, e.r, e.c)) && (r.color === t.color ? !(!r.statuses?.some((e) => e.id === i.FLATTENED) || r.stackedPiece) || E.some((t) => t.r === e.r && t.c === e.c) : !he.isInvulnerable(r, t, o, e.r, e.c, a, c)));
+			const i = o[e.r][e.c];
+			return !i || !i.statuses?.some((e) => e.id === r.PETRIFIED) && (!!i.statuses?.some((e) => e.id === r.FLATTENED) || (i.color === t.color || !he.isHidden(i, t.color, o, e.r, e.c)) && (i.color === t.color ? !(!i.statuses?.some((e) => e.id === r.FLATTENED) || i.stackedPiece) || E.some((t) => t.r === e.r && t.c === e.c) : !he.isInvulnerable(i, t, o, e.r, e.c, a, c)));
 		});
 	}
 	static executePriceHooks(e, t) {
 		const o = { value: t };
-		for (const r of e) {
-			for (const e of this.getAllSkills(r)) {
+		for (const i of e) {
+			for (const e of this.getAllSkills(i)) {
 				const t = this.getDefinition(e);
 				t?.hooks?.onPriceCalculate && t.hooks.onPriceCalculate({
-					piece: r,
+					piece: i,
 					priceRef: o
 				});
 			}
-			r.equippedItems?.forEach((e) => {
+			i.equippedItems?.forEach((e) => {
 				const t = this.getDefinition(e.effectId);
 				t?.hooks?.onPriceCalculate && t.hooks.onPriceCalculate({
-					piece: r,
+					piece: i,
 					priceRef: o
 				});
 			});
 		}
 		return Math.max(5, o.value);
 	}
-}, De = class {
-	static isSquarePassageBlocked(e, t, o, r) {
-		if (r) return r.squareBlock.some((o) => null === o.pieceUid && o.r === e && o.c === t);
+}, Le = class {
+	static isSquarePassageBlocked(e, t, o, i) {
+		if (i) return i.squareBlock.some((o) => null === o.pieceUid && o.r === e && o.c === t);
 		if (o?.squares) {
-			const r = `${e},${t}`, i = o.squares[r];
-			if (i) {
-				for (const e of i) if (Pe.getDefinition(e.id)?.modifiers?.squareBlockMovement) return !0;
+			const i = `${e},${t}`, r = o.squares[i];
+			if (r) {
+				for (const e of r) if (Pe.getDefinition(e.id)?.modifiers?.squareBlockMovement) return !0;
 			}
 		}
 		return !1;
 	}
 	static isSquareMud(e, t, o) {
 		if (o?.squares) {
-			const r = `${e},${t}`;
-			return o.squares[r]?.some((e) => "MUD_SWAMP" === e.id) || !1;
+			const i = `${e},${t}`;
+			return o.squares[i]?.some((e) => "MUD_SWAMP" === e.id) || !1;
 		}
 		return !1;
 	}
-	static getPseudoLegalMoves(e, t, o, i, s, a) {
+	static getPseudoLegalMoves(e, t, o, r, s, a) {
 		const c = e[t][o];
 		if (!c) return [];
 		const n = [], { color: d, type: p } = c;
-		if (p === r.PAWN ? this.generatePawnMoves(e, t, o, c, n, i, a) : p === r.KNIGHT ? this.generateKnightMoves(e, t, o, c, n) : p === r.KING ? this.generateKingMoves(e, t, o, c, n) : this.generateSlidingMoves(e, t, o, c, n, i, a), this.applyAbilityEnhancements(e, t, o, c, n, i), i?.screenWrap && [
+		if (p === i.PAWN ? this.generatePawnMoves(e, t, o, c, n, r, a) : p === i.KNIGHT ? this.generateKnightMoves(e, t, o, c, n) : p === i.KING ? this.generateKingMoves(e, t, o, c, n) : this.generateSlidingMoves(e, t, o, c, n, r, a), this.applyAbilityEnhancements(e, t, o, c, n, r), r?.screenWrap && [
 			[-1, -1],
 			[-1, 0],
 			[-1, 1],
@@ -7108,99 +7222,99 @@ var Ne = class {
 			[1, -1],
 			[1, 0],
 			[1, 1]
-		].forEach(([i, s]) => {
-			const a = t + i, d = o + s;
+		].forEach(([r, s]) => {
+			const a = t + r, d = o + s;
 			if (a < 0 || a >= 8 || d < 0 || d >= 8) {
-				const t = (a + 8) % 8, o = (d + 8) % 8, i = e[t][o];
-				(!i || i.color !== c.color && i.type !== r.KING) && (n.some((e) => e.r === t && e.c === o) || n.push({
+				const t = (a + 8) % 8, o = (d + 8) % 8, r = e[t][o];
+				(!r || r.color !== c.color && r.type !== i.KING) && (n.some((e) => e.r === t && e.c === o) || n.push({
 					r: t,
 					c: o
 				}));
 			}
 		}), a) {
-			let r = [...n];
-			for (const n of a.movement) n.pieceUid === c.uid && (r = n.fn({
+			let i = [...n];
+			for (const n of a.movement) n.pieceUid === c.uid && (i = n.fn({
 				board: e,
 				piece: c,
 				r: t,
 				c: o,
-				metadata: i,
+				metadata: r,
 				networkedMap: s
-			}, r));
-			return r;
+			}, i));
+			return i;
 		}
 		{
-			let r = [...n];
-			const a = x.getModifiers(c, e, t, o);
-			for (const n of a) n.movement && (r = n.movement({
+			let i = [...n];
+			const a = F.getModifiers(c, e, t, o);
+			for (const n of a) n.movement && (i = n.movement({
 				board: e,
 				piece: c,
 				r: t,
 				c: o,
-				metadata: i,
+				metadata: r,
 				networkedMap: s
-			}, r));
-			return r;
+			}, i));
+			return i;
 		}
 	}
-	static generatePawnMoves(e, r, i, s, a, c, n) {
-		const d = s.color === t ? -1 : 1, p = r + d;
+	static generatePawnMoves(e, i, r, s, a, c, n) {
+		const d = s.color === t ? -1 : 1, p = i + d;
 		if (p >= 0 && p < 8) {
-			e[p][i] || this.isSquarePassageBlocked(p, i, c, n) || a.push({
+			e[p][r] || this.isSquarePassageBlocked(p, r, c, n) || a.push({
 				r: p,
-				c: i
+				c: r
 			});
-			const r = s.color === t ? o : t;
-			i - 1 >= 0 && e[p][i - 1]?.color === r && !this.isSquarePassageBlocked(p, i - 1, c, n) && a.push({
+			const i = s.color === t ? o : t;
+			r - 1 >= 0 && e[p][r - 1]?.color === i && !this.isSquarePassageBlocked(p, r - 1, c, n) && a.push({
 				r: p,
-				c: i - 1
-			}), i + 1 < 8 && e[p][i + 1]?.color === r && !this.isSquarePassageBlocked(p, i + 1, c, n) && a.push({
+				c: r - 1
+			}), r + 1 < 8 && e[p][r + 1]?.color === i && !this.isSquarePassageBlocked(p, r + 1, c, n) && a.push({
 				r: p,
-				c: i + 1
+				c: r + 1
 			});
 		}
-		if (c?.squares?.[`${r},${i}`]?.some((e) => "SQUARE_RAILWAY" === e.id)) {
-			const t = r + 2 * d;
-			!(t >= 0 && t < 8) || e[r + d][i] || e[t][i] || this.isSquarePassageBlocked(r + d, i, c, n) || this.isSquarePassageBlocked(t, i, c, n) || a.push({
+		if (c?.squares?.[`${i},${r}`]?.some((e) => "SQUARE_RAILWAY" === e.id)) {
+			const t = i + 2 * d;
+			!(t >= 0 && t < 8) || e[i + d][r] || e[t][r] || this.isSquarePassageBlocked(i + d, r, c, n) || this.isSquarePassageBlocked(t, r, c, n) || a.push({
 				r: t,
-				c: i
+				c: r
 			});
 		}
 	}
-	static generateKnightMoves(e, t, o, r, i) {
-		const s = g[t << 3 | o];
+	static generateKnightMoves(e, t, o, i, r) {
+		const s = v[t << 3 | o];
 		for (let a = 0; a < s.length; a++) {
 			const t = s[a], o = t >> 3, c = 7 & t, n = e[o][c];
-			n && n.color === r.color || i.push({
+			n && n.color === i.color || r.push({
 				r: o,
 				c
 			});
 		}
 	}
-	static generateKingMoves(e, t, o, r, i) {
-		const s = b[t << 3 | o];
+	static generateKingMoves(e, t, o, i, r) {
+		const s = x[t << 3 | o];
 		for (let a = 0; a < s.length; a++) {
 			const t = s[a], o = t >> 3, c = 7 & t, n = e[o][c];
-			n && n.color === r.color || i.push({
+			n && n.color === i.color || r.push({
 				r: o,
 				c
 			});
 		}
 	}
-	static generateSlidingMoves(e, t, o, r, i, s, a) {
-		const c = y[r.type], n = F.has(r, "LEAP_OVER");
+	static generateSlidingMoves(e, t, o, i, r, s, a) {
+		const c = S[i.type], n = V.has(i, "LEAP_OVER");
 		for (let d = 0; d < c.length; d++) {
 			let p = t + c[d][0], E = o + c[d][1], l = !1;
 			for (; p >= 0 && p < 8 && E >= 0 && E < 8 && !this.isSquarePassageBlocked(p, E, s, a);) {
 				const t = e[p][E];
 				if (t) {
-					if (t.color !== r.color && (i.push({
+					if (t.color !== i.color && (r.push({
 						r: p,
 						c: E
 					}), !n)) break;
 					if (!n || l) break;
 					l = !0;
-				} else if (i.push({
+				} else if (r.push({
 					r: p,
 					c: E
 				}), this.isSquareMud(p, E, s)) break;
@@ -7208,152 +7322,152 @@ var Ne = class {
 			}
 		}
 	}
-	static applyAbilityEnhancements(e, o, r, i, s, a) {
-		if (F.has(i, "MOVE_SIDE") && F.has(i, "STEP_LIMIT_1") && [
+	static applyAbilityEnhancements(e, o, i, r, s, a) {
+		if (V.has(r, "MOVE_SIDE") && V.has(r, "STEP_LIMIT_1") && [
 			[-1, 0],
 			[1, 0],
 			[0, -1],
 			[0, 1]
-		].forEach(([t, i]) => {
-			const a = o + t, c = r + i;
+		].forEach(([t, r]) => {
+			const a = o + t, c = i + r;
 			a >= 0 && a < 8 && c >= 0 && c < 8 && (e[a][c] || s.push({
 				r: a,
 				c
 			}));
-		}), F.has(i, "MOVE_FWD_CAPTURE")) {
-			const a = o + (i.color === t ? -1 : 1);
+		}), V.has(r, "MOVE_FWD_CAPTURE")) {
+			const a = o + (r.color === t ? -1 : 1);
 			if (a >= 0 && a < 8) {
-				const t = e[a][r];
-				t && t.color !== i.color && (s.some((e) => e.r === a && e.c === r) || s.push({
+				const t = e[a][i];
+				t && t.color !== r.color && (s.some((e) => e.r === a && e.c === i) || s.push({
 					r: a,
-					c: r
+					c: i
 				}));
 			}
 		}
 	}
-	static getValidMoves(e, o, r, i, s) {
-		const a = e[o][r];
+	static getValidMoves(e, o, i, r, s) {
+		const a = e[o][i];
 		if (!a) return [];
-		const c = Y.isNetworked(i || { squares: {} }, a.color, o, r), n = i?.cache ? a.color === t ? i.cache.whiteNetwork : i.cache.blackNetwork : void 0;
-		if (!he.canAct(a, c, e, o, r, i, n)) return [];
-		let d = this.getPseudoLegalMoves(e, o, r, i, n, s);
+		const c = q.isNetworked(r || { squares: {} }, a.color, o, i), n = r?.cache ? a.color === t ? r.cache.whiteNetwork : r.cache.blackNetwork : void 0;
+		if (!he.canAct(a, c, e, o, i, r, n)) return [];
+		let d = this.getPseudoLegalMoves(e, o, i, r, n, s);
 		return s ? (d = d.filter((t) => !s.squareBlock.some((o) => null === o.pieceUid ? o.r === t.r && o.c === t.c : o.fn({
 			board: e,
 			piece: a,
 			r: t.r,
 			c: t.c,
-			metadata: i
+			metadata: r
 		}))), d = d.filter((t) => {
 			const o = e[t.r][t.c];
 			if (!o) return !0;
 			if (o.color !== a.color) {
 				if (he.isHidden(o, a.color, e, t.r, t.c)) return !1;
-				if (s.invulnerable.some((r) => !(r.pieceUid !== o.uid && !Pe.hasSkill(a, "GENERIC_FIREWALL")) && r.fn({
+				if (s.invulnerable.some((i) => !(i.pieceUid !== o.uid && !Pe.hasSkill(a, "GENERIC_FIREWALL")) && i.fn({
 					board: e,
 					piece: o,
 					r: t.r,
 					c: t.c,
-					metadata: i,
+					metadata: r,
 					networkedMap: n
 				}, a))) return !1;
 			}
 			return !0;
-		})) : (i && (d = d.filter((t) => !Ne.globalSquareBlockMods.some((o) => null === o.piece ? o.r === t.r && o.c === t.c : o.fn({
+		})) : (r && (d = d.filter((t) => !Ne.globalSquareBlockMods.some((o) => null === o.piece ? o.r === t.r && o.c === t.c : o.fn({
 			board: e,
 			piece: a,
 			r: t.r,
 			c: t.c,
-			metadata: i
+			metadata: r
 		})))), d = d.filter((t) => {
 			const o = e[t.r][t.c];
 			if (!o) return !0;
 			if (o.color !== a.color) {
 				if (he.isHidden(o, a.color, e, t.r, t.c)) return !1;
-				if (he.isInvulnerable(o, a, e, t.r, t.c, i, n)) return !1;
+				if (he.isInvulnerable(o, a, e, t.r, t.c, r, n)) return !1;
 			}
 			return !0;
 		})), d.map((e) => ({ ...e }));
 	}
 };
-function Ce(e, t, o, r, i, s) {
-	return De.getValidMoves(e, t, o, r, s);
+function De(e, t, o, i, r, s) {
+	return Le.getValidMoves(e, t, o, i, s);
 }
-function Le(e, o, r, i) {
-	const s = function(e, o, r, i) {
-		return r?.cache ? o === t ? r.cache.whiteControl : r.cache.blackControl : Ge(e, o, r, i).control;
-	}(e, o, r, i), a = [];
-	for (let t = 0; t < 8; t++) for (let i = 0; i < 8; i++) {
-		const c = r?.squares?.[`${t},${i}`]?.some((s) => {
+function Ce(e, o, i, r) {
+	const s = function(e, o, i, r) {
+		return i?.cache ? o === t ? i.cache.whiteControl : i.cache.blackControl : Ge(e, o, i, r).control;
+	}(e, o, i, r), a = [];
+	for (let t = 0; t < 8; t++) for (let r = 0; r < 8; r++) {
+		const c = i?.squares?.[`${t},${r}`]?.some((s) => {
 			const a = Pe.getDefinition(s.id), c = a?.modifiers?.squareBlockMovement?.({
 				board: e,
 				piece: null,
 				r: t,
-				c: i,
-				metadata: r
+				c: r,
+				metadata: i
 			}), n = a?.modifiers?.blockDeployment?.({
 				board: e,
 				piece: null,
 				r: t,
-				c: i,
-				metadata: r,
+				c: r,
+				metadata: i,
 				color: o
 			});
 			return c || n;
 		});
-		e[t][i] || !s[t][i] || c || a.push({
+		e[t][r] || !s[t][r] || c || a.push({
 			r: t,
-			c: i
+			c: r
 		});
 	}
 	return a;
 }
-function Ue(e, t, o, r) {
-	if (r?.squares) {
-		const e = `${t},${o}`, i = r.squares[e];
-		if (i) {
-			for (const t of i) if (Pe.getDefinition(t.id)?.modifiers?.squareBlockMovement) return !0;
+function Ue(e, t, o, i) {
+	if (i?.squares) {
+		const e = `${t},${o}`, r = i.squares[e];
+		if (r) {
+			for (const t of r) if (Pe.getDefinition(t.id)?.modifiers?.squareBlockMovement) return !0;
 		}
 	}
 	return !1;
 }
-function Ge(e, i, s, a) {
+function Ge(e, r, s, a) {
 	const c = Array(8).fill(!1).map(() => Array(8).fill(!1)), n = Array(8).fill(!1).map(() => Array(8).fill(!1)), d = Array(8).fill(-1).map(() => Array(8).fill(-1)), p = [], E = [];
 	let l = !1, u = "ALL";
 	for (let t = 0; t < 8; t++) for (let o = 0; o < 8; o++) {
-		const r = e[t][o];
-		if (r && r.color === i) {
-			const i = Pe.getModifiers(r, e, t, o);
-			for (const s of i) s.globalNetworkDirection && "FORWARD" === s.globalNetworkDirection({
+		const i = e[t][o];
+		if (i && i.color === r) {
+			const r = Pe.getModifiers(i, e, t, o);
+			for (const s of r) s.globalNetworkDirection && "FORWARD" === s.globalNetworkDirection({
 				board: e,
-				piece: r,
+				piece: i,
 				r: t,
 				c: o
 			}) && (u = "FORWARD"), s.globalDisableRelay?.({
 				board: e,
-				piece: r,
+				piece: i,
 				r: t,
 				c: o
 			}) && (l = !0);
 		}
 	}
 	let A = !1;
-	if (a?.proxyKing && i === o) {
+	if (a?.proxyKing && r === o) {
 		let t = !1;
 		e.forEach((e) => e.forEach((e) => {
-			e?.type === r.KING && e.color === o && (t = !0);
+			e?.type === i.KING && e.color === o && (t = !0);
 		})), t || (A = !0);
 	}
-	if (A) for (let t = 0; t < 8; t++) for (let r = 0; r < 8; r++) {
-		const i = e[t][r];
-		i && i.color === o && (c[t][r] = !0, d[t][r] = 0, ke(e, t, r, c, s).forEach((e) => n[e.r][e.c] = !0));
+	if (A) for (let t = 0; t < 8; t++) for (let i = 0; i < 8; i++) {
+		const r = e[t][i];
+		r && r.color === o && (c[t][i] = !0, d[t][i] = 0, ke(e, t, i, c, s).forEach((e) => n[e.r][e.c] = !0));
 	}
-	else if (function(e, o, i, s, a, c) {
+	else if (function(e, o, r, s, a, c) {
 		const n = c?.activeMonarchId === N;
 		for (let d = 0; d < 8; d++) for (let c = 0; c < 8; c++) {
 			const p = e[d][c];
 			if (p && p.color === o) {
 				const o = Pe.getModifiers(p, e, d, c);
-				let E = p.type === r.KING || o.some((t) => t.proxyKing?.({
+				let E = p.type === i.KING || o.some((t) => t.proxyKing?.({
 					board: e,
 					piece: p,
 					r: d,
@@ -7368,28 +7482,28 @@ function Ge(e, i, s, a) {
 					const e = p.skills.some((e) => "LEGENDARY" === Pe.getDefinition(e)?.tier) || p.equippedItems?.some((e) => "LEGENDARY" === e.tier);
 					(p.level >= 3 || e) && (E = !0);
 				}
-				E && (i[d][c] = !0, s[d][c] = 0, a.push({
+				E && (r[d][c] = !0, s[d][c] = 0, a.push({
 					r: d,
 					c
 				}));
 			}
 		}
-	}(e, i, c, d, E, s), !s?.globalJamming || s.globalJamming <= 0) (function(e, o, r, i, s, a, c, n, d, p, E) {
+	}(e, r, c, d, E, s), !s?.globalJamming || s.globalJamming <= 0) (function(e, o, i, r, s, a, c, n, d, p, E) {
 		let l = 0;
 		for (; l < c.length;) {
-			const { r: p, c: u } = c[l++], A = e[p][u], I = s[p][u], m = ke(e, p, u, r, E);
+			const { r: p, c: u } = c[l++], A = e[p][u], m = s[p][u], I = ke(e, p, u, i, E);
 			Pe.getModifiers(A, e, p, u).forEach((t) => {
-				t.networkRange && m.push(...t.networkRange({
+				t.networkRange && I.push(...t.networkRange({
 					board: e,
 					piece: A,
 					r: p,
 					c: u
 				}));
 			});
-			for (const E of m) {
+			for (const E of I) {
 				if ("FORWARD" === d && !(o === t ? E.r <= p : E.r >= p)) continue;
 				const l = e[E.r][E.c];
-				i[E.r][E.c] = !0, l && l.color === o && !r[E.r][E.c] && (r[E.r][E.c] = !0, s[E.r][E.c] = I + 1, n || (c.push(E), a.push({
+				r[E.r][E.c] = !0, l && l.color === o && !i[E.r][E.c] && (i[E.r][E.c] = !0, s[E.r][E.c] = m + 1, n || (c.push(E), a.push({
 					from: {
 						r: p,
 						c: u
@@ -7398,42 +7512,42 @@ function Ge(e, i, s, a) {
 				})));
 			}
 		}
-	})(e, i, c, n, d, p, E, l, u, 0, s);
+	})(e, r, c, n, d, p, E, l, u, 0, s);
 	else for (let t = 0; t < 8; t++) for (let o = 0; o < 8; o++) {
 		const a = e[t][o];
-		a && a.color === i && (a.type === r.KING || Pe.hasModifier(a, "networkSource")) && ke(e, t, o, c, s).forEach((e) => n[e.r][e.c] = !0);
+		a && a.color === r && (a.type === i.KING || Pe.hasModifier(a, "networkSource")) && ke(e, t, o, c, s).forEach((e) => n[e.r][e.c] = !0);
 	}
-	return function(e, t, o, i) {
+	return function(e, t, o, r) {
 		const s = /* @__PURE__ */ new Set(), a = {
-			[r.PAWN]: [],
-			[r.KNIGHT]: [],
-			[r.BISHOP]: [],
-			[r.ROOK]: [],
-			[r.QUEEN]: [],
-			[r.KING]: []
+			[i.PAWN]: [],
+			[i.KNIGHT]: [],
+			[i.BISHOP]: [],
+			[i.ROOK]: [],
+			[i.QUEEN]: [],
+			[i.KING]: []
 		};
 		let c = !1;
-		for (let r = 0; r < 8; r++) for (let n = 0; n < 8; n++) {
-			const d = e[r][n];
+		for (let i = 0; i < 8; i++) for (let n = 0; n < 8; n++) {
+			const d = e[i][n];
 			if (d && d.color === t) {
-				if (Pe.getModifiers(d, e, r, n).some((t) => t.alwaysNetworked?.({
+				if (Pe.getModifiers(d, e, i, n).some((t) => t.alwaysNetworked?.({
 					board: e,
 					piece: d,
-					r,
+					r: i,
 					c: n
-				})) && (o[r][n] = !0, -1 === i[r][n] && (i[r][n] = 0)), a[d.type] && a[d.type].push({
-					r,
+				})) && (o[i][n] = !0, -1 === r[i][n] && (r[i][n] = 0)), a[d.type] && a[d.type].push({
+					r: i,
 					c: n
-				}), o[r][n]) {
+				}), o[i][n]) {
 					const e = Pe.getAllSkills(d);
 					(e.includes("PAWN_SWARM") || e.includes("GENERIC_HIVE_KERNEL")) && s.add(d.type);
 				}
 				d.equippedItems?.some((e) => "EQ_SWARM_INTELLIGENCE" === e.effectId) && (c = !0);
 			}
 		}
-		c && a[r.PAWN].forEach((s) => {
+		c && a[i.PAWN].forEach((s) => {
 			let a = !1;
-			for (const [o, i] of [
+			for (const [o, r] of [
 				[-1, -1],
 				[-1, 0],
 				[-1, 1],
@@ -7443,23 +7557,23 @@ function Ge(e, i, s, a) {
 				[-1, 1],
 				[-1, 1]
 			]) {
-				const c = s.r + o, n = s.c + i;
+				const c = s.r + o, n = s.c + r;
 				if (Ke(c, n)) {
 					const o = e[c][n];
-					if (o && o.color === t && o.type === r.PAWN) {
+					if (o && o.color === t && o.type === i.PAWN) {
 						a = !0;
 						break;
 					}
 				}
 			}
-			a && !o[s.r][s.c] && (o[s.r][s.c] = !0, i[s.r][s.c] = 0);
+			a && !o[s.r][s.c] && (o[s.r][s.c] = !0, r[s.r][s.c] = 0);
 		});
 		s.forEach((e) => {
 			a[e].forEach((e) => {
-				o[e.r][e.c] || (o[e.r][e.c] = !0, i[e.r][e.c] = 0);
+				o[e.r][e.c] || (o[e.r][e.c] = !0, r[e.r][e.c] = 0);
 			});
 		});
-	}(e, i, c, d), {
+	}(e, r, c, d), {
 		networked: c,
 		control: n,
 		connections: p,
@@ -7469,18 +7583,18 @@ function Ge(e, i, s, a) {
 function ke(e, o, s, a, c) {
 	const n = e[o][s];
 	if (!n) return [];
-	if (n.type !== r.KING && n.statuses?.some((e) => e.id === i.FROZEN || e.id === i.PETRIFIED)) return [];
+	if (n.type !== i.KING && n.statuses?.some((e) => e.id === r.FROZEN || e.id === r.PETRIFIED)) return [];
 	const d = [], p = n.type, E = n.color;
-	if (p === r.KING || p === r.KNIGHT) {
-		const e = y[p];
+	if (p === i.KING || p === i.KNIGHT) {
+		const e = S[p];
 		for (let t = 0; t < e.length; t++) {
-			const r = o + e[t][0], i = s + e[t][1];
-			r >= 0 && r < 8 && i >= 0 && i < 8 && d.push({
-				r,
-				c: i
+			const i = o + e[t][0], r = s + e[t][1];
+			i >= 0 && i < 8 && r >= 0 && r < 8 && d.push({
+				r: i,
+				c: r
 			});
 		}
-	} else if (p === r.PAWN) {
+	} else if (p === i.PAWN) {
 		const e = E === t ? -1 : 1;
 		o + e >= 0 && o + e < 8 && s - 1 >= 0 && d.push({
 			r: o + e,
@@ -7490,13 +7604,13 @@ function ke(e, o, s, a, c) {
 			c: s + 1
 		});
 	} else {
-		const t = y[p];
-		for (let r = 0; r < t.length; r++) {
-			let i = o + t[r][0], a = s + t[r][1];
-			for (; i >= 0 && i < 8 && a >= 0 && a < 8 && !Ue(0, i, a, c) && (d.push({
-				r: i,
+		const t = S[p];
+		for (let i = 0; i < t.length; i++) {
+			let r = o + t[i][0], a = s + t[i][1];
+			for (; r >= 0 && r < 8 && a >= 0 && a < 8 && !Ue(0, r, a, c) && (d.push({
+				r,
 				c: a
-			}), !e[i][a]);) i += t[r][0], a += t[r][1];
+			}), !e[r][a]);) r += t[i][0], a += t[i][1];
 		}
 	}
 	const l = Pe.getModifiers(n, e, o, s);
@@ -7519,9 +7633,9 @@ function ke(e, o, s, a, c) {
 		[1, 0],
 		[1, 1]
 	].forEach(([e, t]) => {
-		const r = o + e, i = s + t;
-		if (r < 0 || r >= 8 || i < 0 || i >= 8) {
-			const e = (r + 8) % 8, t = (i + 8) % 8;
+		const i = o + e, r = s + t;
+		if (i < 0 || i >= 8 || r < 0 || r >= 8) {
+			const e = (i + 8) % 8, t = (r + 8) % 8;
 			u.some((o) => o.r === e && o.c === t) || u.push({
 				r: e,
 				c: t
@@ -7540,7 +7654,7 @@ const ge = [
 		description: "主动：可以与周围 1 格内的任意一名非王友军互换位置。",
 		activeSpec: {
 			targeting: "target",
-			getAlternatives: (e, t, o, i) => {
+			getAlternatives: (e, t, o, r) => {
 				const s = [];
 				for (const [a, c] of [
 					[-1, 0],
@@ -7555,7 +7669,7 @@ const ge = [
 					const n = t + a, d = o + c;
 					if (n >= 0 && n < 8 && d >= 0 && d < 8) {
 						const t = e[n][d];
-						t && t.color === i.color && t.type !== r.KING && s.push({
+						t && t.color === r.color && t.type !== i.KING && s.push({
 							pos: {
 								r: n,
 								c: d
@@ -7569,24 +7683,24 @@ const ge = [
 				}
 				return s;
 			},
-			getAoE: (e, t, o, r, i) => i ? [{
-				r: i.r,
-				c: i.c
+			getAoE: (e, t, o, i, r) => r ? [{
+				r: r.r,
+				c: r.c
 			}] : [],
-			execute: (e, t, o, r, i, s) => {
-				i && (s({
+			execute: (e, t, o, i, r, s) => {
+				r && (s({
 					type: "SWAP_PIECES",
 					posA: {
 						r: t,
 						c: o
 					},
-					posB: i
+					posB: r
 				}), s({
 					type: "SHOW_TEXT",
 					text: "Algorithm Swap",
 					textKey: "LOG_ALGORITHM_SWAP",
 					style: "system",
-					pos: i
+					pos: r
 				}));
 			}
 		}
@@ -7596,9 +7710,9 @@ const ge = [
 		name: "应急电池",
 		tier: "RARE",
 		description: "当该棋子断开网络连接时，它不会立即冻结，而是可以继续自由行动 1 个回合。",
-		hooks: { onTurnStart: ({ board: e, piece: t, r: o, c: r, emit: s, metadata: a }) => {
+		hooks: { onTurnStart: ({ board: e, piece: t, r: o, c: i, emit: s, metadata: a }) => {
 			const { networked: c } = Ge(e, t.color, a);
-			if (c[o][r]) s({
+			if (c[o][i]) s({
 				type: "UPDATE_ROSTER_PIECE",
 				pieceUid: t.uid,
 				updates: { metadata: {
@@ -7619,9 +7733,9 @@ const ge = [
 					type: "ADD_STATUS",
 					pos: {
 						r: o,
-						c: r
+						c: i
 					},
-					statusId: i.BACKUP_BUFFER_ACTIVE,
+					statusId: r.BACKUP_BUFFER_ACTIVE,
 					duration: 2
 				}), s({
 					type: "SHOW_TEXT",
@@ -7674,7 +7788,7 @@ const ge = [
 		name: "干扰丝",
 		tier: "RARE",
 		description: "被攻击死亡时， 50% 概率触发“闪避”，原地消失并随机出现在相邻空格。",
-		hooks: { onDeath: ({ board: e, r: t, c: o, piece: r, cancelAction: i, emit: s, prng: a }) => {
+		hooks: { onDeath: ({ board: e, r: t, c: o, piece: i, cancelAction: r, emit: s, prng: a }) => {
 			if (a && a.next() < .5) {
 				const c = [
 					[-1, 0],
@@ -7689,7 +7803,7 @@ const ge = [
 				for (const [a, n] of c) {
 					const c = t + a, d = o + n;
 					if (c >= 0 && c < 8 && d >= 0 && d < 8 && !e[c][d]) {
-						i?.(), s({
+						r?.(), s({
 							type: "ANIMATE",
 							name: "LENS_DISAPPEAR",
 							pos: {
@@ -7724,7 +7838,7 @@ const ge = [
 								c: d
 							},
 							piece: {
-								...r,
+								...i,
 								statuses: []
 							}
 						}), s({
@@ -7752,15 +7866,15 @@ const ge = [
 			targeting: "self",
 			usesKey: "recallUses",
 			maxUses: 1,
-			execute: (e, t, o, r, i, s) => {
-				(r.metadata?.recallUses || 0) >= 1 || (s({
+			execute: (e, t, o, i, r, s) => {
+				(i.metadata?.recallUses || 0) >= 1 || (s({
 					type: "MODIFY_RESERVE",
-					color: r.color,
-					pieceType: r.type,
+					color: i.color,
+					pieceType: i.type,
 					amount: 1
 				}), s({
 					type: "UNDEPLOY_PIECE",
-					uid: r.uid
+					uid: i.uid
 				}), s({
 					type: "REMOVE_PIECE",
 					pos: {
@@ -7769,10 +7883,10 @@ const ge = [
 					}
 				}), s({
 					type: "UPDATE_ROSTER_PIECE",
-					pieceUid: r.uid,
+					pieceUid: i.uid,
 					updates: { metadata: {
-						...r.metadata,
-						recallUses: (r.metadata?.recallUses || 0) + 1
+						...i.metadata,
+						recallUses: (i.metadata?.recallUses || 0) + 1
 					} }
 				}), s({
 					type: "SHOW_TEXT",
@@ -7801,7 +7915,7 @@ const ge = [
 		description: "被动：被该棋子攻击范围覆盖的敌方棋子，会被施加“沉默”（无法触发任何非基础技能）。",
 		hooks: { onTurnStart: ({ board: e, r: o, c: s, piece: a, emit: c }) => {
 			const n = a.type, d = a.color, p = [];
-			if (n === r.PAWN) {
+			if (n === i.PAWN) {
 				const e = d === t ? -1 : 1;
 				o + e >= 0 && o + e < 8 && (s > 0 && p.push({
 					r: o + e,
@@ -7810,31 +7924,31 @@ const ge = [
 					r: o + e,
 					c: s + 1
 				}));
-			} else if (n === r.KNIGHT || n === r.KING) {
-				const e = y[n];
-				for (const [t, r] of e) {
-					const e = o + t, i = s + r;
-					e >= 0 && e < 8 && i >= 0 && i < 8 && p.push({
+			} else if (n === i.KNIGHT || n === i.KING) {
+				const e = S[n];
+				for (const [t, i] of e) {
+					const e = o + t, r = s + i;
+					e >= 0 && e < 8 && r >= 0 && r < 8 && p.push({
 						r: e,
-						c: i
+						c: r
 					});
 				}
 			} else {
-				const t = y[n];
-				for (const [r, i] of t) {
-					let t = o + r, a = s + i;
+				const t = S[n];
+				for (const [i, r] of t) {
+					let t = o + i, a = s + r;
 					for (; t >= 0 && t < 8 && a >= 0 && a < 8 && (p.push({
 						r: t,
 						c: a
-					}), !e[t][a]);) t += r, a += i;
+					}), !e[t][a]);) t += i, a += r;
 				}
 			}
 			p.forEach((t) => {
 				const o = e[t.r][t.c];
-				o && o.color !== a.color && o.type !== r.KING && (c({
+				o && o.color !== a.color && o.type !== i.KING && (c({
 					type: "ADD_STATUS",
 					pos: t,
-					statusId: i.SILENCED,
+					statusId: r.SILENCED,
 					duration: 2
 				}), c({
 					type: "ANIMATE",
@@ -7851,7 +7965,7 @@ const ge = [
 		tier: "EPIC",
 		description: "当该棋子相邻有友军时，能复制友军的基础移动逻辑（仅限基础位移，冷却 3 回合）。",
 		modifiers: { movement: (e, o) => {
-			const { board: i, r: s, c: a, piece: c, isControlSquares: n } = e;
+			const { board: r, r: s, c: a, piece: c, isControlSquares: n } = e;
 			if ((c.metadata?.mirrorCd || 0) > 0) return o;
 			let d = null;
 			for (const [t, p] of [
@@ -7866,44 +7980,44 @@ const ge = [
 			]) {
 				const e = s + t, o = a + p;
 				if (e >= 0 && e < 8 && o >= 0 && o < 8) {
-					const t = i[e][o];
-					if (t && t.color === c.color && t.type !== r.KING && t.type !== c.type) {
+					const t = r[e][o];
+					if (t && t.color === c.color && t.type !== i.KING && t.type !== c.type) {
 						d = t.type;
 						break;
 					}
 				}
 			}
 			if (d) {
-				const e = (e, t, r) => {
+				const e = (e, t, i) => {
 					let d = s + e, p = a + t;
 					for (; d >= 0 && d < 8 && p >= 0 && p < 8;) {
-						const s = i[d][p];
+						const s = r[d][p];
 						if (s && s.color === c.color && !n || o.push({
 							r: d,
 							c: p
-						}), s || !r) break;
+						}), s || !i) break;
 						d += e, p += t;
 					}
 				};
-				if (d === r.PAWN) {
+				if (d === i.PAWN) {
 					const e = c.color === t ? -1 : 1;
-					s + e >= 0 && s + e < 8 && (i[s + e][a] || o.push({
+					s + e >= 0 && s + e < 8 && (r[s + e][a] || o.push({
 						r: s + e,
 						c: a
-					}), a > 0 && i[s + e][a - 1] && i[s + e][a - 1].color !== c.color && o.push({
+					}), a > 0 && r[s + e][a - 1] && r[s + e][a - 1].color !== c.color && o.push({
 						r: s + e,
 						c: a - 1
-					}), a < 7 && i[s + e][a + 1] && i[s + e][a + 1].color !== c.color && o.push({
+					}), a < 7 && r[s + e][a + 1] && r[s + e][a + 1].color !== c.color && o.push({
 						r: s + e,
 						c: a + 1
 					}));
-				} else d === r.KNIGHT ? y.N.forEach(([t, o]) => e(t, o, !1)) : (d !== r.BISHOP && d !== r.QUEEN || y.B.forEach(([t, o]) => e(t, o, !0)), d !== r.ROOK && d !== r.QUEEN || y.R.forEach(([t, o]) => e(t, o, !0)));
+				} else d === i.KNIGHT ? S.N.forEach(([t, o]) => e(t, o, !1)) : (d !== i.BISHOP && d !== i.QUEEN || S.B.forEach(([t, o]) => e(t, o, !0)), d !== i.ROOK && d !== i.QUEEN || S.R.forEach(([t, o]) => e(t, o, !0)));
 			}
 			return o;
 		} },
 		hooks: {
-			onAfterMove: ({ piece: e, r: t, c: o, from: r, emit: i }) => {
-				!r || r.r === t && r.c === o || e.metadata?.mirrorCd && 0 !== e.metadata.mirrorCd || i({
+			onAfterMove: ({ piece: e, r: t, c: o, from: i, emit: r }) => {
+				!i || i.r === t && i.c === o || e.metadata?.mirrorCd && 0 !== e.metadata.mirrorCd || r({
 					type: "UPDATE_ROSTER_PIECE",
 					pieceUid: e.uid,
 					updates: { metadata: {
@@ -7930,10 +8044,10 @@ const ge = [
 		tier: "EPIC",
 		description: "当该棋子被吃掉时，附身在攻击者身上，使攻击者变为“被寄生”状态（极易掉线）。",
 		hooks: { onDeath: ({ attacker: e, emit: t }) => {
-			e && e.type !== r.KING && t({
+			e && e.type !== i.KING && t({
 				type: "ADD_STATUS",
 				targetId: e.id,
-				statusId: i.PARASITIZED,
+				statusId: r.PARASITIZED,
 				duration: 99
 			});
 		} }
@@ -7953,14 +8067,14 @@ const ge = [
 			isSteady: () => !0,
 			movement: (e, t) => t.filter((t) => Math.max(Math.abs(t.r - e.r), Math.abs(t.c - e.c)) <= 3)
 		},
-		hooks: { onTurnStart: ({ piece: e, r: t, c: o, emit: r }) => {
+		hooks: { onTurnStart: ({ piece: e, r: t, c: o, emit: i }) => {
 			const s = [
-				i.SILENCED,
-				i.BETRAYED,
-				i.SKILL_LOCKED
+				r.SILENCED,
+				r.BETRAYED,
+				r.SKILL_LOCKED
 			];
 			(e.statuses || []).forEach((e) => {
-				s.includes(e.id) && r({
+				s.includes(e.id) && i({
 					type: "REMOVE_STATUS",
 					pos: {
 						r: t,
@@ -7976,7 +8090,7 @@ const ge = [
 		name: "威慑",
 		tier: "COMMON",
 		description: "被动：敌方的“兵”无法吃掉该棋子。",
-		modifiers: { invulnerable: ({ r: e, c: t }, o) => o.type === r.PAWN }
+		modifiers: { invulnerable: ({ r: e, c: t }, o) => o.type === i.PAWN }
 	},
 	{
 		id: "GENERIC_LOGIC_BOMB",
@@ -7985,9 +8099,9 @@ const ge = [
 		description: "被动：当该棋子被吃掉时，清除击杀者身上的所有正面状态（护盾、过载），并使其永久“沉默”。",
 		hooks: { onDeath: ({ attacker: e, attackerPos: t, emit: o }) => {
 			if (e && t) {
-				const r = [i.SHIELDED, i.OVERLOADED];
+				const i = [r.SHIELDED, r.OVERLOADED];
 				(e.statuses || []).forEach((e) => {
-					r.includes(e.id) && o({
+					i.includes(e.id) && o({
 						type: "REMOVE_STATUS",
 						pos: t,
 						statusId: e.id
@@ -7995,7 +8109,7 @@ const ge = [
 				}), o({
 					type: "ADD_STATUS",
 					pos: t,
-					statusId: i.SILENCED,
+					statusId: r.SILENCED,
 					duration: 99
 				}), o({
 					type: "SHOW_TEXT",
@@ -8012,12 +8126,12 @@ const ge = [
 		name: "数据挖掘",
 		tier: "RARE",
 		description: "被动：吃掉带有技能的敌方棋子时，额外获得 10 金币。",
-		hooks: { onKill: ({ victim: e, piece: o, emit: r }) => {
-			e && o.color === t && e.skills && e.skills.length > 0 && (r({
+		hooks: { onKill: ({ victim: e, piece: o, emit: i }) => {
+			e && o.color === t && e.skills && e.skills.length > 0 && (i({
 				type: "MODIFY_GOLD",
 				amount: 10,
 				reason: "DATA_MINING"
-			}), r({
+			}), i({
 				type: "SHOW_TEXT",
 				text: "Data Mining +10",
 				textKey: "LOG_DATA_MINING",
@@ -8032,12 +8146,12 @@ const ge = [
 		tier: "EPIC",
 		description: "被动：吃掉敌方棋子后，下回合该棋子的移动范围会叠加“被击杀者”的原始移动逻辑。",
 		hooks: {
-			onKill: ({ piece: e, victim: t, r: o, c: r, emit: i }) => {
-				t && i({
+			onKill: ({ piece: e, victim: t, r: o, c: i, emit: r }) => {
+				t && r({
 					type: "SPAWN",
 					pos: {
 						r: o,
-						c: r
+						c: i
 					},
 					piece: {
 						...e,
@@ -8049,10 +8163,10 @@ const ge = [
 					}
 				});
 			},
-			onTurnStart: ({ piece: e, r: t, c: o, emit: r }) => {
+			onTurnStart: ({ piece: e, r: t, c: o, emit: i }) => {
 				if (e.metadata?.recursiveTimer > 0) {
-					const i = e.metadata.recursiveTimer - 1;
-					r({
+					const r = e.metadata.recursiveTimer - 1;
+					i({
 						type: "SPAWN",
 						pos: {
 							r: t,
@@ -8062,8 +8176,8 @@ const ge = [
 							...e,
 							metadata: {
 								...e.metadata,
-								recursiveTimer: i,
-								recursiveType: 0 === i ? null : e.metadata.recursiveType
+								recursiveTimer: r,
+								recursiveType: 0 === r ? null : e.metadata.recursiveType
 							}
 						}
 					});
@@ -8071,32 +8185,32 @@ const ge = [
 			}
 		},
 		modifiers: { movement: (e, o) => {
-			const { board: i, piece: s, r: a, c, isControlSquares: n } = e, d = s.metadata?.recursiveType;
+			const { board: r, piece: s, r: a, c, isControlSquares: n } = e, d = s.metadata?.recursiveType;
 			if (!d) return o;
 			const p = [], E = s.color, l = (e, t, o) => {
-				let r = a + e, s = c + t;
-				for (; r >= 0 && r < 8 && s >= 0 && s < 8;) {
-					const a = i[r][s];
+				let i = a + e, s = c + t;
+				for (; i >= 0 && i < 8 && s >= 0 && s < 8;) {
+					const a = r[i][s];
 					if (a && a.color === E && !n || p.push({
-						r,
+						r: i,
 						c: s
 					}), a || !o) break;
-					r += e, s += t;
+					i += e, s += t;
 				}
 			};
-			if (d === r.PAWN) {
+			if (d === i.PAWN) {
 				const e = E === t ? -1 : 1;
-				a + e >= 0 && a + e < 8 && (i[a + e][c] || p.push({
+				a + e >= 0 && a + e < 8 && (r[a + e][c] || p.push({
 					r: a + e,
 					c
-				}), c > 0 && i[a + e][c - 1] && i[a + e][c - 1].color !== E && p.push({
+				}), c > 0 && r[a + e][c - 1] && r[a + e][c - 1].color !== E && p.push({
 					r: a + e,
 					c: c - 1
-				}), c < 7 && i[a + e][c + 1] && i[a + e][c + 1].color !== E && p.push({
+				}), c < 7 && r[a + e][c + 1] && r[a + e][c + 1].color !== E && p.push({
 					r: a + e,
 					c: c + 1
 				}));
-			} else d === r.KNIGHT ? y.N.forEach(([e, t]) => l(e, t, !1)) : d === r.BISHOP ? y.B.forEach(([e, t]) => l(e, t, !0)) : d === r.ROOK ? y.R.forEach(([e, t]) => l(e, t, !0)) : d !== r.QUEEN && d !== r.KING || y.Q.forEach(([e, t]) => l(e, t, d === r.QUEEN));
+			} else d === i.KNIGHT ? S.N.forEach(([e, t]) => l(e, t, !1)) : d === i.BISHOP ? S.B.forEach(([e, t]) => l(e, t, !0)) : d === i.ROOK ? S.R.forEach(([e, t]) => l(e, t, !0)) : d !== i.QUEEN && d !== i.KING || S.Q.forEach(([e, t]) => l(e, t, d === i.QUEEN));
 			return [...o, ...p];
 		} }
 	},
@@ -8105,7 +8219,7 @@ const ge = [
 		name: "废料回收",
 		tier: "COMMON",
 		description: "被动：每当该棋子移动而不吃子时获得 1 金币（每关上限 10 金币）。",
-		hooks: { onAfterMove: ({ piece: e, victim: o, r, c: i, emit: s }) => {
+		hooks: { onAfterMove: ({ piece: e, victim: o, r: i, c: r, emit: s }) => {
 			if (e.color === t && !o) {
 				const t = e.metadata?.scrapGold || 0;
 				t < 10 && (s({
@@ -8115,8 +8229,8 @@ const ge = [
 				}), s({
 					type: "SPAWN",
 					pos: {
-						r,
-						c: i
+						r: i,
+						c: r
 					},
 					piece: {
 						...e,
@@ -8136,8 +8250,8 @@ const ge = [
 		isInternal: !0,
 		tier: "COMMON",
 		description: "地块上的棋子免疫1格以外的远程攻击。",
-		modifiers: { invulnerable: ({ board: e, r: t, c: o }, r) => {
-			const i = C.findPieces(e, (e) => e.id === r.id)[0], s = i ? i.r : r._lastPos?.r ?? -1, a = i ? i.c : r._lastPos?.c ?? -1;
+		modifiers: { invulnerable: ({ board: e, r: t, c: o }, i) => {
+			const r = D.findPieces(e, (e) => e.id === i.id)[0], s = r ? r.r : i._lastPos?.r ?? -1, a = r ? r.c : i._lastPos?.c ?? -1;
 			return -1 !== s && -1 !== a && Math.max(Math.abs(s - t), Math.abs(a - o)) > 1;
 		} }
 	},
@@ -8166,16 +8280,16 @@ const ge = [
 			networkRange: ({ piece: e, r: t, c: o }) => {
 				if (e.metadata?.isPetrified) {
 					const e = [];
-					for (let r = -1; r <= 1; r++) for (let i = -1; i <= 1; i++) e.push({
-						r: t + r,
-						c: o + i
+					for (let i = -1; i <= 1; i++) for (let r = -1; r <= 1; r++) e.push({
+						r: t + i,
+						c: o + r
 					});
 					return e;
 				}
 				return [];
 			}
 		},
-		hooks: { onDeath: ({ piece: e, emit: t, cancelAction: o, r, c: s }) => {
+		hooks: { onDeath: ({ piece: e, emit: t, cancelAction: o, r: i, c: s }) => {
 			e.metadata?.isPetrified || (o?.(), t({
 				type: "UPDATE_ROSTER_PIECE",
 				pieceUid: e.uid,
@@ -8185,10 +8299,10 @@ const ge = [
 						isPetrified: !0
 					},
 					statuses: [{
-						id: i.PETRIFIED,
+						id: r.PETRIFIED,
 						duration: 99
 					}, {
-						id: i.FLATTENED,
+						id: r.FLATTENED,
 						duration: 99
 					}]
 				}
@@ -8198,7 +8312,7 @@ const ge = [
 				textKey: "LOG_SWALLOW_GOODBYE",
 				style: "system",
 				pos: {
-					r,
+					r: i,
 					c: s
 				}
 			}));
@@ -8219,16 +8333,16 @@ const ge = [
 		tier: "COMMON",
 		description: "获得十字方向 1 格的移动能力。",
 		modifiers: { movement: (e, t) => {
-			const { r: o, c: r, board: i, piece: s, isControlSquares: a } = e;
+			const { r: o, c: i, board: r, piece: s, isControlSquares: a } = e;
 			return [
 				[-1, 0],
 				[1, 0],
 				[0, -1],
 				[0, 1]
 			].forEach(([e, c]) => {
-				const n = o + e, d = r + c;
+				const n = o + e, d = i + c;
 				if (n >= 0 && n < 8 && d >= 0 && d < 8) {
-					const e = i[n][d];
+					const e = r[n][d];
 					e && e.color === s.color && !a || t.push({
 						r: n,
 						c: d
@@ -8244,7 +8358,7 @@ const ge = [
 		tier: "COMMON",
 		description: "获得全向 1 格移动能力。",
 		modifiers: { movement: (e, t) => {
-			const { r: o, c: r, board: i, piece: s, isControlSquares: a } = e;
+			const { r: o, c: i, board: r, piece: s, isControlSquares: a } = e;
 			for (const [c, n] of [
 				[-1, 0],
 				[1, 0],
@@ -8255,9 +8369,9 @@ const ge = [
 				[1, -1],
 				[1, 1]
 			]) {
-				const e = o + c, d = r + n;
+				const e = o + c, d = i + n;
 				if (e >= 0 && e < 8 && d >= 0 && d < 8 && !t.some((t) => t.r === e && t.c === d)) {
-					const o = i[e][d];
+					const o = r[e][d];
 					o && o.color === s.color && !a || t.push({
 						r: e,
 						c: d
@@ -8306,7 +8420,7 @@ const ge = [
 		tier: "COMMON",
 		description: "获得两格全向滑行移动。",
 		modifiers: { movement: (e, t) => {
-			const { r: o, c: r, board: i, piece: s, isControlSquares: a } = e, c = [
+			const { r: o, c: i, board: r, piece: s, isControlSquares: a } = e, c = [
 				[-1, 0],
 				[1, 0],
 				[0, -1],
@@ -8317,10 +8431,10 @@ const ge = [
 				[1, 1]
 			], n = [];
 			for (const [d, p] of c) for (let e = 1; e <= 2; e++) {
-				const t = o + d * e, c = r + p * e;
+				const t = o + d * e, c = i + p * e;
 				if (!(t >= 0 && t < 8 && c >= 0 && c < 8)) break;
 				{
-					const e = i[t][c];
+					const e = r[t][c];
 					if (e) {
 						(e.color !== s.color || a) && n.push({
 							r: t,
@@ -8390,13 +8504,13 @@ const ge = [
 				const d = t + c, p = o + n;
 				if (d >= 0 && d < 8 && p >= 0 && p < 8) {
 					const t = e[d][p];
-					t && t.color !== s.color && t.type !== r.KING && a({
+					t && t.color !== s.color && t.type !== i.KING && a({
 						type: "ADD_STATUS",
 						pos: {
 							r: d,
 							c: p
 						},
-						statusId: i.FROZEN,
+						statusId: r.FROZEN,
 						duration: 2
 					});
 				}
@@ -8417,7 +8531,7 @@ const ge = [
 		tier: "EPIC",
 		description: "获得滑行移动能力。",
 		modifiers: { movement: (e, t) => {
-			const { r: o, c: r, board: i, piece: s, isControlSquares: a } = e;
+			const { r: o, c: i, board: r, piece: s, isControlSquares: a } = e;
 			return [
 				[-1, 0],
 				[1, 0],
@@ -8428,9 +8542,9 @@ const ge = [
 				[1, -1],
 				[1, 1]
 			].forEach(([e, c]) => {
-				let n = o + e, d = r + c;
+				let n = o + e, d = i + c;
 				for (; n >= 0 && n < 8 && d >= 0 && d < 8;) {
-					const o = i[n][d];
+					const o = r[n][d];
 					if (o) {
 						(o.color !== s.color || a) && t.push({
 							r: n,
@@ -8460,14 +8574,14 @@ const ge = [
 		isInternal: !0,
 		tier: "COMMON",
 		description: "每回合有 50% 概率断网/冻结。",
-		hooks: { onTurnStart: ({ r: e, c: t, emit: o, prng: r }) => {
-			r && r.next() < .5 && (o({
+		hooks: { onTurnStart: ({ r: e, c: t, emit: o, prng: i }) => {
+			i && i.next() < .5 && (o({
 				type: "ADD_STATUS",
 				pos: {
 					r: e,
 					c: t
 				},
-				statusId: i.FROZEN,
+				statusId: r.FROZEN,
 				duration: 2
 			}), o({
 				type: "SHOW_TEXT",
@@ -8483,9 +8597,9 @@ const ge = [
 		isInternal: !0,
 		tier: "COMMON",
 		description: "每回合蔓延。若宿主处于联网状态，吞噬部分金币。",
-		hooks: { onTurnStart: ({ board: e, r: o, c: r, piece: s, emit: a, metadata: c }) => {
+		hooks: { onTurnStart: ({ board: e, r: o, c: i, piece: s, emit: a, metadata: c }) => {
 			const { networked: n } = Ge(e, s.color, c);
-			n[o][r] && s.color === t && (a({
+			n[o][i] && s.color === t && (a({
 				type: "MODIFY_GOLD",
 				amount: -1,
 				reason: "INFECTION_PENALTY"
@@ -8497,7 +8611,7 @@ const ge = [
 				style: "danger",
 				pos: {
 					r: o,
-					c: r
+					c: i
 				}
 			}));
 			for (const [t, d] of [
@@ -8510,16 +8624,16 @@ const ge = [
 				[1, -1],
 				[1, 1]
 			]) {
-				const s = o + t, c = r + d;
+				const s = o + t, c = i + d;
 				if (s >= 0 && s < 8 && c >= 0 && c < 8) {
 					const t = e[s][c];
-					t && !t.statuses?.some((e) => e.id === i.PETRIFIED || e.id === i.INFECTED) && a({
+					t && !t.statuses?.some((e) => e.id === r.PETRIFIED || e.id === r.INFECTED) && a({
 						type: "ADD_STATUS",
 						pos: {
 							r: s,
 							c
 						},
-						statusId: i.INFECTED,
+						statusId: r.INFECTED,
 						duration: 3
 					});
 				}
@@ -8577,8 +8691,8 @@ const ge = [
 		tier: "COMMON",
 		description: "免疫来自 1 格以外的远程攻击。",
 		modifiers: { invulnerable: ({ r: e, c: t }, o) => {
-			const r = o._lastPos?.r, i = o._lastPos?.c;
-			return void 0 !== r && void 0 !== i && Math.max(Math.abs(r - e), Math.abs(i - t)) > 1;
+			const i = o._lastPos?.r, r = o._lastPos?.c;
+			return void 0 !== i && void 0 !== r && Math.max(Math.abs(i - e), Math.abs(r - t)) > 1;
 		} }
 	},
 	{
@@ -8595,8 +8709,8 @@ const ge = [
 		isInternal: !0,
 		tier: "COMMON",
 		description: "每移动一格获得金币",
-		hooks: { onAfterMove: ({ from: e, r: t, c: o, emit: r }) => {
-			e && r({
+		hooks: { onAfterMove: ({ from: e, r: t, c: o, emit: i }) => {
+			e && i({
 				type: "MODIFY_GOLD",
 				amount: Math.abs(t - e.r) + Math.abs(o - e.c),
 				reason: "MAGNET"
@@ -8647,7 +8761,7 @@ const ge = [
 		isInternal: !0,
 		tier: "COMMON",
 		description: "抵消一次伤害",
-		hooks: { onDeath: ({ cancelAction: e, emit: t, r: o, c: r }) => {
+		hooks: { onDeath: ({ cancelAction: e, emit: t, r: o, c: i }) => {
 			t({
 				type: "PLAY_SOUND",
 				soundId: "SHIELD"
@@ -8655,9 +8769,9 @@ const ge = [
 				type: "REMOVE_STATUS",
 				pos: {
 					r: o,
-					c: r
+					c: i
 				},
-				statusId: i.SHIELDED
+				statusId: r.SHIELDED
 			}), e?.();
 		} }
 	},
@@ -8667,14 +8781,14 @@ const ge = [
 		isInternal: !0,
 		tier: "COMMON",
 		description: "为地块上的友军提供远程攻击免疫。",
-		modifiers: { invulnerable: ({ board: e, r: t, c: o }, i) => {
+		modifiers: { invulnerable: ({ board: e, r: t, c: o }, r) => {
 			if ([
-				r.QUEEN,
-				r.ROOK,
-				r.BISHOP
-			].includes(i.type)) {
-				const r = C.findPieces(e, (e) => e === i)[0];
-				if (r && Math.max(Math.abs(r.r - t), Math.abs(r.c - o)) > 1) return !0;
+				i.QUEEN,
+				i.ROOK,
+				i.BISHOP
+			].includes(r.type)) {
+				const i = D.findPieces(e, (e) => e === r)[0];
+				if (i && Math.max(Math.abs(i.r - t), Math.abs(i.c - o)) > 1) return !0;
 			}
 			return !1;
 		} }
@@ -8685,22 +8799,22 @@ const ge = [
 		isInternal: !0,
 		tier: "COMMON",
 		description: "在此部署返还金币",
-		hooks: { onDeploy: ({ r: e, c: t, board: o, emit: r }) => {
-			const i = C.findPieces(o, (e) => e.skills.includes("ROOK_SUPPLY_DEPOT"))[0]?.piece;
-			if (i && (i.metadata?.supplyGoldEarned || 0) < 30) {
-				const o = i.metadata?.supplyGoldEarned || 0;
-				r({
+		hooks: { onDeploy: ({ r: e, c: t, board: o, emit: i }) => {
+			const r = D.findPieces(o, (e) => e.skills.includes("ROOK_SUPPLY_DEPOT"))[0]?.piece;
+			if (r && (r.metadata?.supplyGoldEarned || 0) < 30) {
+				const o = r.metadata?.supplyGoldEarned || 0;
+				i({
 					type: "MODIFY_GOLD",
 					amount: 5,
 					reason: "SUPPLY_DEPOT"
-				}), r({
+				}), i({
 					type: "UPDATE_ROSTER_PIECE",
-					pieceUid: i.uid,
+					pieceUid: r.uid,
 					updates: { metadata: {
-						...i.metadata,
+						...r.metadata,
 						supplyGoldEarned: o + 5
 					} }
-				}), r({
+				}), i({
 					type: "SHOW_TEXT",
 					text: "+5G Supply",
 					textKey: "LOG_SUPPLY_DEPOT",
@@ -8719,7 +8833,7 @@ const ge = [
 		isInternal: !0,
 		tier: "LEGENDARY",
 		description: "每隔 5 回合，轰炸棋盘特定区域。",
-		hooks: { onTurnStart: ({ board: e, piece: t, emit: o, prng: i }) => {
+		hooks: { onTurnStart: ({ board: e, piece: t, emit: o, prng: r }) => {
 			const s = t.metadata?.erasureTimer || 1, a = t.metadata?.erasureTarget || {
 				r: 4,
 				c: 4
@@ -8730,12 +8844,12 @@ const ge = [
 					soundId: "HAZARD_WARNING"
 				});
 				for (let e = -1; e <= 1; e++) for (let t = -1; t <= 1; t++) {
-					const r = a.r + e, i = a.c + t;
-					r >= 0 && r < 8 && i >= 0 && i < 8 && o({
+					const i = a.r + e, r = a.c + t;
+					i >= 0 && i < 8 && r >= 0 && r < 8 && o({
 						type: "SET_SQUARE",
 						pos: {
-							r,
-							c: i
+							r: i,
+							c: r
 						},
 						status: {
 							id: "DANGER_ZONE",
@@ -8762,12 +8876,12 @@ const ge = [
 					soundId: "HAZARD_WARNING"
 				});
 				for (let e = -1; e <= 1; e++) for (let t = -1; t <= 1; t++) {
-					const r = a.r + e, i = a.c + t;
-					r >= 0 && r < 8 && i >= 0 && i < 8 && o({
+					const i = a.r + e, r = a.c + t;
+					i >= 0 && i < 8 && r >= 0 && r < 8 && o({
 						type: "SET_SQUARE",
 						pos: {
-							r,
-							c: i
+							r: i,
+							c: r
 						},
 						status: {
 							id: "DANGER_ZONE",
@@ -8797,8 +8911,8 @@ const ge = [
 					name: "SCREEN_SHAKE",
 					duration: 400
 				});
-				for (let t = -1; t <= 1; t++) for (let i = -1; i <= 1; i++) {
-					const s = a.r + t, c = a.c + i;
+				for (let t = -1; t <= 1; t++) for (let r = -1; r <= 1; r++) {
+					const s = a.r + t, c = a.c + r;
 					s >= 0 && s < 8 && c >= 0 && c < 8 && (o({
 						type: "ANIMATE",
 						name: "ION_FIRE",
@@ -8808,7 +8922,7 @@ const ge = [
 						},
 						duration: 500,
 						visualMeta: { delayBefore: 100 * (t + 1) }
-					}), e[s][c] && e[s][c]?.type !== r.KING && o({
+					}), e[s][c] && e[s][c]?.type !== i.KING && o({
 						type: "KILL",
 						pos: {
 							r: s,
@@ -8823,10 +8937,10 @@ const ge = [
 						statusId: "DANGER_ZONE"
 					}));
 				}
-				if (i) {
+				if (r) {
 					const e = {
-						r: Math.floor(6 * i.next()) + 1,
-						c: Math.floor(6 * i.next()) + 1
+						r: Math.floor(6 * r.next()) + 1,
+						c: Math.floor(6 * r.next()) + 1
 					};
 					o({
 						type: "UPDATE_ROSTER_PIECE",
@@ -8885,9 +8999,9 @@ const ge = [
 		modifiers: {
 			networkRange: ({ r: e, c: t }) => {
 				const o = [];
-				for (let r = -2; r <= 2; r++) for (let i = -2; i <= 2; i++) e + r >= 0 && e + r < 8 && t + i >= 0 && t + i < 8 && o.push({
-					r: e + r,
-					c: t + i
+				for (let i = -2; i <= 2; i++) for (let r = -2; r <= 2; r++) e + i >= 0 && e + i < 8 && t + r >= 0 && t + r < 8 && o.push({
+					r: e + i,
+					c: t + r
 				});
 				return o;
 			},
@@ -8898,13 +9012,13 @@ const ge = [
 				const d = t + c, p = o + n;
 				if (d >= 0 && d < 8 && p >= 0 && p < 8) {
 					const t = e[d][p];
-					t && t.color !== s.color && t.type !== r.KING && a({
+					t && t.color !== s.color && t.type !== i.KING && a({
 						type: "ADD_STATUS",
 						pos: {
 							r: d,
 							c: p
 						},
-						statusId: i.SKILL_LOCKED,
+						statusId: r.SKILL_LOCKED,
 						duration: 2
 					});
 				}
@@ -8918,7 +9032,7 @@ const ge = [
 		tier: "EPIC",
 		description: "获得全向 2 格移动能力。",
 		modifiers: { movement: (e, t) => {
-			const { board: o, r, c: i, piece: s, isControlSquares: a } = e, c = [
+			const { board: o, r: i, c: r, piece: s, isControlSquares: a } = e, c = [
 				[-1, 0],
 				[1, 0],
 				[0, -1],
@@ -8929,7 +9043,7 @@ const ge = [
 				[1, 1]
 			], n = [];
 			for (const [d, p] of c) for (let e = 1; e <= 2; e++) {
-				const t = r + d * e, c = i + p * e;
+				const t = i + d * e, c = r + p * e;
 				if (!(t >= 0 && t < 8 && c >= 0 && c < 8)) break;
 				{
 					const e = o[t][c];
@@ -8958,9 +9072,9 @@ const ge = [
 		modifiers: {
 			globalNetworkDirection: () => "FORWARD",
 			movement: (e, o) => {
-				const { board: i, piece: s, r: a, c, isControlSquares: n } = e;
+				const { board: r, piece: s, r: a, c, isControlSquares: n } = e;
 				let d = o;
-				if (s.type === r.KING) {
+				if (s.type === i.KING) {
 					const e = s.color === t, o = [
 						[-1, 0],
 						[1, 0],
@@ -8970,25 +9084,25 @@ const ge = [
 						[-1, 1],
 						[1, -1],
 						[1, 1]
-					], r = [];
+					], i = [];
 					for (const [t, d] of o) {
 						let e = a + t, o = c + d;
 						for (; e >= 0 && e < 8 && o >= 0 && o < 8;) {
-							const a = i[e][o];
+							const a = r[e][o];
 							if (a) {
-								(a.color !== s.color || n) && r.push({
+								(a.color !== s.color || n) && i.push({
 									r: e,
 									c: o
 								});
 								break;
 							}
-							r.push({
+							i.push({
 								r: e,
 								c: o
 							}), e += t, o += d;
 						}
 					}
-					return d = r, d.filter((t) => e ? t.r <= a : t.r >= a);
+					return d = i, d.filter((t) => e ? t.r <= a : t.r >= a);
 				}
 				return d;
 			}
@@ -8996,14 +9110,14 @@ const ge = [
 		hooks: {
 			onTurnStart: ({ board: e, r: o, c: s, piece: a, emit: c, metadata: n }) => {
 				const d = a.color === t ? 7 - o : o, { networked: p } = Ge(e, a.color, n);
-				C.findPieces(e, (e) => e.color === a.color && e.type !== r.KING).forEach(({ r: e, c: o }) => {
+				D.findPieces(e, (e) => e.color === a.color && e.type !== i.KING).forEach(({ r: e, c: o }) => {
 					d > 0 && (c({
 						type: "ADD_STATUS",
 						pos: {
 							r: e,
 							c: o
 						},
-						statusId: i.CHARISMA_BUFF,
+						statusId: r.CHARISMA_BUFF,
 						duration: 2,
 						metadata: { bonus: d }
 					}), c({
@@ -9025,14 +9139,14 @@ const ge = [
 					});
 				});
 			},
-			onDeath: ({ board: e, r: o, c: i, piece: s, cancelAction: a, emit: c, gold: n, prng: d }) => {
-				if (s.type === r.KING && s.color === t && (n ?? 0) >= 100) {
-					const t = 7, r = [];
-					for (let o = 0; o < 8; o++) e[t][o] || r.push({
+			onDeath: ({ board: e, r: o, c: r, piece: s, cancelAction: a, emit: c, gold: n, prng: d }) => {
+				if (s.type === i.KING && s.color === t && (n ?? 0) >= 100) {
+					const t = 7, i = [];
+					for (let o = 0; o < 8; o++) e[t][o] || i.push({
 						r: t,
 						c: o
 					});
-					if (r.length > 0) {
+					if (i.length > 0) {
 						a?.(), c({
 							type: "MODIFY_GOLD",
 							amount: -100,
@@ -9041,16 +9155,16 @@ const ge = [
 							type: "REMOVE_PIECE",
 							pos: {
 								r: o,
-								c: i
+								c: r
 							}
 						});
-						const e = r[Math.floor((d || { next: Math.random }).next() * r.length)];
+						const e = i[Math.floor((d || { next: Math.random }).next() * i.length)];
 						c({
 							type: "SPAWN",
 							pos: e,
 							piece: {
 								...s,
-								id: q(),
+								id: Z(),
 								statuses: []
 							}
 						}), c({
@@ -9075,7 +9189,7 @@ const ge = [
 		tier: "COMMON",
 		description: "狮心王御驾亲征，吃子获得额外金币。",
 		hooks: { onKill: ({ piece: e, emit: t }) => {
-			const o = (e.statuses?.find((e) => "RICHARD_REWARD_BUFF" === e.id || e.id === i.CHARISMA_BUFF))?.metadata?.bonus || 1;
+			const o = (e.statuses?.find((e) => "RICHARD_REWARD_BUFF" === e.id || e.id === r.CHARISMA_BUFF))?.metadata?.bonus || 1;
 			t({
 				type: "MODIFY_GOLD",
 				amount: o,
@@ -9121,14 +9235,14 @@ const ge = [
 			isSteady: () => !0,
 			movement: (e, t) => t.filter((t) => e.isControlSquares || !e.board[t.r][t.c])
 		},
-		hooks: { onDeath: ({ board: e, piece: t, cancelAction: o, emit: i, gold: s, prng: a }) => {
+		hooks: { onDeath: ({ board: e, piece: t, cancelAction: o, emit: r, gold: s, prng: a }) => {
 			if ((s ?? 0) >= 500) {
-				const s = C.findPieces(e, (e) => e.type === r.KING && e.color === t.color)[0], c = s ? {
+				const s = D.findPieces(e, (e) => e.type === i.KING && e.color === t.color)[0], c = s ? {
 					r: s.r,
 					c: s.c
 				} : null;
 				if (c) {
-					const r = [
+					const i = [
 						[-1, 0],
 						[1, 0],
 						[0, -1],
@@ -9139,36 +9253,36 @@ const ge = [
 						[1, 1]
 					];
 					let s = null;
-					const n = a || { next: Math.random }, d = r.sort(() => n.next() - .5);
+					const n = a || { next: Math.random }, d = i.sort(() => n.next() - .5);
 					for (const [t, o] of d) {
-						const r = c.r + t, i = c.c + o;
-						if (Ke(r, i) && !e[r][i]) {
+						const i = c.r + t, r = c.c + o;
+						if (Ke(i, r) && !e[i][r]) {
 							s = {
-								r,
-								c: i
+								r: i,
+								c: r
 							};
 							break;
 						}
 					}
-					s && (o?.(), i({
+					s && (o?.(), r({
 						type: "MODIFY_GOLD",
 						amount: -500,
 						reason: "SWALLOW_RESURRECT"
-					}), i({
+					}), r({
 						type: "SPAWN",
 						pos: s,
 						piece: {
 							...t,
-							id: q(),
+							id: Z(),
 							statuses: []
 						}
-					}), i({
+					}), r({
 						type: "SHOW_TEXT",
 						text: "\"Leaden heart shattered: Remaking Swallow!\"",
 						textKey: "LOG_SWALLOW_RESURRECT",
 						style: "gold",
 						pos: s
-					}), i({
+					}), r({
 						type: "PLAY_SOUND",
 						soundId: "GOLD_COLLECT"
 					}));
@@ -9184,16 +9298,16 @@ const ge = [
 		tags: ["GLOBAL"],
 		description: "圆桌骑士同生共死。每当有 3 级友方单位在战场上成功吃子时，全场所有 3 级友方单位（除国王外）将同时获得一层【护盾】。",
 		hooks: { onKill: ({ board: e, piece: t, subject: o, emit: s }) => {
-			o && o.color === t.color && o.level >= 3 && o.type !== r.KING && (e.flat().forEach((e, o) => {
-				if (e && e.color === t.color && e.level >= 3 && e.type !== r.KING) {
-					const t = Math.floor(o / 8), r = o % 8;
-					e.statuses?.some((e) => e.id === i.SHIELDED) || s({
+			o && o.color === t.color && o.level >= 3 && o.type !== i.KING && (e.flat().forEach((e, o) => {
+				if (e && e.color === t.color && e.level >= 3 && e.type !== i.KING) {
+					const t = Math.floor(o / 8), i = o % 8;
+					e.statuses?.some((e) => e.id === r.SHIELDED) || s({
 						type: "ADD_STATUS",
 						pos: {
 							r: t,
-							c: r
+							c: i
 						},
-						statusId: i.SHIELDED,
+						statusId: r.SHIELDED,
 						duration: 99
 					});
 				}
@@ -9212,14 +9326,14 @@ const ge = [
 		tier: "EPIC",
 		description: "奥德修斯的绝妙诡计。静止在原地，2回合后自动解体，就地释放两只奇袭兵蜂。",
 		modifiers: { movement: () => [] },
-		hooks: { onTurnStart: ({ board: e, piece: t, r: o, c: i, emit: s, prng: a }) => {
+		hooks: { onTurnStart: ({ board: e, piece: t, r: o, c: r, emit: s, prng: a }) => {
 			const c = t.metadata?.woodenHorseTimer || 1;
 			if (c >= 2) {
 				s({
 					type: "REMOVE_PIECE",
 					pos: {
 						r: o,
-						c: i
+						c: r
 					}
 				});
 				let c = 0;
@@ -9235,7 +9349,7 @@ const ge = [
 				].sort(() => n.next() - .5);
 				for (const [a, p] of d) {
 					if (c >= 2) break;
-					const n = o + a, d = i + p;
+					const n = o + a, d = r + p;
 					Ke(n, d) && !e[n][d] && (s({
 						type: "SPAWN",
 						pos: {
@@ -9243,9 +9357,9 @@ const ge = [
 							c: d
 						},
 						piece: {
-							id: q(),
-							uid: `trojan-spawn-${q()}`,
-							type: r.PAWN,
+							id: Z(),
+							uid: `trojan-spawn-${Z()}`,
+							type: i.PAWN,
 							color: t.color,
 							level: 1,
 							skills: [],
@@ -9262,14 +9376,14 @@ const ge = [
 					style: "gold",
 					pos: {
 						r: o,
-						c: i
+						c: r
 					}
 				});
 			} else s({
 				type: "SPAWN",
 				pos: {
 					r: o,
-					c: i
+					c: r
 				},
 				piece: {
 					...t,
@@ -9286,7 +9400,7 @@ const ge = [
 				style: "system",
 				pos: {
 					r: o,
-					c: i
+					c: r
 				}
 			});
 		} }
@@ -9302,28 +9416,28 @@ const ge = [
 			usesKey: "trojanUses",
 			maxUses: 1,
 			getAlternatives: (e, t, o) => {
-				const r = [];
-				for (let i = 0; i < 8; i++) for (let t = 0; t < 8; t++) e[i][t] || r.push({
+				const i = [];
+				for (let r = 0; r < 8; r++) for (let t = 0; t < 8; t++) e[r][t] || i.push({
 					pos: {
-						r: i,
+						r,
 						c: t
 					},
 					value: {
-						r: i,
+						r,
 						c: t
 					}
 				});
-				return r;
+				return i;
 			},
-			execute: (e, t, o, i, s, a) => {
-				(i.metadata?.trojanUses || 0) >= 1 || s && (a({
+			execute: (e, t, o, r, s, a) => {
+				(r.metadata?.trojanUses || 0) >= 1 || s && (a({
 					type: "SPAWN",
 					pos: s,
 					piece: {
-						id: q(),
-						uid: `horse-${q()}`,
-						type: r.PAWN,
-						color: i.color,
+						id: Z(),
+						uid: `horse-${Z()}`,
+						type: i.PAWN,
+						color: r.color,
 						level: 1,
 						skills: ["ODYSSEUS_WOODEN_HORSE"],
 						learnedSkills: ["ODYSSEUS_WOODEN_HORSE"],
@@ -9333,10 +9447,10 @@ const ge = [
 					}
 				}), a({
 					type: "UPDATE_ROSTER_PIECE",
-					pieceUid: i.uid,
+					pieceUid: r.uid,
 					updates: { metadata: {
-						...i.metadata,
-						trojanUses: (i.metadata?.trojanUses || 0) + 1
+						...r.metadata,
+						trojanUses: (r.metadata?.trojanUses || 0) + 1
 					} }
 				}), a({
 					type: "SHOW_TEXT",
@@ -9354,7 +9468,7 @@ const ge = [
 		isInternal: !0,
 		tier: "LEGENDARY",
 		description: "BOSS专属：受到致命一击时，在黑方底线生成不能动的伪王和于谦救场。",
-		hooks: { onDeath: ({ board: e, piece: t, r: i, c: s, cancelAction: a, emit: c, prng: n }) => {
+		hooks: { onDeath: ({ board: e, piece: t, r, c: s, cancelAction: a, emit: c, prng: n }) => {
 			if (t.color !== o) return;
 			const d = [];
 			for (let o = 0; o < 8; o++) e[0][o] || d.push({
@@ -9365,7 +9479,7 @@ const ge = [
 				a?.(), c({
 					type: "REMOVE_PIECE",
 					pos: {
-						r: i,
+						r,
 						c: s
 					}
 				}), c({
@@ -9374,24 +9488,24 @@ const ge = [
 					textKey: "LOG_DAIZONG_CAPTURED",
 					style: "danger"
 				});
-				const e = n || { next: Math.random }, t = Math.floor(e.next() * d.length), p = d.splice(t, 1)[0], E = d[Math.floor(e.next() * d.length)], l = `daizong-${q()}`, u = `hero-yuqian-${q()}`;
+				const e = n || { next: Math.random }, t = Math.floor(e.next() * d.length), p = d.splice(t, 1)[0], E = d[Math.floor(e.next() * d.length)], l = `daizong-${Z()}`, u = `hero-yuqian-${Z()}`;
 				c({
 					type: "SPAWN",
 					pos: p,
 					piece: {
-						...z(r.KING, o),
+						...oe(i.KING, o),
 						uid: l,
 						traits: ["FAKE_KING_TRAIT", "ROOTED"],
 						customName: "unitDaizong"
 					}
 				});
 				const A = function(e) {
-					const t = () => e ? e.next() : Math.random(), o = ce()[r.BISHOP].filter((e) => "LEGENDARY" === e.tier), i = o[Math.floor(t() * o.length)]?.id || "BISHOP_AURORA", s = ne.filter((e) => "EQUIPMENT" === e.type), a = s.filter((e) => "LEGENDARY" === e.tier), c = s.filter((e) => "EPIC" === e.tier), n = a[Math.floor(t() * a.length)], d = c[Math.floor(t() * c.length)], p = s[Math.floor(t() * s.length)];
+					const t = () => e ? e.next() : Math.random(), o = pe()[i.BISHOP].filter((e) => "LEGENDARY" === e.tier), r = o[Math.floor(t() * o.length)]?.id || "BISHOP_AURORA", s = Ee.filter((e) => "EQUIPMENT" === e.type), a = s.filter((e) => "LEGENDARY" === e.tier), c = s.filter((e) => "EPIC" === e.tier), n = a[Math.floor(t() * a.length)], d = c[Math.floor(t() * c.length)], p = s[Math.floor(t() * s.length)];
 					return {
-						skills: [i],
+						skills: [r],
 						equippedItems: [
 							{
-								id: `yq-l-${q()}`,
+								id: `yq-l-${Z()}`,
 								type: "EQUIPMENT",
 								name: n.id,
 								desc: "",
@@ -9399,7 +9513,7 @@ const ge = [
 								tier: "LEGENDARY"
 							},
 							{
-								id: `yq-e-${q()}`,
+								id: `yq-e-${Z()}`,
 								type: "EQUIPMENT",
 								name: d.id,
 								desc: "",
@@ -9407,7 +9521,7 @@ const ge = [
 								tier: "EPIC"
 							},
 							{
-								id: `yq-r-${q()}`,
+								id: `yq-r-${Z()}`,
 								type: "EQUIPMENT",
 								name: p.id,
 								desc: "",
@@ -9416,8 +9530,8 @@ const ge = [
 							}
 						]
 					};
-				}(e), I = {
-					...z(r.BISHOP, o),
+				}(e), m = {
+					...oe(i.BISHOP, o),
 					uid: u,
 					level: 5,
 					traits: ["YUQIAN_TRAIT"],
@@ -9428,11 +9542,11 @@ const ge = [
 				};
 				c({
 					type: "ADD_TO_ROSTER",
-					piece: I
+					piece: m
 				}), c({
 					type: "SPAWN",
 					pos: E,
-					piece: I
+					piece: m
 				});
 			}
 		} }
@@ -9451,7 +9565,7 @@ const ge = [
 		},
 		hooks: { onDeath: ({ board: e, emit: o }) => {
 			e.flat().forEach((e) => {
-				if (e && e.type === r.KING && e.color === t) {
+				if (e && e.type === i.KING && e.color === t) {
 					const t = e.skills.filter((e) => "LOUIS_ABSOLUTE_CORONA" !== e);
 					o({
 						type: "UPDATE_ROSTER_PIECE",
@@ -9476,10 +9590,10 @@ const ge = [
 		isInternal: !0,
 		tier: "LEGENDARY",
 		description: "每过5个回合，随机调换场上两个白色棋子的位置。",
-		hooks: { onTurnStart: ({ board: e, piece: o, emit: i, prng: s }) => {
+		hooks: { onTurnStart: ({ board: e, piece: o, emit: r, prng: s }) => {
 			const a = o.metadata?.quantumTurns || 0;
 			if (a >= 5) {
-				const a = C.findPieces(e, (e) => e.color === t && e.type !== r.KING).map(({ r: e, c: t, piece: o }) => ({
+				const a = D.findPieces(e, (e) => e.color === t && e.type !== i.KING).map(({ r: e, c: t, piece: o }) => ({
 					r: e,
 					c: t,
 					p: o
@@ -9488,25 +9602,25 @@ const ge = [
 					const e = Math.floor(s.next() * a.length);
 					let t = Math.floor(s.next() * (a.length - 1));
 					t >= e && t++;
-					const o = a[e], r = a[t];
-					i({
+					const o = a[e], i = a[t];
+					r({
 						type: "SWAP_PIECES",
 						posA: {
 							r: o.r,
 							c: o.c
 						},
 						posB: {
-							r: r.r,
-							c: r.c
+							r: i.r,
+							c: i.c
 						}
-					}), i({
+					}), r({
 						type: "SHOW_TEXT",
 						text: "Quantum Swap",
 						textKey: "LOG_QUANTUM_SWAP",
 						style: "danger"
 					});
 				}
-				i({
+				r({
 					type: "UPDATE_ROSTER_PIECE",
 					pieceUid: o.uid,
 					updates: { metadata: {
@@ -9514,7 +9628,7 @@ const ge = [
 						quantumTurns: 0
 					} }
 				});
-			} else i({
+			} else r({
 				type: "UPDATE_ROSTER_PIECE",
 				pieceUid: o.uid,
 				updates: { metadata: {
@@ -9538,15 +9652,15 @@ const ge = [
 			invulnerable: () => !0,
 			isSteady: () => !0
 		},
-		hooks: { onTurnStart: ({ board: e, r: t, c: i, piece: s, emit: a, prng: c }) => {
+		hooks: { onTurnStart: ({ board: e, r: t, c: r, piece: s, emit: a, prng: c }) => {
 			if (s.color !== o) return;
 			let n = s.metadata?.dr, d = s.metadata?.dc;
 			if (void 0 === n || void 0 === d) {
 				const e = c || { next: Math.random }, t = e.next() > .5, o = e.next() > .5 ? 1 : -1;
 				n = t ? o : 0, d = t ? 0 : o;
 			}
-			let p = t + n, E = i + d, l = n, u = d;
-			(p < 0 || p >= 8 || E < 0 || E >= 8) && (l = 0 === n ? 0 : -n, u = 0 === d ? 0 : -d, p = t + l, E = i + u), a({
+			let p = t + n, E = r + d, l = n, u = d;
+			(p < 0 || p >= 8 || E < 0 || E >= 8) && (l = 0 === n ? 0 : -n, u = 0 === d ? 0 : -d, p = t + l, E = r + u), a({
 				type: "UPDATE_ROSTER_PIECE",
 				pieceUid: s.uid,
 				updates: { metadata: {
@@ -9556,7 +9670,7 @@ const ge = [
 				} }
 			});
 			const A = e[p][E];
-			A && A.type !== r.KING && a({
+			A && A.type !== i.KING && a({
 				type: "KILL",
 				pos: {
 					r: p,
@@ -9566,7 +9680,7 @@ const ge = [
 				type: "MOVE",
 				from: {
 					r: t,
-					c: i
+					c: r
 				},
 				to: {
 					r: p,
@@ -9585,19 +9699,19 @@ const ge = [
 			const a = e.metadata?.permissionTimer || 1;
 			if (3 === a && o) {
 				const a = [
-					r.PAWN,
-					r.KNIGHT,
-					r.BISHOP,
-					r.ROOK,
-					r.QUEEN
+					i.PAWN,
+					i.KNIGHT,
+					i.BISHOP,
+					i.ROOK,
+					i.QUEEN
 				], c = a[Math.floor(o.next() * a.length)];
-				C.findPieces(s, (t) => t.color !== e.color && t.type === c).forEach(({ r: e, c: o }) => t({
+				D.findPieces(s, (t) => t.color !== e.color && t.type === c).forEach(({ r: e, c: o }) => t({
 					type: "ADD_STATUS",
 					pos: {
 						r: e,
 						c: o
 					},
-					statusId: i.FROZEN,
+					statusId: r.FROZEN,
 					duration: 2
 				})), t({
 					type: "UPDATE_ROSTER_PIECE",
@@ -9629,30 +9743,30 @@ const ge = [
 		isInternal: !0,
 		tier: "LEGENDARY",
 		description: "前5回合无法吃子",
-		hooks: { onTurnStart: ({ board: e, piece: t, emit: o, historyLength: r }) => {
-			const s = r || 0;
+		hooks: { onTurnStart: ({ board: e, piece: t, emit: o, historyLength: i }) => {
+			const s = i || 0;
 			if (s < 10) {
 				const t = 9 === s ? 1 : 2;
-				C.findPieces(e, () => !0).forEach(({ r: e, c: r }) => {
+				D.findPieces(e, () => !0).forEach(({ r: e, c: i }) => {
 					o({
 						type: "ADD_STATUS",
 						pos: {
 							r: e,
-							c: r
+							c: i
 						},
-						statusId: i.INVULNERABLE,
+						statusId: r.INVULNERABLE,
 						duration: t
 					});
 				});
 			}
 		} },
 		getDisplayStatus: (e, t) => {
-			const o = "undefined" != typeof window && window.gameStore?.getState()?.history?.length || 0, r = Math.max(0, 3 - Math.floor(o / 2));
-			return r <= 0 ? {
+			const o = "undefined" != typeof window && window.gameStore?.getState()?.history?.length || 0, i = Math.max(0, 3 - Math.floor(o / 2));
+			return i <= 0 ? {
 				text: t("finished") || "Finished",
 				colorClass: "text-slate-500"
 			} : {
-				text: t("turnsRemaining", { n: r }),
+				text: t("turnsRemaining", { n: i }),
 				colorClass: "text-red-400 font-bold animate-pulse"
 			};
 		}
@@ -9678,7 +9792,7 @@ const ge = [
 		isInternal: !0,
 		tier: "LEGENDARY",
 		description: "每4回合旋转90度",
-		hooks: { onTurnStart: ({ board: e, piece: t, emit: o, metadata: i }) => {
+		hooks: { onTurnStart: ({ board: e, piece: t, emit: o, metadata: r }) => {
 			const a = t.metadata?.rotateTimer || 1;
 			if (4 === a) {
 				o({
@@ -9687,7 +9801,7 @@ const ge = [
 					textKey: "LOG_BOARD_ROTATION",
 					style: "danger"
 				});
-				const a = C.findPieces(e, () => !0).map(({ r: e, c: t, piece: o }) => ({
+				const a = D.findPieces(e, () => !0).map(({ r: e, c: t, piece: o }) => ({
 					p: o,
 					r: e,
 					c: t,
@@ -9701,7 +9815,7 @@ const ge = [
 						c: t
 					}
 				})), a.forEach(({ p: e, nr: t, nc: a }) => {
-					i?.squares?.[`${t},${a}`]?.some((e) => e.id === s || e.id === l || e.id === A) && e.type !== r.KING ? (o({
+					r?.squares?.[`${t},${a}`]?.some((e) => e.id === s || e.id === l || e.id === A) && e.type !== i.KING ? (o({
 						type: "SPAWN",
 						pos: {
 							r: t,
@@ -9746,28 +9860,28 @@ const ge = [
 		isInternal: !0,
 		tier: "LEGENDARY",
 		description: "无限替死",
-		hooks: { onDeath: ({ board: e, piece: t, r: o, c: r, cancelAction: i, emit: s, prng: a }) => {
-			const c = C.findPieces(e, (e) => e.color === t.color && e.uid !== t.uid).map(({ r: e, c: t, piece: o }) => ({
+		hooks: { onDeath: ({ board: e, piece: t, r: o, c: i, cancelAction: r, emit: s, prng: a }) => {
+			const c = D.findPieces(e, (e) => e.color === t.color && e.uid !== t.uid).map(({ r: e, c: t, piece: o }) => ({
 				r: e,
 				c: t,
 				p: o
 			}));
 			if (c.length > 0 && a) {
-				i?.();
+				r?.();
 				const e = c[Math.floor(a.next() * c.length)];
 				s({
 					type: "ANIMATE",
 					name: "PHANTOM_MOVE",
 					pos: {
 						r: o,
-						c: r
+						c: i
 					},
 					duration: 400
 				}), s({
 					type: "REMOVE_PIECE",
 					pos: {
 						r: o,
-						c: r
+						c: i
 					}
 				}), s({
 					type: "KILL",
@@ -9803,9 +9917,9 @@ const ge = [
 		tier: "LEGENDARY",
 		description: "随机生成传送门",
 		hooks: {
-			onTurnStart: ({ board: e, emit: t, prng: o, metadata: r }) => {
-				if (r?.squares) {
-					for (const s in r.squares) if (r.squares[s].some((e) => e.id === f)) {
+			onTurnStart: ({ board: e, emit: t, prng: o, metadata: i }) => {
+				if (i?.squares) {
+					for (const s in i.squares) if (i.squares[s].some((e) => e.id === f)) {
 						const [e, o] = s.split(",").map(Number);
 						t({
 							type: "REMOVE_SQUARE",
@@ -9817,17 +9931,17 @@ const ge = [
 						});
 					}
 				}
-				const i = [];
+				const r = [];
 				if (e.forEach((e, t) => e.forEach((e, o) => {
-					e || i.push({
+					e || r.push({
 						r: t,
 						c: o
 					});
-				})), o) for (let s = 0; s < 2 && i.length > 0; s++) {
-					const e = Math.floor(o.next() * i.length);
+				})), o) for (let s = 0; s < 2 && r.length > 0; s++) {
+					const e = Math.floor(o.next() * r.length);
 					t({
 						type: "SET_SQUARE",
-						pos: i.splice(e, 1)[0],
+						pos: r.splice(e, 1)[0],
 						status: {
 							id: f,
 							duration: 1
@@ -9835,7 +9949,7 @@ const ge = [
 					});
 				}
 			},
-			onAfterMove: ({ board: e, r: t, c: o, emit: r, prng: i, metadata: s }) => {
+			onAfterMove: ({ board: e, r: t, c: o, emit: i, prng: r, metadata: s }) => {
 				if (s?.squares?.[`${t},${o}`]?.some((e) => e.id === f)) {
 					const s = [];
 					if (e.forEach((e, t) => e.forEach((e, o) => {
@@ -9843,19 +9957,19 @@ const ge = [
 							r: t,
 							c: o
 						});
-					})), s.length > 0 && i) {
-						const e = s[Math.floor(i.next() * s.length)];
-						r({
+					})), s.length > 0 && r) {
+						const e = s[Math.floor(r.next() * s.length)];
+						i({
 							type: "PLAY_SOUND",
 							soundId: "WORMHOLE"
-						}), r({
+						}), i({
 							type: "MOVE",
 							from: {
 								r: t,
 								c: o
 							},
 							to: e
-						}), r({
+						}), i({
 							type: "SHOW_TEXT",
 							text: "Warp Storm Teleport",
 							textKey: "LOG_WARP_STORM",
@@ -9876,7 +9990,7 @@ const ge = [
 		hooks: { onTurnStart: ({ board: e, piece: t, emit: o, prng: s }) => {
 			const a = t.metadata?.mutinyTimer || 1;
 			if (6 === a) {
-				const a = C.findPieces(e, (e) => e.color !== t.color && e.type !== r.KING).map(({ r: e, c: t, piece: o }) => ({
+				const a = D.findPieces(e, (e) => e.color !== t.color && e.type !== i.KING).map(({ r: e, c: t, piece: o }) => ({
 					r: e,
 					c: t,
 					p: o
@@ -9890,7 +10004,7 @@ const ge = [
 						Q: 90
 					})[e] || 0;
 					a.sort((t, o) => e(o.p.type) - e(t.p.type));
-					const r = a.slice(0, 3), c = r[Math.floor(s.next() * r.length)];
+					const i = a.slice(0, 3), c = i[Math.floor(s.next() * i.length)];
 					o({
 						type: "SPAWN",
 						pos: c,
@@ -9898,7 +10012,7 @@ const ge = [
 							...c.p,
 							color: t.color,
 							statuses: [...c.p.statuses || [], {
-								id: i.BETRAYED,
+								id: r.BETRAYED,
 								duration: 1
 							}]
 						}
@@ -9937,9 +10051,9 @@ const ge = [
 		hooks: { onTurnStart: ({ piece: e, board: t, emit: o, prng: s, roster: a, deployedUids: c }) => {
 			const n = e.metadata?.necroTimer || 1;
 			if (5 === n) {
-				const n = a || [], d = c || [], p = t.flat().filter(Boolean), E = n.filter((e) => e.type !== r.KING && !p.some((t) => t.uid === e.uid) && !d.includes(e.uid));
+				const n = a || [], d = c || [], p = t.flat().filter(Boolean), E = n.filter((e) => e.type !== i.KING && !p.some((t) => t.uid === e.uid) && !d.includes(e.uid));
 				if (E.length > 0 && s) {
-					const r = E[Math.floor(s.next() * E.length)], a = [];
+					const i = E[Math.floor(s.next() * E.length)], a = [];
 					if (t.forEach((e, t) => e.forEach((e, o) => {
 						e || a.push({
 							r: t,
@@ -9951,12 +10065,12 @@ const ge = [
 							type: "SPAWN",
 							pos: t,
 							piece: {
-								...r,
-								id: q(),
-								uid: `zombie-${q()}`,
+								...i,
+								id: Z(),
+								uid: `zombie-${Z()}`,
 								color: e.color,
 								statuses: [{
-									id: i.ENCRYPTED,
+									id: r.ENCRYPTED,
 									duration: 99
 								}]
 							}
@@ -10009,9 +10123,9 @@ const ge = [
 		isInternal: !0,
 		tier: "LEGENDARY",
 		description: "",
-		hooks: { onTurnStart: ({ board: e, piece: i, emit: s, historyLength: a }) => {
-			0 !== (a || 0) || i.metadata?.mirrorMatched || (C.findPieces(e, (e) => e.color === t && e.type !== r.KING).forEach(({ r: t, c: r, piece: i }) => {
-				const a = 7 - t, c = 7 - r;
+		hooks: { onTurnStart: ({ board: e, piece: r, emit: s, historyLength: a }) => {
+			0 !== (a || 0) || r.metadata?.mirrorMatched || (D.findPieces(e, (e) => e.color === t && e.type !== i.KING).forEach(({ r: t, c: i, piece: r }) => {
+				const a = 7 - t, c = 7 - i;
 				e[a][c] || s({
 					type: "SPAWN",
 					pos: {
@@ -10019,17 +10133,17 @@ const ge = [
 						c
 					},
 					piece: {
-						...i,
-						id: q(),
-						uid: `mirror-${q()}`,
+						...r,
+						id: Z(),
+						uid: `mirror-${Z()}`,
 						color: o
 					}
 				});
 			}), s({
 				type: "UPDATE_ROSTER_PIECE",
-				pieceUid: i.uid,
+				pieceUid: r.uid,
 				updates: { metadata: {
-					...i.metadata,
+					...r.metadata,
 					mirrorMatched: !0
 				} }
 			}), s({
@@ -10046,7 +10160,7 @@ const ge = [
 		isInternal: !0,
 		tier: "LEGENDARY",
 		description: "",
-		hooks: { onTurnStart: ({ board: e, piece: t, emit: o, prng: i }) => {
+		hooks: { onTurnStart: ({ board: e, piece: t, emit: o, prng: r }) => {
 			const s = t.metadata?.hiveTimer || 1;
 			if (5 === s) {
 				const s = [];
@@ -10054,15 +10168,15 @@ const ge = [
 					r: t,
 					c: o
 				});
-				if (s.length > 0 && i) {
-					const e = s[Math.floor(i.next() * s.length)];
+				if (s.length > 0 && r) {
+					const e = s[Math.floor(r.next() * s.length)];
 					o({
 						type: "SPAWN",
 						pos: e,
 						piece: {
-							id: q(),
-							uid: `egg-${q()}`,
-							type: r.PAWN,
+							id: Z(),
+							uid: `egg-${Z()}`,
+							type: i.PAWN,
 							color: t.color,
 							level: 1,
 							skills: ["EGG_HATCH"],
@@ -10103,25 +10217,25 @@ const ge = [
 		tier: "COMMON",
 		description: "3回合后孵化为高级棋子",
 		modifiers: { movement: () => [] },
-		hooks: { onTurnStart: ({ piece: e, r: t, c: o, emit: i, prng: s }) => {
+		hooks: { onTurnStart: ({ piece: e, r: t, c: o, emit: r, prng: s }) => {
 			const a = e.metadata?.hatchTimer || 1;
 			if (3 === a && s) {
-				const a = s.next() < .5 ? r.QUEEN : r.ROOK;
-				i({
+				const a = s.next() < .5 ? i.QUEEN : i.ROOK;
+				r({
 					type: "REMOVE_PIECE",
 					pos: {
 						r: t,
 						c: o
 					}
-				}), i({
+				}), r({
 					type: "SPAWN",
 					pos: {
 						r: t,
 						c: o
 					},
 					piece: {
-						id: q(),
-						uid: `hatched-${q()}`,
+						id: Z(),
+						uid: `hatched-${Z()}`,
 						type: a,
 						color: e.color,
 						level: 1,
@@ -10130,7 +10244,7 @@ const ge = [
 						maxSlots: 1,
 						equippedItems: []
 					}
-				}), i({
+				}), r({
 					type: "SHOW_TEXT",
 					text: "Hatched!",
 					textKey: "LOG_EGG_HATCHED",
@@ -10140,7 +10254,7 @@ const ge = [
 						c: o
 					}
 				});
-			} else i({
+			} else r({
 				type: "SPAWN",
 				pos: {
 					r: t,
@@ -10153,7 +10267,7 @@ const ge = [
 						hatchTimer: a + 1
 					}
 				}
-			}), i({
+			}), r({
 				type: "SHOW_TEXT",
 				text: "Hatching in " + (3 - a),
 				textKey: "LOG_EGG_HATCHING",
@@ -10172,8 +10286,8 @@ const ge = [
 		isInternal: !0,
 		tier: "LEGENDARY",
 		description: "每 4 回合行动两次",
-		hooks: { onTurnStart: ({ piece: e, emit: t, historyLength: r }) => {
-			(Math.floor((r || 0) / 2) + 1) % 4 == 0 && e.color === o && (t({
+		hooks: { onTurnStart: ({ piece: e, emit: t, historyLength: i }) => {
+			(Math.floor((i || 0) / 2) + 1) % 4 == 0 && e.color === o && (t({
 				type: "SET_EXTRA_MOVE",
 				active: !0
 			}), t({
@@ -10190,8 +10304,9 @@ const ge = [
 		isInternal: !0,
 		tier: "COMMON",
 		description: "每奇数回合通电摧毁上方棋子。",
-		hooks: { onTurnStart: ({ r: e, c: t, emit: o, board: i, historyLength: s }) => {
-			(Math.floor((s || 0) / 2) + 1) % 2 != 0 && (o({
+		hooks: { onTurnStart: ({ r: e, c: t, emit: o, board: r, historyLength: s }) => {
+			const a = s || 0, c = Math.floor(a / 2) + 1;
+			a % 2 == 0 && c % 2 != 0 && (o({
 				type: "PLAY_SOUND",
 				soundId: "LASER_GRID"
 			}), o({
@@ -10202,7 +10317,7 @@ const ge = [
 					c: t
 				},
 				duration: 400
-			}), i[e][t] && i[e][t].type !== r.KING && o({
+			}), r[e][t] && r[e][t].type !== i.KING && o({
 				type: "KILL",
 				pos: {
 					r: e,
@@ -10217,8 +10332,8 @@ const ge = [
 		isInternal: !0,
 		tier: "COMMON",
 		description: "兵踩中触发3x3爆炸。",
-		hooks: { onAfterMove: ({ piece: e, r: t, c: o, board: i, emit: s }) => {
-			if (e.type === r.PAWN) {
+		hooks: { onAfterMove: ({ piece: e, r: t, c: o, board: r, emit: s }) => {
+			if (e.type === i.PAWN) {
 				s({
 					type: "PLAY_SOUND",
 					soundId: "LANDMINE"
@@ -10228,7 +10343,7 @@ const ge = [
 						r: t,
 						c: o
 					},
-					statusId: m
+					statusId: I
 				}), s({
 					type: "ANIMATE",
 					name: "EXPLOSION",
@@ -10240,7 +10355,7 @@ const ge = [
 				});
 				for (let e = -1; e <= 1; e++) for (let a = -1; a <= 1; a++) {
 					const c = t + e, n = o + a;
-					c >= 0 && c < 8 && n >= 0 && n < 8 && i[c][n] && i[c][n].type !== r.KING && s({
+					c >= 0 && c < 8 && n >= 0 && n < 8 && r[c][n] && r[c][n].type !== i.KING && s({
 						type: "KILL",
 						pos: {
 							r: c,
@@ -10257,17 +10372,17 @@ const ge = [
 		isInternal: !0,
 		tier: "COMMON",
 		description: "踩中后放逐3回合",
-		hooks: { onAfterMove: ({ piece: e, r: t, c: o, emit: r }) => {
-			r({
+		hooks: { onAfterMove: ({ piece: e, r: t, c: o, emit: i }) => {
+			i({
 				type: "PLAY_SOUND",
 				soundId: "TELEPORT"
-			}), r({
+			}), i({
 				type: "REMOVE_PIECE",
 				pos: {
 					r: t,
 					c: o
 				}
-			}), r({
+			}), i({
 				type: "SET_SQUARE",
 				pos: {
 					r: t,
@@ -10278,7 +10393,7 @@ const ge = [
 					duration: 3,
 					metadata: { piece: e }
 				}
-			}), r({
+			}), i({
 				type: "SHOW_TEXT",
 				text: "Time Banished",
 				textKey: "LOG_TIME_BANISHED",
@@ -10296,11 +10411,11 @@ const ge = [
 		isInternal: !0,
 		tier: "COMMON",
 		description: "",
-		hooks: { onTurnStart: ({ r: e, c: t, emit: o, board: r, metadata: i }) => {
-			const s = (i?.squares?.[`${e},${t}`] || []).find((e) => "TIME_ANOMALY_REBIRTH" === e.id);
+		hooks: { onTurnStart: ({ r: e, c: t, emit: o, board: i, metadata: r }) => {
+			const s = (r?.squares?.[`${e},${t}`] || []).find((e) => "TIME_ANOMALY_REBIRTH" === e.id);
 			if (s && 1 === s.duration) {
-				const i = s.metadata.piece;
-				r[e][t] ? (o({
+				const r = s.metadata.piece;
+				i[e][t] ? (o({
 					type: "KILL",
 					pos: {
 						r: e,
@@ -10312,14 +10427,14 @@ const ge = [
 						r: e,
 						c: t
 					},
-					piece: i
+					piece: r
 				})) : (o({
 					type: "SPAWN",
 					pos: {
 						r: e,
 						c: t
 					},
-					piece: i
+					piece: r
 				}), o({
 					type: "SHOW_TEXT",
 					text: "Returned",
@@ -10339,12 +10454,12 @@ const ge = [
 		isInternal: !0,
 		tier: "COMMON",
 		description: "棋子滑动",
-		hooks: { onAfterMove: ({ piece: e, from: t, r: o, c: r, board: i, emit: s, metadata: a }) => {
+		hooks: { onAfterMove: ({ piece: e, from: t, r: o, c: i, board: r, emit: s, metadata: a }) => {
 			if (!t || e.metadata?.isSliding) return;
-			const c = Math.sign(o - t.r), n = Math.sign(r - t.c);
+			const c = Math.sign(o - t.r), n = Math.sign(i - t.c);
 			if (0 === c && 0 === n) return;
-			let d = o + c, p = r + n, E = null;
-			for (; d >= 0 && d < 8 && p >= 0 && p < 8 && !i[d][p] && (E = {
+			let d = o + c, p = i + n, E = null;
+			for (; d >= 0 && d < 8 && p >= 0 && p < 8 && !r[d][p] && (E = {
 				r: d,
 				c: p
 			}, a?.squares?.[`${d},${p}`]?.some((e) => e.id === T));) d += c, p += n;
@@ -10359,7 +10474,7 @@ const ge = [
 				type: "MOVE",
 				from: {
 					r: o,
-					c: r
+					c: i
 				},
 				to: E
 			}));
@@ -10371,11 +10486,11 @@ const ge = [
 		isInternal: !0,
 		tier: "COMMON",
 		description: "",
-		hooks: { onAfterMove: ({ r: e, c: t, emit: o, metadata: r, board: i }) => {
-			const s = r?.squares || {};
+		hooks: { onAfterMove: ({ r: e, c: t, emit: o, metadata: i, board: r }) => {
+			const s = i?.squares || {};
 			for (const a in s) if (s[a].some((e) => e.id === _)) {
-				const [r, s] = a.split(",").map(Number);
-				i[r][s] || (o({
+				const [i, s] = a.split(",").map(Number);
+				r[i][s] || (o({
 					type: "PLAY_SOUND",
 					soundId: "WORMHOLE"
 				}), o({
@@ -10385,7 +10500,7 @@ const ge = [
 						c: t
 					},
 					to: {
-						r,
+						r: i,
 						c: s
 					}
 				}), o({
@@ -10394,7 +10509,7 @@ const ge = [
 					textKey: "LOG_TELEPORT",
 					style: "system",
 					pos: {
-						r,
+						r: i,
 						c: s
 					}
 				}));
@@ -10408,11 +10523,11 @@ const ge = [
 		isInternal: !0,
 		tier: "COMMON",
 		description: "",
-		hooks: { onAfterMove: ({ r: e, c: t, emit: o, metadata: r, board: i }) => {
-			const s = r?.squares || {};
+		hooks: { onAfterMove: ({ r: e, c: t, emit: o, metadata: i, board: r }) => {
+			const s = i?.squares || {};
 			for (const a in s) if (s[a].some((e) => e.id === O)) {
-				const [r, s] = a.split(",").map(Number);
-				i[r][s] || (o({
+				const [i, s] = a.split(",").map(Number);
+				r[i][s] || (o({
 					type: "PLAY_SOUND",
 					soundId: "WORMHOLE"
 				}), o({
@@ -10422,7 +10537,7 @@ const ge = [
 						c: t
 					},
 					to: {
-						r,
+						r: i,
 						c: s
 					}
 				}), o({
@@ -10431,7 +10546,7 @@ const ge = [
 					textKey: "LOG_TELEPORT",
 					style: "system",
 					pos: {
-						r,
+						r: i,
 						c: s
 					}
 				}));
@@ -10468,17 +10583,17 @@ const ge = [
 		isInternal: !0,
 		tier: "COMMON",
 		description: "",
-		hooks: { onTurnStart: ({ board: e, r: t, c: o, emit: r, metadata: i, historyLength: s }) => {
+		hooks: { onTurnStart: ({ board: e, r: t, c: o, emit: i, metadata: r, historyLength: s }) => {
 			if ((s || 0) % 2 != 0) return;
 			if (!e[t][o]) return;
-			const a = (i?.squares?.[`${t},${o}`]?.find((e) => "CONVEYOR_BELT" === e.id))?.metadata?.dir || {
+			const a = (r?.squares?.[`${t},${o}`]?.find((e) => "CONVEYOR_BELT" === e.id))?.metadata?.dir || {
 				dr: 0,
 				dc: 1
 			}, c = t + a.dr, n = o + a.dc;
-			c < 0 || c >= 8 || n < 0 || n >= 8 ? (r({
+			c < 0 || c >= 8 || n < 0 || n >= 8 ? (i({
 				type: "PLAY_SOUND",
 				soundId: "MUD_SWAMP"
-			}), r({
+			}), i({
 				type: "ANIMATE",
 				name: "PIECE_SHATTER",
 				pos: {
@@ -10486,13 +10601,13 @@ const ge = [
 					c: o
 				},
 				duration: 400
-			}), r({
+			}), i({
 				type: "KILL",
 				pos: {
 					r: t,
 					c: o
 				}
-			}), r({
+			}), i({
 				type: "SHOW_TEXT",
 				text: "Fell off",
 				textKey: "LOG_FALL_OFF",
@@ -10501,10 +10616,10 @@ const ge = [
 					r: t,
 					c: o
 				}
-			})) : e[c][n] ? (r({
+			})) : e[c][n] ? (i({
 				type: "PLAY_SOUND",
 				soundId: "LANDMINE"
-			}), r({
+			}), i({
 				type: "ANIMATE",
 				name: "EXPLOSION",
 				pos: {
@@ -10512,19 +10627,19 @@ const ge = [
 					c: n
 				},
 				duration: 400
-			}), r({
+			}), i({
 				type: "KILL",
 				pos: {
 					r: t,
 					c: o
 				}
-			}), r({
+			}), i({
 				type: "KILL",
 				pos: {
 					r: c,
 					c: n
 				}
-			}), r({
+			}), i({
 				type: "SHOW_TEXT",
 				text: "Crash!",
 				textKey: "LOG_CRASH",
@@ -10533,10 +10648,10 @@ const ge = [
 					r: c,
 					c: n
 				}
-			})) : (r({
+			})) : (i({
 				type: "PLAY_SOUND",
 				soundId: "CONVEYOR"
-			}), r({
+			}), i({
 				type: "MOVE",
 				from: {
 					r: t,
@@ -10555,15 +10670,15 @@ const ge = [
 		isInternal: !0,
 		tier: "COMMON",
 		description: "技能CD清零",
-		hooks: { onTurnStart: ({ board: e, emit: t, r: o, c: r }) => {
-			const i = e[o][r];
-			if (i) {
-				const e = i.metadata || {}, s = {};
+		hooks: { onTurnStart: ({ board: e, emit: t, r: o, c: i }) => {
+			const r = e[o][i];
+			if (r) {
+				const e = r.metadata || {}, s = {};
 				let a = !1;
 				for (const t in e) (t.toLowerCase().includes("cooldown") || t.toLowerCase().includes("cd")) && (s[t] = 0, a = !0);
 				a && (t({
 					type: "UPDATE_ROSTER_PIECE",
-					pieceUid: i.uid,
+					pieceUid: r.uid,
 					updates: { metadata: {
 						...e,
 						...s
@@ -10575,7 +10690,7 @@ const ge = [
 					style: "gold",
 					pos: {
 						r: o,
-						c: r
+						c: i
 					}
 				}));
 			}
@@ -10587,8 +10702,8 @@ const ge = [
 		isInternal: !0,
 		tier: "COMMON",
 		description: "",
-		hooks: { onTurnStart: ({ board: e, emit: o, r, c: i }) => {
-			const s = e[r][i];
+		hooks: { onTurnStart: ({ board: e, emit: o, r: i, c: r }) => {
+			const s = e[i][r];
 			s && s.color === t && (o({
 				type: "MODIFY_GOLD",
 				amount: 3,
@@ -10600,8 +10715,8 @@ const ge = [
 				textParams: { amount: 3 },
 				style: "gold",
 				pos: {
-					r,
-					c: i
+					r: i,
+					c: r
 				}
 			}));
 		} }
@@ -10621,8 +10736,8 @@ const ge = [
 		tier: "COMMON",
 		description: "",
 		hooks: {
-			onTurnStart: ({ emit: e, r: t, c: o, board: r }) => {
-				r[t][o] && (e({
+			onTurnStart: ({ emit: e, r: t, c: o, board: i }) => {
+				i[t][o] && (e({
 					type: "PLAY_SOUND",
 					soundId: "FARADAY_CAGE"
 				}), e({
@@ -10631,7 +10746,7 @@ const ge = [
 						r: t,
 						c: o
 					},
-					statusId: i.FROZEN,
+					statusId: r.FROZEN,
 					duration: 2
 				}));
 			},
@@ -10645,7 +10760,7 @@ const ge = [
 						r: t,
 						c: o
 					},
-					statusId: i.FROZEN,
+					statusId: r.FROZEN,
 					duration: 2
 				});
 			}
@@ -10658,25 +10773,25 @@ const ge = [
 		tier: "LEGENDARY",
 		description: "BOSS在场时存在系统倒计时，归零玩家失败。",
 		hooks: {
-			onTurnStart: ({ piece: e, emit: t, historyLength: r }) => {
+			onTurnStart: ({ piece: e, emit: t, historyLength: i }) => {
 				if (e.color !== o) return;
-				const i = e.metadata?.maxTurns;
-				if (!i) {
-					const o = "undefined" != typeof window && window.rogueStore?.getState()?.chapter || 1, r = Math.max(40, 65 - o);
+				const r = e.metadata?.maxTurns;
+				if (!r) {
+					const o = "undefined" != typeof window && window.rogueStore?.getState()?.chapter || 1, i = Math.max(40, 65 - o);
 					t({
 						type: "UPDATE_ROSTER_PIECE",
 						pieceUid: e.uid,
 						updates: { metadata: {
 							...e.metadata,
-							maxTurns: r
+							maxTurns: i
 						} }
 					}), t({
 						type: "UPDATE_METADATA",
-						updates: { turnsRemaining: r }
+						updates: { turnsRemaining: i }
 					});
 					return;
 				}
-				const s = i - Math.floor((r || 0) / 2);
+				const s = r - Math.floor((i || 0) / 2);
 				t({
 					type: "UPDATE_METADATA",
 					updates: { turnsRemaining: s }
@@ -10698,9 +10813,9 @@ const ge = [
 			}
 		},
 		getDisplayStatus: (e, t) => {
-			const o = "undefined" != typeof window && window.gameStore?.getState()?.history?.length || 0, r = e.metadata?.maxTurns || 40;
+			const o = "undefined" != typeof window && window.gameStore?.getState()?.history?.length || 0, i = e.metadata?.maxTurns || 40;
 			return {
-				text: `系统崩溃: ${Math.max(0, r - Math.floor(o / 2))}T`,
+				text: `系统崩溃: ${Math.max(0, i - Math.floor(o / 2))}T`,
 				colorClass: "text-red-500 animate-pulse"
 			};
 		}
@@ -10710,11 +10825,11 @@ const ge = [
 		id: "EQ_ARROGANT_CREED",
 		name: "狂妄信条",
 		tier: "LEGENDARY",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "游戏开始时，国王拥有等同于后+马的移动范围。一旦你部署了任何其他棋子，该效果永久失效。",
 		tags: ["GLOBAL"],
-		modifiers: { movement: ({ board: e, piece: t, r: o, c: s }, a) => (t.type !== r.KING || t.statuses?.some((e) => e.id === i.EQ_ARROGANT_CREED_DISABLED) || ([...y.R, ...y.B].forEach(([r, i]) => {
-			let c = o + r, n = s + i;
+		modifiers: { movement: ({ board: e, piece: t, r: o, c: s }, a) => (t.type !== i.KING || t.statuses?.some((e) => e.id === r.EQ_ARROGANT_CREED_DISABLED) || ([...S.R, ...S.B].forEach(([i, r]) => {
+			let c = o + i, n = s + r;
 			for (; c >= 0 && c < 8 && n >= 0 && n < 8;) {
 				const o = e[c][n];
 				if (o) {
@@ -10727,23 +10842,23 @@ const ge = [
 				a.push({
 					r: c,
 					c: n
-				}), c += r, n += i;
+				}), c += i, n += r;
 			}
-		}), y.N.forEach(([r, i]) => {
-			const c = o + r, n = s + i;
+		}), S.N.forEach(([i, r]) => {
+			const c = o + i, n = s + r;
 			c >= 0 && c < 8 && n >= 0 && n < 8 && e[c][n]?.color !== t.color && a.push({
 				r: c,
 				c: n
 			});
 		})), a) },
 		hooks: { onDeploy: ({ board: e, piece: o, emit: s }) => {
-			o.color === t && (C.findPieces(e, (e) => e.color === t && e.type !== r.KING).length > 0 || o.type !== r.KING) && C.findPieces(e, (e) => e.color === t && e.type === r.KING && e.equippedItems?.some((e) => "EQ_ARROGANT_CREED" === e.effectId) && !e.statuses?.some((e) => e.id === i.EQ_ARROGANT_CREED_DISABLED)).forEach(({ r: e, c: t }) => s({
+			o.color === t && (D.findPieces(e, (e) => e.color === t && e.type !== i.KING).length > 0 || o.type !== i.KING) && D.findPieces(e, (e) => e.color === t && e.type === i.KING && e.equippedItems?.some((e) => "EQ_ARROGANT_CREED" === e.effectId) && !e.statuses?.some((e) => e.id === r.EQ_ARROGANT_CREED_DISABLED)).forEach(({ r: e, c: t }) => s({
 				type: "ADD_STATUS",
 				pos: {
 					r: e,
 					c: t
 				},
-				statusId: i.EQ_ARROGANT_CREED_DISABLED,
+				statusId: r.EQ_ARROGANT_CREED_DISABLED,
 				duration: 99
 			}));
 		} }
@@ -10753,14 +10868,14 @@ const ge = [
 		name: "应急电池",
 		tier: "COMMON",
 		description: "解除冻结",
-		hooks: { onUse: ({ piece: e, r: t, c: o, emit: r, setNoSkip: s }) => {
-			e ? r({
+		hooks: { onUse: ({ piece: e, r: t, c: o, emit: i, setNoSkip: s }) => {
+			e ? i({
 				type: "REMOVE_STATUS",
 				pos: {
 					r: t,
 					c: o
 				},
-				statusId: i.FROZEN
+				statusId: r.FROZEN
 			}) : s?.();
 		} }
 	},
@@ -10770,13 +10885,13 @@ const ge = [
 		tier: "EPIC",
 		description: "永久石化",
 		hooks: { onUse: ({ piece: e, r: t, c: o, emit: s, setNoSkip: a }) => {
-			e && e.type !== r.KING && e.type !== r.QUEEN ? s({
+			e && e.type !== i.KING && e.type !== i.QUEEN ? s({
 				type: "ADD_STATUS",
 				pos: {
 					r: t,
 					c: o
 				},
-				statusId: i.PETRIFIED,
+				statusId: r.PETRIFIED,
 				duration: 99
 			}) : a?.();
 		} }
@@ -10786,8 +10901,8 @@ const ge = [
 		name: "战术撤回",
 		tier: "RARE",
 		description: "撤回库存",
-		hooks: { onUse: ({ piece: e, r: o, c: i, emit: s, setNoSkip: a }) => {
-			e && e.color === t && e.type !== r.KING ? (s({
+		hooks: { onUse: ({ piece: e, r: o, c: r, emit: s, setNoSkip: a }) => {
+			e && e.color === t && e.type !== i.KING ? (s({
 				type: "MODIFY_RESERVE",
 				color: t,
 				pieceType: e.type,
@@ -10796,7 +10911,7 @@ const ge = [
 				type: "REMOVE_PIECE",
 				pos: {
 					r: o,
-					c: i
+					c: r
 				}
 			})) : a?.();
 		} }
@@ -10818,17 +10933,17 @@ const ge = [
 		name: "恐吓信",
 		tier: "COMMON",
 		description: "逼退敌军",
-		hooks: { onUse: ({ piece: e, board: i, r: s, c: a, emit: c, setNoSkip: n }) => {
+		hooks: { onUse: ({ piece: e, board: r, r: s, c: a, emit: c, setNoSkip: n }) => {
 			if (e && e.color === o) {
 				if (e.equippedItems?.some((e) => "EQ_STABILIZER" === e.effectId)) return void n?.();
-				const o = C.findPieces(i, (e) => e.type === r.KING && e.color === t)[0], d = o ? {
+				const o = D.findPieces(r, (e) => e.type === i.KING && e.color === t)[0], d = o ? {
 					r: o.r,
 					c: o.c
 				} : {
 					r: 7,
 					c: 4
 				}, p = s - d.r, E = a - d.c, l = s + (p > 0 ? 1 : p < 0 ? -1 : 0), u = a + (E > 0 ? 1 : E < 0 ? -1 : 0);
-				l >= 0 && l < 8 && !i[l][u] ? c({
+				l >= 0 && l < 8 && !r[l][u] ? c({
 					type: "MOVE",
 					from: {
 						r: s,
@@ -10858,12 +10973,12 @@ const ge = [
 		name: "备用零件",
 		tier: "COMMON",
 		description: "王身边刷兵",
-		hooks: { onUse: ({ board: e, emit: o, prng: i }) => {
-			const s = C.findPieces(e, (e) => e.type === r.KING && e.color === t)[0], a = s ? {
+		hooks: { onUse: ({ board: e, emit: o, prng: r }) => {
+			const s = D.findPieces(e, (e) => e.type === i.KING && e.color === t)[0], a = s ? {
 				r: s.r,
 				c: s.c
 			} : null;
-			if (!a || !i) return;
+			if (!a || !r) return;
 			const c = a, n = [
 				[-1, 0],
 				[1, 0],
@@ -10873,19 +10988,19 @@ const ge = [
 				[-1, 1],
 				[1, -1],
 				[1, 1]
-			].sort(() => i.next() - .5);
+			].sort(() => r.next() - .5);
 			for (const [d, p] of n) {
-				const i = c.r + d, s = c.c + p;
-				if (i >= 0 && i < 8 && s >= 0 && s < 8 && !e[i][s]) {
+				const r = c.r + d, s = c.c + p;
+				if (r >= 0 && r < 8 && s >= 0 && s < 8 && !e[r][s]) {
 					o({
 						type: "SPAWN",
 						pos: {
-							r: i,
+							r,
 							c: s
 						},
 						piece: {
-							id: q(),
-							type: r.PAWN,
+							id: Z(),
+							type: i.PAWN,
 							color: t,
 							level: 1,
 							skills: [],
@@ -10905,7 +11020,7 @@ const ge = [
 		tier: "COMMON",
 		isFreeAction: !0,
 		description: "随机漂移",
-		hooks: { onUse: ({ piece: e, board: o, r, c: i, setNoSkip: s, emit: a, prng: c }) => {
+		hooks: { onUse: ({ piece: e, board: o, r: i, c: r, setNoSkip: s, emit: a, prng: c }) => {
 			if (!c) return;
 			const n = [
 				[-1, 0],
@@ -10914,12 +11029,12 @@ const ge = [
 				[0, 1]
 			].sort(() => c.next() - .5);
 			for (const [d, p] of n) {
-				const c = r + d, n = i + p;
+				const c = i + d, n = r + p;
 				if (c >= 0 && c < 8 && n >= 0 && n < 8 && !o[c][n] && e && e.color === t) return a({
 					type: "MOVE",
 					from: {
-						r,
-						c: i
+						r: i,
+						c: r
 					},
 					to: {
 						r: c,
@@ -10936,13 +11051,13 @@ const ge = [
 		tier: "RARE",
 		description: "冻结敌军",
 		hooks: { onUse: ({ piece: e, r: t, c: s, emit: a, setNoSkip: c }) => {
-			e && e.type !== r.KING && e.color === o ? a({
+			e && e.type !== i.KING && e.color === o ? a({
 				type: "ADD_STATUS",
 				pos: {
 					r: t,
 					c: s
 				},
-				statusId: i.FROZEN,
+				statusId: r.FROZEN,
 				duration: 5
 			}) : c?.();
 		} }
@@ -10952,16 +11067,16 @@ const ge = [
 		name: "信号净化器",
 		tier: "COMMON",
 		description: "清负面状态",
-		hooks: { onUse: ({ piece: e, r: t, c: o, emit: r, setNoSkip: s }) => {
+		hooks: { onUse: ({ piece: e, r: t, c: o, emit: i, setNoSkip: s }) => {
 			if (e) {
 				const s = [
-					i.INFECTED,
-					i.SILENCED,
-					i.SKILL_LOCKED,
-					i.ENCRYPTED
+					r.INFECTED,
+					r.SILENCED,
+					r.SKILL_LOCKED,
+					r.ENCRYPTED
 				];
 				(e.statuses || []).forEach((e) => {
-					s.includes(e.id) && r({
+					s.includes(e.id) && i({
 						type: "REMOVE_STATUS",
 						pos: {
 							r: t,
@@ -10978,16 +11093,16 @@ const ge = [
 		name: "诱饵弹",
 		tier: "RARE",
 		description: "高权重诱饵",
-		hooks: { onUse: ({ r: e, c: o, emit: i }) => {
-			i({
+		hooks: { onUse: ({ r: e, c: o, emit: r }) => {
+			r({
 				type: "SPAWN",
 				pos: {
 					r: e,
 					c: o
 				},
 				piece: {
-					id: q(),
-					type: r.PAWN,
+					id: Z(),
+					type: i.PAWN,
 					color: t,
 					level: 1,
 					skills: [],
@@ -11004,10 +11119,10 @@ const ge = [
 		name: "末日广播",
 		tier: "EPIC",
 		description: "摧毁全场断网单位",
-		hooks: { onUse: ({ board: e, metadata: i, emit: s }) => {
-			const a = Ge(e, t, i).networked, c = Ge(e, o, i).networked;
-			C.findPieces(e, (e) => e.type !== r.KING).forEach(({ r: e, c: o, piece: r }) => {
-				(r.color === t ? a[e][o] : c[e][o]) || s({
+		hooks: { onUse: ({ board: e, metadata: r, emit: s }) => {
+			const a = Ge(e, t, r).networked, c = Ge(e, o, r).networked;
+			D.findPieces(e, (e) => e.type !== i.KING).forEach(({ r: e, c: o, piece: i }) => {
+				(i.color === t ? a[e][o] : c[e][o]) || s({
 					type: "KILL",
 					pos: {
 						r: e,
@@ -11023,7 +11138,7 @@ const ge = [
 		tier: "EPIC",
 		description: "策反敌军",
 		hooks: { onUse: ({ piece: e, r: s, c: a, emit: c, setNoSkip: n }) => {
-			e && e.color === o && e.type !== r.KING ? c({
+			e && e.color === o && e.type !== i.KING ? c({
 				type: "SPAWN",
 				pos: {
 					r: s,
@@ -11033,7 +11148,7 @@ const ge = [
 					...e,
 					color: t,
 					statuses: [...e.statuses || [], {
-						id: i.BETRAYED,
+						id: r.BETRAYED,
 						duration: 1
 					}]
 				}
@@ -11083,14 +11198,14 @@ const ge = [
 		name: "重压机",
 		tier: "RARE",
 		description: "永久扁平化",
-		hooks: { onUse: ({ piece: e, r: o, c: r, emit: s, setNoSkip: a }) => {
+		hooks: { onUse: ({ piece: e, r: o, c: i, emit: s, setNoSkip: a }) => {
 			e && e.color === t ? s({
 				type: "ADD_STATUS",
 				pos: {
 					r: o,
-					c: r
+					c: i
 				},
-				statusId: i.FLATTENED,
+				statusId: r.FLATTENED,
 				duration: 99
 			}) : a?.();
 		} }
@@ -11119,16 +11234,16 @@ const ge = [
 		name: "重力陷阱",
 		tier: "RARE",
 		description: "3x3重力锁定",
-		hooks: { onUse: ({ board: e, r: t, c: o, emit: r }) => {
+		hooks: { onUse: ({ board: e, r: t, c: o, emit: i }) => {
 			for (let s = -1; s <= 1; s++) for (let a = -1; a <= 1; a++) {
 				const c = t + s, n = o + a;
-				c >= 0 && c < 8 && n >= 0 && n < 8 && e[c][n] && r({
+				c >= 0 && c < 8 && n >= 0 && n < 8 && e[c][n] && i({
 					type: "ADD_STATUS",
 					pos: {
 						r: c,
 						c: n
 					},
-					statusId: i.GRAVITY_LOCKED,
+					statusId: r.GRAVITY_LOCKED,
 					duration: 2
 				});
 			}
@@ -11140,9 +11255,9 @@ const ge = [
 		tier: "COMMON",
 		description: "作用于2x2网格，使地块上的棋子免疫1格以外的攻击，持续2回合。",
 		hooks: { onUse: ({ r: e, c: t, emit: o }) => {
-			const r = 7 === e ? 6 : e, i = 7 === t ? 6 : t;
+			const i = 7 === e ? 6 : e, r = 7 === t ? 6 : t;
 			for (let s = 0; s <= 1; s++) for (let e = 0; e <= 1; e++) {
-				const t = r + s, a = i + e;
+				const t = i + s, a = r + e;
 				o({
 					type: "SET_SQUARE",
 					pos: {
@@ -11170,14 +11285,14 @@ const ge = [
 		name: "信号遮断器",
 		tier: "RARE",
 		description: "隐身 2 回合",
-		hooks: { onUse: ({ piece: e, r: o, c: r, emit: s, setNoSkip: a }) => {
+		hooks: { onUse: ({ piece: e, r: o, c: i, emit: s, setNoSkip: a }) => {
 			e && e.color === t ? s({
 				type: "ADD_STATUS",
 				pos: {
 					r: o,
-					c: r
+					c: i
 				},
-				statusId: i.INVISIBLE,
+				statusId: r.INVISIBLE,
 				duration: 2
 			}) : a?.();
 		} }
@@ -11188,29 +11303,29 @@ const ge = [
 		tier: "EPIC",
 		isFreeAction: !0,
 		description: "选定一枚棋子，使其本回合可立刻行动一次（无视网络连接，但不能吃子）。",
-		hooks: { onUse: ({ piece: e, r: t, c: o, emit: r, setNoSkip: s }) => {
-			e ? (r({
+		hooks: { onUse: ({ piece: e, r: t, c: o, emit: i, setNoSkip: s }) => {
+			e ? (i({
 				type: "ADD_STATUS",
 				pos: {
 					r: t,
 					c: o
 				},
-				statusId: i.CANNOT_CAPTURE,
+				statusId: r.CANNOT_CAPTURE,
 				duration: 1
-			}), r({
+			}), i({
 				type: "SET_EXTRA_MOVE",
 				active: !0
-			}), r({
+			}), i({
 				type: "UPDATE_METADATA",
 				updates: { lockedActionUid: e.uid }
-			}), r({
+			}), i({
 				type: "SET_UI_SELECTION",
 				pos: {
 					r: t,
 					c: o
 				},
 				uid: e.uid ?? null
-			}), r({
+			}), i({
 				type: "SHOW_TEXT",
 				text: "Overloaded: No Captures",
 				textKey: "LOG_OVERLOAD",
@@ -11244,13 +11359,13 @@ const ge = [
 		description: "随机复活一枚高级棋子放入库存（仅本局有效）。",
 		hooks: { onUse: ({ emit: e, prng: o }) => {
 			if (!o) return;
-			const i = [
-				r.KNIGHT,
-				r.BISHOP,
-				r.ROOK
-			], s = i[Math.floor(o.next() * i.length)], a = {
-				id: "revived-" + q(),
-				uid: "u-" + q(),
+			const r = [
+				i.KNIGHT,
+				i.BISHOP,
+				i.ROOK
+			], s = r[Math.floor(o.next() * r.length)], a = {
+				id: "revived-" + Z(),
+				uid: "u-" + Z(),
 				type: s,
 				color: t,
 				level: 1,
@@ -11283,7 +11398,7 @@ const ge = [
 		description: "将棋子（不论棋盘或库存）转化为 30 金币。",
 		hooks: { onUse: (e) => {
 			const t = e.piece || e.board[e.r]?.[e.c];
-			t && t.type !== r.KING ? (e.emit({
+			t && t.type !== i.KING ? (e.emit({
 				type: "REMOVE_FROM_ROSTER",
 				pieceUid: t.uid
 			}), e.board[e.r]?.[e.c] && (e.emit({
@@ -11318,7 +11433,7 @@ const ge = [
 		tier: "EPIC",
 		description: "献祭一名友军，使其力量永久叠加至该棋子（等级+1，槽位+1）。",
 		hooks: { onUse: (e) => {
-			e.piece && e.piece.type !== r.KING ? (e.emit({
+			e.piece && e.piece.type !== i.KING ? (e.emit({
 				type: "REMOVE_FROM_ROSTER",
 				pieceUid: e.piece.uid
 			}), e.emit({
@@ -11339,6 +11454,10 @@ const ge = [
 				text: "Sacrifice Success: Power Boost",
 				textKey: "LOG_SACRIFICE_SUCCESS",
 				style: "gold"
+			}), e.isAISimulation || U.emit(G, {
+				key: "allies_sacrificed",
+				value: 1,
+				isLifetimeOnly: !0
 			})) : e.setNoSkip?.();
 		} }
 	},
@@ -11370,20 +11489,20 @@ const ge = [
 		description: "随机消耗品",
 		hooks: { onUse: ({ emit: e, setNoSkip: t, prng: o }) => {
 			if (!o) return;
-			const r = [
+			const i = [
 				"BATTERY",
 				"PURIFIER",
 				"SMOKE_BOMB",
 				"SPARE_PARTS"
-			], i = r[Math.floor(o.next() * r.length)];
+			], r = i[Math.floor(o.next() * i.length)];
 			e({
 				type: "ADD_ITEM",
 				item: {
-					id: q(),
+					id: Z(),
 					type: "CONSUMABLE",
-					name: i,
+					name: r,
 					desc: "From Loot Box",
-					effectId: i
+					effectId: r
 				}
 			}), t?.();
 		} }
@@ -11392,12 +11511,12 @@ const ge = [
 		id: "EQ_BAYONET",
 		name: "刺刀",
 		tier: "COMMON",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "兵可以向前攻击（吃子）。",
 		modifiers: { movement: (e, o) => {
-			const { board: r, r: i, c: s, piece: a, isControlSquares: c } = e, n = i + (a.color === t ? -1 : 1);
+			const { board: i, r, c: s, piece: a, isControlSquares: c } = e, n = r + (a.color === t ? -1 : 1);
 			if (n >= 0 && n < 8) {
-				const e = r[n][s];
+				const e = i[n][s];
 				(e && e.color !== a.color || c && e && e.color === a.color) && o.push({
 					r: n,
 					c: s
@@ -11410,26 +11529,26 @@ const ge = [
 		id: "EQ_SCOUT_RADAR",
 		name: "侦察雷达",
 		tier: "RARE",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "只要该兵连通，周围 2 格内的敌方隐身/幻影失效。"
 	},
 	{
 		id: "EQ_SIGNAL_BACKPACK",
 		name: "信号背包",
 		tier: "RARE",
-		pieceType: r.PAWN,
+		pieceType: i.PAWN,
 		description: "强制使其正前 and 正后 2 格内的友军连网。",
 		modifiers: {
-			networkRange: ({ r: e, c: o, piece: r }) => {
-				const i = [], s = r.color === t ? -1 : 1;
-				for (let t = 1; t <= 2; t++) e + s * t >= 0 && e + s * t < 8 && i.push({
+			networkRange: ({ r: e, c: o, piece: i }) => {
+				const r = [], s = i.color === t ? -1 : 1;
+				for (let t = 1; t <= 2; t++) e + s * t >= 0 && e + s * t < 8 && r.push({
 					r: e + s * t,
 					c: o
-				}), e - s * t >= 0 && e - s * t < 8 && i.push({
+				}), e - s * t >= 0 && e - s * t < 8 && r.push({
 					r: e - s * t,
 					c: o
 				});
-				return i;
+				return r;
 			},
 			networkSource: () => !0
 		}
@@ -11438,10 +11557,10 @@ const ge = [
 		id: "EQ_HOOF_ARMOR",
 		name: "护蹄重甲",
 		tier: "RARE",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "跳跃落点如果有敌方兵，直接吃掉，且该棋子可立刻再次行动（无视网络连接）。",
-		hooks: { onKill: ({ victim: e, piece: t, r: o, c: i, emit: s }) => {
-			e && e.type === r.PAWN && (s({
+		hooks: { onKill: ({ victim: e, piece: t, r: o, c: r, emit: s }) => {
+			e && e.type === i.PAWN && (s({
 				type: "SET_EXTRA_MOVE",
 				active: !0
 			}), s({
@@ -11451,7 +11570,7 @@ const ge = [
 				type: "SET_UI_SELECTION",
 				pos: {
 					r: o,
-					c: i
+					c: r
 				},
 				uid: t.uid ?? null
 			}));
@@ -11461,10 +11580,10 @@ const ge = [
 		id: "EQ_TELESCOPIC_LEGS",
 		name: "伸缩腿",
 		tier: "EPIC",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "马可以选择跳跃 3x1 的距离。",
 		modifiers: { movement: (e, t) => {
-			const { board: o, piece: r, r: i, c: s, isControlSquares: a } = e;
+			const { board: o, piece: i, r, c: s, isControlSquares: a } = e;
 			return [
 				[-3, -1],
 				[-3, 1],
@@ -11475,10 +11594,10 @@ const ge = [
 				[-1, 3],
 				[1, 3]
 			].forEach(([e, c]) => {
-				const n = i + e, d = s + c;
+				const n = r + e, d = s + c;
 				if (n >= 0 && n < 8 && d >= 0 && d < 8) {
 					const e = o[n][d];
-					e && e.color === r.color && !a || t.push({
+					e && e.color === i.color && !a || t.push({
 						r: n,
 						c: d
 					});
@@ -11490,7 +11609,7 @@ const ge = [
 		id: "EQ_SHOCK_STIRRUPS",
 		name: "震荡马镫",
 		tier: "EPIC",
-		pieceType: r.KNIGHT,
+		pieceType: i.KNIGHT,
 		description: "马落地时，使落点周围十字方向 1 格内敌军眩晕 1 回合。",
 		hooks: { onAfterMove: ({ board: e, piece: t, r: o, c: s, emit: a }) => {
 			[
@@ -11502,13 +11621,13 @@ const ge = [
 				const d = o + c, p = s + n;
 				if (d >= 0 && d < 8 && p >= 0 && p < 8) {
 					const o = e[d][p];
-					o && o.color !== t.color && o.type !== r.KING && a({
+					o && o.color !== t.color && o.type !== i.KING && a({
 						type: "ADD_STATUS",
 						pos: {
 							r: d,
 							c: p
 						},
-						statusId: i.FROZEN,
+						statusId: r.FROZEN,
 						duration: 2
 					});
 				}
@@ -11519,15 +11638,15 @@ const ge = [
 		id: "EQ_PRISM_SHIELD",
 		name: "棱镜护盾",
 		tier: "RARE",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "被吃掉时，将其杀手（如果是斜线攻击）一同带走。",
-		hooks: { onDeath: ({ r: e, c: t, attacker: o, attackerPos: r, emit: i }) => {
-			if (o && r) {
-				const s = Math.abs(r.r - e);
-				s === Math.abs(r.c - t) && s > 0 && (i({
+		hooks: { onDeath: ({ r: e, c: t, attacker: o, attackerPos: i, emit: r }) => {
+			if (o && i) {
+				const s = Math.abs(i.r - e);
+				s === Math.abs(i.c - t) && s > 0 && (r({
 					type: "KILL",
 					targetId: o.id
-				}), i({
+				}), r({
 					type: "SHOW_TEXT",
 					text: "Prism Reflect!",
 					textKey: "LOG_PRISM_REFLECT",
@@ -11540,10 +11659,10 @@ const ge = [
 		id: "EQ_HIGH_POWER_SCOPE",
 		name: "高倍目镜",
 		tier: "COMMON",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "如果吃掉距离自己 3 格及以上的敌人，立即获得 5 金币奖励。",
-		hooks: { onKill: ({ piece: e, from: o, r, c: i, emit: s }) => {
-			o && e.color === t && Math.max(Math.abs(r - o.r), Math.abs(i - o.c)) >= 3 && s({
+		hooks: { onKill: ({ piece: e, from: o, r: i, c: r, emit: s }) => {
+			o && e.color === t && Math.max(Math.abs(i - o.r), Math.abs(r - o.c)) >= 3 && s({
 				type: "MODIFY_GOLD",
 				amount: 5,
 				reason: "SCOPE"
@@ -11554,19 +11673,19 @@ const ge = [
 		id: "EQ_PURIFICATION_STAFF",
 		name: "净化法杖",
 		tier: "RARE",
-		pieceType: r.BISHOP,
+		pieceType: i.BISHOP,
 		description: "移动后，清除落点周围 3x3 范围友军的负面状态。",
-		hooks: { onAfterMove: ({ board: e, piece: t, r: o, c: r, emit: s }) => {
+		hooks: { onAfterMove: ({ board: e, piece: t, r: o, c: i, emit: s }) => {
 			const a = [
-				i.FROZEN,
-				i.PETRIFIED,
-				i.INFECTED,
-				i.SILENCED,
-				i.GRAVITY_LOCKED,
-				i.SKILL_LOCKED
+				r.FROZEN,
+				r.PETRIFIED,
+				r.INFECTED,
+				r.SILENCED,
+				r.GRAVITY_LOCKED,
+				r.SKILL_LOCKED
 			];
-			for (let i = -1; i <= 1; i++) for (let c = -1; c <= 1; c++) {
-				const n = o + i, d = r + c;
+			for (let r = -1; r <= 1; r++) for (let c = -1; c <= 1; c++) {
+				const n = o + r, d = i + c;
 				if (n >= 0 && n < 8 && d >= 0 && d < 8) {
 					const o = e[n][d];
 					o && o.color === t.color && (o.statuses || []).forEach((e) => {
@@ -11587,37 +11706,37 @@ const ge = [
 		id: "EQ_HOVER_TREAD",
 		name: "履带轮",
 		tier: "RARE",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "车可以斜向移动一格。",
-		modifiers: { movement: ({ board: e, piece: t, r: o, c: r }, i) => ([
+		modifiers: { movement: ({ board: e, piece: t, r: o, c: i }, r) => ([
 			[-1, -1],
 			[-1, 1],
 			[1, -1],
 			[1, 1]
 		].forEach(([s, a]) => {
-			const c = o + s, n = r + a;
+			const c = o + s, n = i + a;
 			if (c >= 0 && c < 8 && n >= 0 && n < 8) {
 				const o = e[c][n];
-				o && o.color === t.color || i.push({
+				o && o.color === t.color || r.push({
 					r: c,
 					c: n
 				});
 			}
-		}), i) }
+		}), r) }
 	},
 	{
 		id: "EQ_BASE_STATION",
 		name: "基站天线",
 		tier: "EPIC",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "车处于连通时，其所在的整条行和列的所有友军视为已连网。",
 		modifiers: { networkRange: ({ r: e, c: t }) => {
 			const o = [];
-			for (let r = 0; r < 8; r++) r !== t && o.push({
+			for (let i = 0; i < 8; i++) i !== t && o.push({
 				r: e,
-				c: r
-			}), r !== e && o.push({
-				r,
+				c: i
+			}), i !== e && o.push({
+				r: i,
 				c: t
 			});
 			return o;
@@ -11627,18 +11746,18 @@ const ge = [
 		id: "EQ_REACTIVE_ARMOR",
 		name: "反应装甲",
 		tier: "EPIC",
-		pieceType: r.ROOK,
+		pieceType: i.ROOK,
 		description: "免疫来自正上方和正下方的任何攻击。",
-		modifiers: { invulnerable: ({ board: e, r: t, c: o }, r) => C.findPieces(e, (e, t, i) => e === r && i === o).length > 0 }
+		modifiers: { invulnerable: ({ board: e, r: t, c: o }, i) => D.findPieces(e, (e, t, r) => e === i && r === o).length > 0 }
 	},
 	{
 		id: "EQ_PHOENIX_FEATHER",
 		name: "凤凰羽毛",
 		tier: "LEGENDARY",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "被吃时，在王身边重生为等级 1 的兵，随后该装备损毁。",
-		hooks: { onDeath: ({ board: e, piece: t, cancelAction: o, emit: i, r: s, c: a, prng: c }) => {
-			const n = C.findPieces(e, (e) => e.type === r.KING && e.color === t.color)[0], d = n ? {
+		hooks: { onDeath: ({ board: e, piece: t, cancelAction: o, emit: r, r: s, c: a, prng: c }) => {
+			const n = D.findPieces(e, (e) => e.type === i.KING && e.color === t.color)[0], d = n ? {
 				r: n.r,
 				c: n.c
 			} : null;
@@ -11658,24 +11777,24 @@ const ge = [
 					if (n >= 0 && n < 8 && E >= 0 && E < 8 && !e[n][E]) {
 						const e = {
 							...t,
-							type: r.PAWN,
+							type: i.PAWN,
 							level: 1,
 							equippedItems: t.equippedItems.filter((e) => "EQ_PHOENIX_FEATHER" !== e.effectId)
 						};
-						i({
+						r({
 							type: "REMOVE_PIECE",
 							pos: {
 								r: s,
 								c: a
 							}
-						}), i({
+						}), r({
 							type: "SPAWN",
 							pos: {
 								r: n,
 								c: E
 							},
 							piece: e
-						}), i({
+						}), r({
 							type: "SHOW_TEXT",
 							text: "Phoenix Rebirth",
 							textKey: "LOG_PHOENIX_REBIRTH",
@@ -11691,10 +11810,10 @@ const ge = [
 		id: "EQ_BLOOD_DRESS",
 		name: "鲜血长裙",
 		tier: "EPIC",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "吃掉敌军后在落点留下残影（2回合），之后可无视距离移动至残影处。",
-		hooks: { onKill: ({ r: e, c: t, piece: o, emit: r }) => {
-			r({
+		hooks: { onKill: ({ r: e, c: t, piece: o, emit: i }) => {
+			i({
 				type: "SET_SQUARE",
 				pos: {
 					r: e,
@@ -11708,9 +11827,9 @@ const ge = [
 			});
 		} },
 		modifiers: { movement: ({ metadata: e, piece: t }, o) => {
-			const r = e?.squares || {};
-			for (const i in r) if (r[i].some((e) => e.id === p && e.metadata?.uid === t.uid)) {
-				const [e, t] = i.split(",").map(Number);
+			const i = e?.squares || {};
+			for (const r in i) if (i[r].some((e) => e.id === p && e.metadata?.uid === t.uid)) {
+				const [e, t] = r.split(",").map(Number);
 				o.push({
 					r: e,
 					c: t
@@ -11723,34 +11842,34 @@ const ge = [
 		id: "EQ_SCEPTER_OF_CHARM",
 		name: "蛊惑权杖",
 		tier: "LEGENDARY",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "威胁范围内有且仅有一个敌方单位且它无相邻友军时，将其策反 1 回合。",
 		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: s, emit: a }) => {
-			const c = [], n = [...y.R, ...y.B];
-			for (const [i, d] of n) {
-				let a = t + i, n = o + d;
+			const c = [], n = [...S.R, ...S.B];
+			for (const [r, d] of n) {
+				let a = t + r, n = o + d;
 				for (; a >= 0 && a < 8 && n >= 0 && n < 8;) {
 					const t = e[a][n];
 					if (t) {
-						t.color !== s.color && t.type !== r.KING && c.push({
+						t.color !== s.color && t.type !== i.KING && c.push({
 							r: a,
 							c: n,
 							p: t
 						});
 						break;
 					}
-					a += i, n += d;
+					a += r, n += d;
 				}
 			}
 			if (1 === c.length) {
 				const t = c[0];
 				let o = !1;
-				for (let r = -1; r <= 1; r++) for (let i = -1; i <= 1; i++) {
-					if (0 === r && 0 === i) continue;
-					const s = t.r + r, a = t.c + i;
+				for (let i = -1; i <= 1; i++) for (let r = -1; r <= 1; r++) {
+					if (0 === i && 0 === r) continue;
+					const s = t.r + i, a = t.c + r;
 					if (s >= 0 && s < 8 && a >= 0 && a < 8) {
-						const r = e[s][a];
-						if (r && r.color === t.p.color) {
+						const i = e[s][a];
+						if (i && i.color === t.p.color) {
 							o = !0;
 							break;
 						}
@@ -11766,7 +11885,7 @@ const ge = [
 						...t.p,
 						color: s.color,
 						statuses: [...t.p.statuses || [], {
-							id: i.BETRAYED,
+							id: r.BETRAYED,
 							duration: 1
 						}]
 					}
@@ -11778,19 +11897,19 @@ const ge = [
 		id: "EQ_LIGHTNING_ROD",
 		name: "避雷针",
 		tier: "RARE",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "王免疫敌方环境陷阱 and 负面状态的影响。",
-		hooks: { onTurnStart: ({ piece: e, r: t, c: o, emit: r }) => {
+		hooks: { onTurnStart: ({ piece: e, r: t, c: o, emit: i }) => {
 			const s = [
-				i.FROZEN,
-				i.PETRIFIED,
-				i.INFECTED,
-				i.SILENCED,
-				i.GRAVITY_LOCKED,
-				i.SKILL_LOCKED
+				r.FROZEN,
+				r.PETRIFIED,
+				r.INFECTED,
+				r.SILENCED,
+				r.GRAVITY_LOCKED,
+				r.SKILL_LOCKED
 			];
 			(e.statuses || []).forEach((e) => {
-				s.includes(e.id) && r({
+				s.includes(e.id) && i({
 					type: "REMOVE_STATUS",
 					pos: {
 						r: t,
@@ -11805,17 +11924,17 @@ const ge = [
 		id: "EQ_MEGAPHONE",
 		name: "扩音器",
 		tier: "COMMON",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "王提供的初始网络支持范围变为十字方向 2 格。",
 		modifiers: { networkRange: ({ r: e, c: t }) => {
 			const o = [];
-			for (const [r, i] of [
+			for (const [i, r] of [
 				[-1, 0],
 				[1, 0],
 				[0, -1],
 				[0, 1]
 			]) for (let s = 1; s <= 2; s++) {
-				const a = e + r * s, c = t + i * s;
+				const a = e + i * s, c = t + r * s;
 				a >= 0 && a < 8 && c >= 0 && c < 8 && o.push({
 					r: a,
 					c
@@ -11828,14 +11947,14 @@ const ge = [
 		id: "EQ_ROYAL_GUARD",
 		name: "御前侍卫",
 		tier: "LEGENDARY",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "王相邻友军被吃时，自动消耗 10 金币将其复活（每局限一次）。",
 		tags: ["GLOBAL"],
-		hooks: { onDeath: ({ board: e, piece: t, ownerPos: o, subject: r, r: i, c: s, cancelAction: a, emit: c, gold: n, prng: d }) => {
-			if (o && r && r.color === t.color && r.uid !== t.uid && 1 === Math.max(Math.abs(i - o.r), Math.abs(s - o.c))) {
-				const i = t.equippedItems.find((e) => "EQ_ROYAL_GUARD" === e.effectId);
-				if (i && !i.metadata?.used && (n ?? 0) >= 10 && d) {
-					const i = [
+		hooks: { onDeath: ({ board: e, piece: t, ownerPos: o, subject: i, r, c: s, cancelAction: a, emit: c, gold: n, prng: d, isAISimulation: p }) => {
+			if (o && i && i.color === t.color && i.uid !== t.uid && 1 === Math.max(Math.abs(r - o.r), Math.abs(s - o.c))) {
+				const r = t.equippedItems.find((e) => "EQ_ROYAL_GUARD" === e.effectId);
+				if (r && !r.metadata?.used && (n ?? 0) >= 10 && d) {
+					const r = [
 						[-1, -1],
 						[-1, 0],
 						[-1, 1],
@@ -11846,11 +11965,11 @@ const ge = [
 						[1, 1]
 					].sort(() => d.next() - .5);
 					let s = null;
-					for (const [t, r] of i) {
-						const i = o.r + t, a = o.c + r;
-						if (i >= 0 && i < 8 && a >= 0 && a < 8 && !e[i][a]) {
+					for (const [t, i] of r) {
+						const r = o.r + t, a = o.c + i;
+						if (r >= 0 && r < 8 && a >= 0 && a < 8 && !e[r][a]) {
 							s = {
-								r: i,
+								r,
 								c: a
 							};
 							break;
@@ -11874,7 +11993,7 @@ const ge = [
 							type: "SPAWN",
 							pos: s,
 							piece: {
-								...r,
+								...i,
 								statuses: []
 							}
 						}), a?.(), c({
@@ -11882,6 +12001,10 @@ const ge = [
 							text: "Guardian Sacrifice",
 							textKey: "LOG_ROYAL_GUARD",
 							style: "system"
+						}), p || U.emit(G, {
+							key: "king_protected",
+							value: 1,
+							isLifetimeOnly: !0
 						});
 						return;
 					}
@@ -11895,10 +12018,10 @@ const ge = [
 		tier: "COMMON",
 		description: "当棋子被吃掉时，吃它的敌方棋子被冻结 1 回合。",
 		hooks: { onDeath: ({ attacker: e, emit: t }) => {
-			e && e.type !== r.KING && t({
+			e && e.type !== i.KING && t({
 				type: "ADD_STATUS",
 				targetId: e.id,
-				statusId: i.FROZEN,
+				statusId: r.FROZEN,
 				duration: 2
 			});
 		} }
@@ -11909,16 +12032,16 @@ const ge = [
 		tier: "COMMON",
 		description: "棋子可以在断网状态下强行移动一次，随后该装备损毁。",
 		modifiers: { bypassFrozen: () => !0 },
-		hooks: { onAfterMove: ({ board: e, piece: t, r: o, c: r, from: i, emit: s, metadata: a }) => {
-			if (!i) return;
-			const c = e[o][r], n = e[i.r][i.c];
-			e[i.r][i.c] = c, e[o][r] = n;
-			const { networked: d } = Ge(e, t.color, a), p = !d[i.r][i.c];
-			e[o][r] = c, e[i.r][i.c] = n, p && (s({
+		hooks: { onAfterMove: ({ board: e, piece: t, r: o, c: i, from: r, emit: s, metadata: a }) => {
+			if (!r) return;
+			const c = e[o][i], n = e[r.r][r.c];
+			e[r.r][r.c] = c, e[o][i] = n;
+			const { networked: d } = Ge(e, t.color, a), p = !d[r.r][r.c];
+			e[o][i] = c, e[r.r][r.c] = n, p && (s({
 				type: "SPAWN",
 				pos: {
 					r: o,
-					c: r
+					c: i
 				},
 				piece: {
 					...t,
@@ -11931,7 +12054,7 @@ const ge = [
 				style: "system",
 				pos: {
 					r: o,
-					c: r
+					c: i
 				}
 			}));
 		} }
@@ -11942,23 +12065,23 @@ const ge = [
 		tier: "RARE",
 		description: "只要该棋子本回合未移动且未吃子，它处于“伪装”状态。",
 		hooks: {
-			onTurnStart: ({ piece: e, r: t, c: o, emit: r }) => r({
+			onTurnStart: ({ piece: e, r: t, c: o, emit: i }) => i({
 				type: "ADD_STATUS",
 				pos: {
 					r: t,
 					c: o
 				},
-				statusId: i.CAMOUFLAGED,
+				statusId: r.CAMOUFLAGED,
 				duration: 2
 			}),
-			onAfterMove: ({ piece: e, r: t, c: o, emit: r }) => {
-				r({
+			onAfterMove: ({ piece: e, r: t, c: o, emit: i }) => {
+				i({
 					type: "REMOVE_STATUS",
 					pos: {
 						r: t,
 						c: o
 					},
-					statusId: i.CAMOUFLAGED
+					statusId: r.CAMOUFLAGED
 				});
 			}
 		}
@@ -11974,10 +12097,10 @@ const ge = [
 		name: "自毁协议",
 		tier: "RARE",
 		description: "被吃时对周围 1 格造成毁灭爆炸，随后装备损毁。",
-		hooks: { onDeath: ({ board: e, r: t, c: o, emit: i }) => {
+		hooks: { onDeath: ({ board: e, r: t, c: o, emit: r }) => {
 			for (let s = -1; s <= 1; s++) for (let a = -1; a <= 1; a++) {
 				const c = t + s, n = o + a;
-				c >= 0 && c < 8 && n >= 0 && n < 8 && e[c][n]?.type !== r.KING && i({
+				c >= 0 && c < 8 && n >= 0 && n < 8 && e[c][n]?.type !== i.KING && r({
 					type: "KILL",
 					pos: {
 						r: c,
@@ -11992,8 +12115,8 @@ const ge = [
 		name: "备用电池组",
 		tier: "COMMON",
 		description: "该棋子断网后，可以多撑 2 回合才进入瘫痪状态。",
-		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: r, emit: s, metadata: a }) => {
-			const { networked: c } = Ge(e, r.color, a);
+		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: i, emit: s, metadata: a }) => {
+			const { networked: c } = Ge(e, i.color, a);
 			c[t][o] ? s({
 				type: "SPAWN",
 				pos: {
@@ -12001,23 +12124,23 @@ const ge = [
 					c: o
 				},
 				piece: {
-					...r,
+					...i,
 					metadata: {
-						...r.metadata,
+						...i.metadata,
 						batteryLeft: 2
 					}
 				}
-			}) : r.metadata?.batteryLeft > 0 && (s({
+			}) : i.metadata?.batteryLeft > 0 && (s({
 				type: "SPAWN",
 				pos: {
 					r: t,
 					c: o
 				},
 				piece: {
-					...r,
+					...i,
 					metadata: {
-						...r.metadata,
-						batteryLeft: r.metadata.batteryLeft - 1
+						...i.metadata,
+						batteryLeft: i.metadata.batteryLeft - 1
 					}
 				}
 			}), s({
@@ -12026,7 +12149,7 @@ const ge = [
 					r: t,
 					c: o
 				},
-				statusId: i.BACKUP_BUFFER_ACTIVE,
+				statusId: r.BACKUP_BUFFER_ACTIVE,
 				duration: 2
 			}));
 		} }
@@ -12036,10 +12159,10 @@ const ge = [
 		name: "应急链路",
 		tier: "RARE",
 		description: "断网时，强行与周围 2 格内的另一名友军建立临时连接。",
-		modifiers: { alwaysNetworked: ({ board: e, r: t, c: o, piece: r }) => {
-			for (let i = -2; i <= 2; i++) for (let s = -2; s <= 2; s++) {
-				const a = t + i, c = o + s;
-				if (a >= 0 && a < 8 && c >= 0 && c < 8 && e[a][c]?.color === r.color && e[a][c] !== r) return !0;
+		modifiers: { alwaysNetworked: ({ board: e, r: t, c: o, piece: i }) => {
+			for (let r = -2; r <= 2; r++) for (let s = -2; s <= 2; s++) {
+				const a = t + r, c = o + s;
+				if (a >= 0 && a < 8 && c >= 0 && c < 8 && e[a][c]?.color === i.color && e[a][c] !== i) return !0;
 			}
 			return !1;
 		} }
@@ -12062,16 +12185,16 @@ const ge = [
 		name: "急救信标",
 		tier: "EPIC",
 		description: "被吃掉时，如果有同类棋子在库存，免费将其部署在王周围。",
-		hooks: { onDeath: ({ piece: e, board: t, reserves: o, emit: i, prng: s }) => {
+		hooks: { onDeath: ({ piece: e, board: t, reserves: o, emit: r, prng: s }) => {
 			if (o && (o[e.color]?.[e.type] || 0) > 0 && s) {
 				let o = null;
-				if (t.forEach((t, i) => t.forEach((t, s) => {
-					t?.type === r.KING && t.color === e.color && (o = {
-						r: i,
+				if (t.forEach((t, r) => t.forEach((t, s) => {
+					t?.type === i.KING && t.color === e.color && (o = {
+						r,
 						c: s
 					});
 				})), o) {
-					const r = [
+					const i = [
 						[-1, -1],
 						[-1, 0],
 						[-1, 1],
@@ -12081,23 +12204,23 @@ const ge = [
 						[1, 0],
 						[1, 1]
 					].sort(() => s.next() - .5);
-					for (const [s, a] of r) {
-						const r = o.r + s, c = o.c + a;
-						if (r >= 0 && r < 8 && c >= 0 && c < 8 && !t[r][c]) {
-							i({
+					for (const [s, a] of i) {
+						const i = o.r + s, c = o.c + a;
+						if (i >= 0 && i < 8 && c >= 0 && c < 8 && !t[i][c]) {
+							r({
 								type: "MODIFY_RESERVE",
 								color: e.color,
 								pieceType: e.type,
 								amount: -1
-							}), i({
+							}), r({
 								type: "SPAWN",
 								pos: {
-									r,
+									r: i,
 									c
 								},
 								piece: {
 									...e,
-									id: q(),
+									id: Z(),
 									statuses: [],
 									equippedItems: []
 								}
@@ -12114,13 +12237,13 @@ const ge = [
 		name: "战术调度中心",
 		tier: "LEGENDARY",
 		description: "每场战斗的第一回合，可以额外进行一次部署操作。",
-		pieceType: r.KING,
-		hooks: { onTurnStart: ({ piece: e, historyLength: o, emit: r }) => {
-			const i = o ?? 0;
-			e.color === t && 0 === i && e.equippedItems?.some((e) => "EQ_TACTICAL_OPS" === e.effectId) && (r({
+		pieceType: i.KING,
+		hooks: { onTurnStart: ({ piece: e, historyLength: o, emit: i }) => {
+			const r = o ?? 0;
+			e.color === t && 0 === r && e.equippedItems?.some((e) => "EQ_TACTICAL_OPS" === e.effectId) && (i({
 				type: "SET_EXTRA_MOVE",
 				active: !0
-			}), r({
+			}), i({
 				type: "SHOW_TEXT",
 				text: "Tactical Ops: Extra Deployment",
 				textKey: "LOG_TACTICAL_OPS",
@@ -12133,13 +12256,13 @@ const ge = [
 		name: "外交豁免权",
 		tier: "LEGENDARY",
 		description: "前 2 回合，敌方 AI 禁止部署 new 棋子。",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		tags: ["GLOBAL"],
-		hooks: { onDeploy: ({ r: e, c: t, piece: o, subject: r, historyLength: i, cancelAction: s, emit: a }) => {
-			o && r && r.color !== o.color && o.equippedItems.some((e) => "EQ_DIPLOMATIC_IMMUNITY" === e.effectId) && (i ?? 0) < 5 && (a({
+		hooks: { onDeploy: ({ r: e, c: t, piece: o, subject: i, historyLength: r, cancelAction: s, emit: a }) => {
+			o && i && i.color !== o.color && o.equippedItems.some((e) => "EQ_DIPLOMATIC_IMMUNITY" === e.effectId) && (r ?? 0) < 5 && (a({
 				type: "MODIFY_RESERVE",
-				color: r.color,
-				pieceType: r.type,
+				color: i.color,
+				pieceType: i.type,
 				amount: 1
 			}), a({
 				type: "REMOVE_PIECE",
@@ -12160,26 +12283,30 @@ const ge = [
 		name: "全频扫描仪",
 		tier: "EPIC",
 		description: "回合开始时，强制所有敌方“隐身”和“陷阱”显形销毁。",
-		pieceType: r.KING,
-		hooks: { onTurnStart: ({ board: e, piece: r, metadata: s, emit: c }) => {
-			if (r.color === t && (C.findPieces(e, (e) => e.color === o && e.statuses?.some((e) => e.id === i.INVISIBLE)).forEach(({ r: e, c: t }) => c({
+		pieceType: i.KING,
+		hooks: { onTurnStart: ({ board: e, piece: i, metadata: s, emit: c, isAISimulation: n }) => {
+			if (i.color === t && (D.findPieces(e, (e) => e.color === o && e.statuses?.some((e) => e.id === r.INVISIBLE)).forEach(({ r: e, c: t }) => c({
 				type: "REMOVE_STATUS",
 				pos: {
 					r: e,
 					c: t
 				},
-				statusId: i.INVISIBLE
+				statusId: r.INVISIBLE
 			})), s && s.squares)) {
 				const e = { ...s.squares };
 				let t = !1;
 				for (const o in e) {
-					const r = e[o].filter((e) => e.id !== a);
-					r.length !== e[o].length && (e[o] = r, t = !0);
+					const i = e[o].filter((e) => e.id !== a);
+					i.length !== e[o].length && (e[o] = i, t = !0);
 				}
-				t && c({
+				t && (c({
 					type: "UPDATE_METADATA",
 					updates: { squares: e }
-				});
+				}), n || U.emit(G, {
+					key: "trapsDestroyed",
+					value: 1,
+					isLifetimeOnly: !0
+				}));
 			}
 		} }
 	},
@@ -12188,10 +12315,10 @@ const ge = [
 		name: "黑市账本",
 		tier: "EPIC",
 		description: "击杀敌方国王（胜利）时，额外获得 30 金币的巨额收益。",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		tags: ["GLOBAL"],
-		hooks: { onDeath: ({ piece: e, subject: t, emit: i }) => {
-			t && t.type === r.KING && t.color === o && e.equippedItems.some((e) => "EQ_BLACK_MARKET_LEDGER" === e.effectId) && i({
+		hooks: { onDeath: ({ piece: e, subject: t, emit: r }) => {
+			t && t.type === i.KING && t.color === o && e.equippedItems.some((e) => "EQ_BLACK_MARKET_LEDGER" === e.effectId) && r({
 				type: "MODIFY_GOLD",
 				amount: 30,
 				reason: "LEDGER"
@@ -12203,19 +12330,19 @@ const ge = [
 		name: "循环回收站",
 		tier: "RARE",
 		description: "每当有友方棋子阵亡，随机获得一个普通消耗品。",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		tags: ["GLOBAL"],
-		hooks: { onDeath: ({ piece: e, subject: o, emit: r, prng: i }) => {
-			if (o && o.color === t && o.uid !== e.uid && i) {
+		hooks: { onDeath: ({ piece: e, subject: o, emit: i, prng: r }) => {
+			if (o && o.color === t && o.uid !== e.uid && r) {
 				const e = [
 					"BATTERY",
 					"SMOKE_BOMB",
 					"PURIFIER"
-				], t = e[Math.floor(i.next() * e.length)];
-				r({
+				], t = e[Math.floor(r.next() * e.length)];
+				i({
 					type: "ADD_ITEM",
 					item: {
-						id: q(),
+						id: Z(),
 						type: "CONSUMABLE",
 						name: "回收物资",
 						desc: "",
@@ -12230,11 +12357,11 @@ const ge = [
 		id: "EQ_RELIC_OF_KINGS",
 		name: "王权遗物",
 		tier: "LEGENDARY",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "当场上只剩下王且无兵可发时，获得“后”和“马”的移动能力。",
 		modifiers: { movement: (e, t) => {
-			const { board: o, piece: r, r: i, c: s } = e, a = !0 === r.metadata?.isReserveEmpty;
-			if (1 === C.findPieces(o, (e) => e.color === r.color).length && a) [
+			const { board: o, piece: i, r, c: s } = e, a = !0 === i.metadata?.isReserveEmpty;
+			if (1 === D.findPieces(o, (e) => e.color === i.color).length && a) [
 				[0, 1],
 				[0, -1],
 				[1, 0],
@@ -12244,11 +12371,11 @@ const ge = [
 				[-1, 1],
 				[-1, -1]
 			].forEach(([e, a]) => {
-				let c = i + e, n = s + a;
+				let c = r + e, n = s + a;
 				for (; c >= 0 && c < o.length && n >= 0 && n < o[0].length;) {
-					const i = o[c][n];
-					if (i) {
-						i.color !== r.color && t.push({
+					const r = o[c][n];
+					if (r) {
+						r.color !== i.color && t.push({
 							r: c,
 							c: n
 						});
@@ -12269,10 +12396,10 @@ const ge = [
 				[-1, 2],
 				[-1, -2]
 			].forEach(([e, a]) => {
-				const c = i + e, n = s + a;
+				const c = r + e, n = s + a;
 				if (c >= 0 && c < o.length && n >= 0 && n < o[0].length) {
 					const e = o[c][n];
-					e && e.color === r.color || t.push({
+					e && e.color === i.color || t.push({
 						r: c,
 						c: n
 					});
@@ -12286,9 +12413,9 @@ const ge = [
 		name: "风险投资",
 		tier: "RARE",
 		description: "每进入下一关且金币>50，立刻获得 10 金币利息。",
-		pieceType: r.KING,
-		hooks: { onTurnStart: ({ piece: e, gold: o, historyLength: r, emit: i, r: s, c: a }) => {
-			0 === (r ?? 0) && e.color === t && "number" == typeof s && "number" == typeof a && (e.metadata?.ventureCapitalTriggered || (i({
+		pieceType: i.KING,
+		hooks: { onTurnStart: ({ piece: e, gold: o, historyLength: i, emit: r, r: s, c: a }) => {
+			0 === (i ?? 0) && e.color === t && "number" == typeof s && "number" == typeof a && (e.metadata?.ventureCapitalTriggered || (r({
 				type: "SPAWN",
 				pos: {
 					r: s,
@@ -12301,7 +12428,7 @@ const ge = [
 						ventureCapitalTriggered: !0
 					}
 				}
-			}), (o ?? 0) >= 50 && i({
+			}), (o ?? 0) >= 50 && r({
 				type: "MODIFY_GOLD",
 				amount: 10,
 				reason: "VENTURE_CAPITAL"
@@ -12312,7 +12439,7 @@ const ge = [
 		id: "EQ_SWARM_INTELLIGENCE",
 		name: "蜂群意识",
 		tier: "LEGENDARY",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "场上所有的“兵”只要互相相邻，即视为与王连通。",
 		hooks: {}
 	},
@@ -12321,16 +12448,16 @@ const ge = [
 		name: "侦察探头",
 		tier: "COMMON",
 		description: "使 2x2 区域内的敌方隐身单位显形。",
-		hooks: { onUse: ({ board: e, r: t, c: o, emit: r }) => {
+		hooks: { onUse: ({ board: e, r: t, c: o, emit: i }) => {
 			for (let s = 0; s < 2; s++) for (let a = 0; a < 2; a++) {
 				const c = t + s, n = o + a;
-				c < 8 && n < 8 && e[c][n] && r({
+				c < 8 && n < 8 && e[c][n] && i({
 					type: "REMOVE_STATUS",
 					pos: {
 						r: c,
 						c: n
 					},
-					statusId: i.INVISIBLE
+					statusId: r.INVISIBLE
 				});
 			}
 		} }
@@ -12347,7 +12474,7 @@ const ge = [
 					r: e,
 					c: t
 				},
-				statusId: i.RUSTED,
+				statusId: r.RUSTED,
 				duration: 2
 			});
 		} }
@@ -12364,7 +12491,7 @@ const ge = [
 					r: e.r,
 					c: e.c
 				},
-				statusId: i.GOLD_MAGNET,
+				statusId: r.GOLD_MAGNET,
 				duration: 1
 			});
 		} }
@@ -12388,13 +12515,13 @@ const ge = [
 		tier: "COMMON",
 		description: "强制敌方兵后退。",
 		hooks: { onUse: (e) => {
-			const { piece: t, r: i, c: s, emit: a, board: c } = e;
-			if (t?.type === r.PAWN && t.color === o) {
-				const e = i - 1;
+			const { piece: t, r, c: s, emit: a, board: c } = e;
+			if (t?.type === i.PAWN && t.color === o) {
+				const e = r - 1;
 				e >= 0 && !c[e][s] && a({
 					type: "MOVE",
 					from: {
-						r: i,
+						r,
 						c: s
 					},
 					to: {
@@ -12436,7 +12563,7 @@ const ge = [
 					r: e,
 					c: t
 				},
-				statusId: i.INFECTED
+				statusId: r.INFECTED
 			});
 		} }
 	},
@@ -12445,20 +12572,20 @@ const ge = [
 		name: "交换插件",
 		tier: "RARE",
 		description: "交换相邻友军位置。",
-		hooks: { onUse: ({ board: e, r: o, c: r, emit: i }) => {
+		hooks: { onUse: ({ board: e, r: o, c: i, emit: r }) => {
 			for (const [s, a] of [
 				[0, 1],
 				[1, 0],
 				[0, -1],
 				[-1, 0]
 			]) {
-				const c = o + s, n = r + a;
+				const c = o + s, n = i + a;
 				if (c >= 0 && c < 8 && n >= 0 && n < 8 && e[c][n]?.color === t) {
-					i({
+					r({
 						type: "SWAP_PIECES",
 						posA: {
 							r: o,
-							c: r
+							c: i
 						},
 						posB: {
 							r: c,
@@ -12482,7 +12609,7 @@ const ge = [
 					r: e,
 					c: t
 				},
-				statusId: i.FROZEN,
+				statusId: r.FROZEN,
 				duration: 2
 			}), o({
 				type: "ADD_STATUS",
@@ -12490,7 +12617,7 @@ const ge = [
 					r: e,
 					c: t
 				},
-				statusId: i.JAMMING_TOWER,
+				statusId: r.JAMMING_TOWER,
 				duration: 2
 			});
 		} }
@@ -12503,7 +12630,7 @@ const ge = [
 		hooks: { onUse: ({ board: e, emit: t }) => {
 			let o = 0;
 			e.flat().forEach((e) => {
-				e?.statuses?.some((e) => e.id === i.FROZEN) && o++;
+				e?.statuses?.some((e) => e.id === r.FROZEN) && o++;
 			}), t({
 				type: "MODIFY_GOLD",
 				amount: 10 * o,
@@ -12516,12 +12643,12 @@ const ge = [
 		name: "黄金化",
 		tier: "RARE",
 		description: "将敌方兵变为 50 金币。",
-		hooks: { onUse: ({ piece: e, r: t, c: i, emit: s }) => {
-			e?.type === r.PAWN && e.color === o && (s({
+		hooks: { onUse: ({ piece: e, r: t, c: r, emit: s }) => {
+			e?.type === i.PAWN && e.color === o && (s({
 				type: "KILL",
 				pos: {
 					r: t,
-					c: i
+					c: r
 				}
 			}), s({
 				type: "MODIFY_GOLD",
@@ -12553,7 +12680,7 @@ const ge = [
 				type: "ADD_ITEM",
 				item: {
 					...e.equippedItems[0],
-					id: q()
+					id: Z()
 				}
 			}), t({
 				type: "UPDATE_ROSTER_PIECE",
@@ -12567,10 +12694,10 @@ const ge = [
 		name: "死神程序",
 		tier: "LEGENDARY",
 		description: "击杀所有断网棋子。",
-		hooks: { onUse: ({ board: e, metadata: i, emit: s }) => {
-			const { networked: a } = Ge(e, t, i), { networked: c } = Ge(e, o, i);
-			C.findPieces(e, (e) => e.type !== r.KING).forEach(({ r: e, c: o, piece: r }) => {
-				(r.color === t ? a[e][o] : c[e][o]) || s({
+		hooks: { onUse: ({ board: e, metadata: r, emit: s }) => {
+			const { networked: a } = Ge(e, t, r), { networked: c } = Ge(e, o, r);
+			D.findPieces(e, (e) => e.type !== i.KING).forEach(({ r: e, c: o, piece: i }) => {
+				(i.color === t ? a[e][o] : c[e][o]) || s({
 					type: "KILL",
 					pos: {
 						r: e,
@@ -12592,17 +12719,17 @@ const ge = [
 				"SMOKE_BOMB",
 				"SPARE_PARTS"
 			], o = e.prng || { next: Math.random };
-			for (let r = 0; r < 3; r++) {
-				const r = t[Math.floor(o.next() * t.length)];
+			for (let i = 0; i < 3; i++) {
+				const i = t[Math.floor(o.next() * t.length)];
 				e.emit({
 					type: "SHOW_TEXT",
-					text: "Fate Trigger: " + r,
+					text: "Fate Trigger: " + i,
 					textKey: "LOG_WHEEL_TRIGGER",
-					textParams: { item: r },
+					textParams: { item: i },
 					style: "gold"
 				});
-				const i = Pe.getDefinition(r);
-				i?.hooks?.onUse && i.hooks.onUse(e);
+				const r = Pe.getDefinition(i);
+				r?.hooks?.onUse && r.hooks.onUse(e);
 			}
 		} }
 	},
@@ -12610,14 +12737,14 @@ const ge = [
 		id: "EQ_ROYAL_SALUTE",
 		name: "皇家礼炮",
 		tier: "EPIC",
-		pieceType: r.QUEEN,
+		pieceType: i.QUEEN,
 		description: "吃子后随机雷击一名敌方兵。冷却 3 回合。",
 		hooks: {
-			onKill: ({ board: e, piece: t, emit: o, prng: i }) => {
-				if (0 === (t.metadata?.saluteCd || 0) && i) {
-					const s = C.findPieces(e, (e) => e.color !== t.color && e.type === r.PAWN);
-					if (s.length > 0) {
-						const e = s[Math.floor(i.next() * s.length)];
+			onKill: ({ board: e, piece: t, emit: o, prng: r, isAISimulation: s }) => {
+				if (0 === (t.metadata?.saluteCd || 0) && r) {
+					const a = D.findPieces(e, (e) => e.color !== t.color && e.type === i.PAWN);
+					if (a.length > 0) {
+						const e = a[Math.floor(r.next() * a.length)];
 						o({
 							type: "ANIMATE",
 							name: "LIGHTNING",
@@ -12639,6 +12766,10 @@ const ge = [
 								...t.metadata,
 								saluteCd: 4
 							} }
+						}), s || U.emit(G, {
+							key: "enemy_pawns_killed",
+							value: 1,
+							isLifetimeOnly: !0
 						});
 					}
 				}
@@ -12669,19 +12800,19 @@ const ge = [
 		id: "EQ_GOLDEN_THRONE",
 		name: "黄金王座",
 		tier: "LEGENDARY",
-		pieceType: r.KING,
+		pieceType: i.KING,
 		description: "每回合开始，根据场上连通的友军数量获得金币。",
-		hooks: { onTurnStart: ({ board: e, piece: o, emit: r, metadata: i }) => {
+		hooks: { onTurnStart: ({ board: e, piece: o, emit: i, metadata: r }) => {
 			if (o.color === t) {
-				const { networked: t } = Ge(e, o.color, i);
+				const { networked: t } = Ge(e, o.color, r);
 				let s = 0;
 				t.forEach((e) => e.forEach((e) => {
 					e && s++;
-				})), s > 0 && (r({
+				})), s > 0 && (i({
 					type: "MODIFY_GOLD",
 					amount: s,
 					reason: "THRONE"
-				}), r({
+				}), i({
 					type: "SHOW_TEXT",
 					text: `Throne Income +${s}`,
 					textKey: "LOG_THRONE_REWARD",
@@ -12697,22 +12828,22 @@ const ge = [
 		tier: "EPIC",
 		description: "主动：消耗 20 金币在当前格子放置永久“信号增益塔”。每关限一次。",
 		hooks: { onUse: (e) => {
-			const { r: t, c: o, board: r, emit: i, gold: s, setNoSkip: a } = e;
-			(s ?? 0) < 20 ? (i({
+			const { r: t, c: o, board: i, emit: r, gold: s, setNoSkip: a, isAISimulation: c } = e;
+			(s ?? 0) < 20 ? (r({
 				type: "SHOW_TEXT",
 				text: "Insufficient gold",
 				textKey: "LOG_NO_FUNDS",
 				style: "system"
-			}), a?.()) : r[t][o] ? (i({
+			}), a?.()) : i[t][o] ? (r({
 				type: "SHOW_TEXT",
 				text: "No space around",
 				textKey: "LOG_NO_SPACE",
 				style: "system"
-			}), a?.()) : (i({
+			}), a?.()) : (r({
 				type: "MODIFY_GOLD",
 				amount: -20,
 				reason: "BUILD_TOWER"
-			}), i({
+			}), r({
 				type: "SET_SQUARE",
 				pos: {
 					r: t,
@@ -12722,7 +12853,7 @@ const ge = [
 					id: u,
 					duration: 99
 				}
-			}), i({
+			}), r({
 				type: "SHOW_TEXT",
 				text: "Signal tower built",
 				textKey: "LOG_TOWER_BUILT",
@@ -12731,6 +12862,10 @@ const ge = [
 					r: t,
 					c: o
 				}
+			}), c || U.emit(G, {
+				key: "towers_built",
+				value: 1,
+				isLifetimeOnly: !0
 			}));
 		} }
 	},
@@ -12748,12 +12883,12 @@ const ge = [
 		name: "黑客终端",
 		tier: "EPIC",
 		description: "每回合开始时，随机使一个敌方高级棋子冻结。",
-		hooks: { onTurnStart: ({ board: e, piece: s, emit: a, prng: c }) => {
+		hooks: { onTurnStart: ({ board: e, piece: s, emit: a, prng: c, isAISimulation: n }) => {
 			if (s.color === t && c) {
-				const t = C.findPieces(e, (e) => e.color === o && [
-					r.ROOK,
-					r.BISHOP,
-					r.QUEEN
+				const t = D.findPieces(e, (e) => e.color === o && [
+					i.ROOK,
+					i.BISHOP,
+					i.QUEEN
 				].includes(e.type));
 				if (t.length > 0) {
 					const e = t[Math.floor(c.next() * t.length)];
@@ -12763,7 +12898,7 @@ const ge = [
 							r: e.r,
 							c: e.c
 						},
-						statusId: i.FROZEN,
+						statusId: r.FROZEN,
 						duration: 2
 					}), a({
 						type: "SHOW_TEXT",
@@ -12774,6 +12909,10 @@ const ge = [
 							r: e.r,
 							c: e.c
 						}
+					}), n || U.emit(G, {
+						key: "highTierFrozen",
+						value: 1,
+						isLifetimeOnly: !0
 					});
 				}
 			}
@@ -12785,12 +12924,12 @@ const ge = [
 		tier: "RARE",
 		description: "每次敌方国王移动后，玩家获得 5 金币。",
 		tags: ["GLOBAL"],
-		hooks: { onAfterMove: ({ piece: e, subject: t, emit: i }) => {
-			t && t.color === o && t.type === r.KING && e.equippedItems?.some((e) => "EQ_SPYWARE" === e.effectId) && (i({
+		hooks: { onAfterMove: ({ piece: e, subject: t, emit: r }) => {
+			t && t.color === o && t.type === i.KING && e.equippedItems?.some((e) => "EQ_SPYWARE" === e.effectId) && (r({
 				type: "MODIFY_GOLD",
 				amount: 5,
 				reason: "SPYWARE"
-			}), i({
+			}), r({
 				type: "SHOW_TEXT",
 				text: "Data Stolen +5",
 				textKey: "LOG_SPYWARE",
@@ -12801,35 +12940,35 @@ const ge = [
 ];
 var ve = class {
 	static resolve(e, t, o) {
-		let i = [];
+		let r = [];
 		if ("use_skill" === e.type && e.from && e.skillId) {
-			const o = t.board[e.from.r][e.from.c], r = Pe.getDefinition(e.skillId);
-			return o && r && r.activeSpec && r.activeSpec.execute(t.board, e.from.r, e.from.c, o, e.choice, (e) => i.push(e), {
+			const o = t.board[e.from.r][e.from.c], i = Pe.getDefinition(e.skillId);
+			return o && i && i.activeSpec && i.activeSpec.execute(t.board, e.from.r, e.from.c, o, e.choice, (e) => r.push(e), {
 				board: t.board,
 				piece: o,
 				r: e.from.r,
 				c: e.from.c,
-				emit: (e) => i.push(e),
+				emit: (e) => r.push(e),
 				metadata: t.metadata,
 				gold: t.gold,
 				roster: t.roster,
 				deployedUids: t.deployedUids
-			}), i;
+			}), r;
 		}
 		if ("deploy" === e.type && e.to && e.pieceType) {
 			if ((t.reserves[t.turn][e.pieceType] || 0) <= 0) return [];
 			const s = o ? o(e.pieceType) : {
-				id: `sim-${q().slice(0, 8)}`,
-				uid: `sim-u-${q().slice(0, 8)}`,
+				id: `sim-${Z().slice(0, 8)}`,
+				uid: `sim-u-${Z().slice(0, 8)}`,
 				type: e.pieceType,
 				color: t.turn,
 				level: 1,
 				skills: [],
 				statuses: [],
-				maxSlots: e.pieceType === r.KING ? 3 : 1,
+				maxSlots: e.pieceType === i.KING ? 3 : 1,
 				equippedItems: []
 			};
-			return s ? (e.recordedUid && (s.uid = e.recordedUid), e.recordedId && (s.id = e.recordedId), e.recordedUid = s.uid, e.recordedId = s.id, i.push({
+			return s ? (e.recordedUid && (s.uid = e.recordedUid), e.recordedId && (s.id = e.recordedId), e.recordedUid = s.uid, e.recordedId = s.id, r.push({
 				type: "SPAWN",
 				pos: e.to,
 				piece: s
@@ -12838,25 +12977,25 @@ var ve = class {
 				color: t.turn,
 				pieceType: s.type,
 				amount: -1
-			}), s.uid && i.push({
+			}), s.uid && r.push({
 				type: "RECORD_DEPLOY",
 				uid: s.uid
-			}), i) : [];
+			}), r) : [];
 		}
 		const s = e.from, a = e.to;
-		if ("strike" === e.type) return i.push({
+		if ("strike" === e.type) return r.push({
 			type: "KILL",
 			pos: a,
 			from: s
-		}), i;
-		if ("swap" === e.type) return i.push({
+		}), r;
+		if ("swap" === e.type) return r.push({
 			type: "SWAP_PIECES",
 			posA: s,
 			posB: a
-		}), i;
+		}), r;
 		if ("move" === e.type) {
-			const e = Ce(t.board, s.r, s.c, t.metadata, t.levelConstraints).find((e) => e.r === a.r && e.c === a.c);
-			return e?.isSecondary && e.midPos ? i.push({
+			const e = De(t.board, s.r, s.c, t.metadata, t.levelConstraints).find((e) => e.r === a.r && e.c === a.c);
+			return e?.isSecondary && e.midPos ? r.push({
 				type: "MOVE",
 				from: s,
 				to: e.midPos
@@ -12867,21 +13006,21 @@ var ve = class {
 				type: "MOVE",
 				from: e.midPos,
 				to: a
-			}) : i.push({
+			}) : r.push({
 				type: "MOVE",
 				from: s,
 				to: a
-			}), i;
+			}), r;
 		}
-		return i;
+		return r;
 	}
 }, xe = class {
 	static generateAllActions(e, t) {
-		const { board: o, turn: r, metadata: i, reserves: s, hasDeployedThisTurn: a } = e, c = w.build(o, i), n = [], d = i.lockedActionUid;
+		const { board: o, turn: i, metadata: r, reserves: s, hasDeployedThisTurn: a } = e, c = $.build(o, r), n = [], d = r.lockedActionUid;
 		if (!t && !a && !d) {
-			const t = Le(o, r, i, e.levelConstraints);
+			const t = Ce(o, i, r, e.levelConstraints);
 			if (t.length > 0) {
-				const e = s[r];
+				const e = s[i];
 				for (const o of Object.keys(e)) if (e[o] && e[o] > 0) for (const e of t) n.push({
 					type: "deploy",
 					to: e,
@@ -12891,26 +13030,26 @@ var ve = class {
 		}
 		for (let p = 0; p < 8; p++) for (let s = 0; s < 8; s++) {
 			const a = o[p][s];
-			if (a && a.color === r) {
+			if (a && a.color === i) {
 				if (d && a.uid !== d) continue;
 				if (!t) {
 					const t = [...Pe.getAllSkills(a) || [], ...a.equippedItems?.map((e) => e.effectId) || []];
-					for (const r of t) {
-						const t = Pe.getDefinition(r);
+					for (const i of t) {
+						const t = Pe.getDefinition(i);
 						if (t && t.activeSpec) {
-							const i = t.activeSpec;
-							if (i.cooldownKey && (a.metadata?.[i.cooldownKey] || 0) > 0) continue;
-							if (i.usesKey && (a.metadata?.[i.usesKey] || 0) >= (i.maxUses || Infinity)) continue;
-							if ("self" === i.targeting) n.push({
+							const r = t.activeSpec;
+							if (r.cooldownKey && (a.metadata?.[r.cooldownKey] || 0) > 0) continue;
+							if (r.usesKey && (a.metadata?.[r.usesKey] || 0) >= (r.maxUses || Infinity)) continue;
+							if ("self" === r.targeting) n.push({
 								type: "use_skill",
 								from: {
 									r: p,
 									c: s
 								},
-								skillId: r,
+								skillId: i,
 								choice: null
 							});
-							else if (i.getAlternatives) {
+							else if (r.getAlternatives) {
 								const t = {
 									board: o,
 									piece: a,
@@ -12922,23 +13061,23 @@ var ve = class {
 									roster: e.roster,
 									deployedUids: e.deployedUids,
 									prng: e.prng
-								}, c = i.getAlternatives(o, p, s, a, t);
+								}, c = r.getAlternatives(o, p, s, a, t);
 								for (const e of c) n.push({
 									type: "use_skill",
 									from: {
 										r: p,
 										c: s
 									},
-									skillId: r,
+									skillId: i,
 									choice: e.value
 								});
 							}
 						}
 					}
 				}
-				const E = Ce(o, p, s, i, e.levelConstraints, c), l = Pe.getAllSkills(a).some((e) => S.REMOTE_STRIKE_SKILLS.includes(e)) || a.equippedItems && a.equippedItems.some((e) => S.REMOTE_STRIKE_ITEMS.includes(e.effectId));
+				const E = De(o, p, s, r, e.levelConstraints, c), l = Pe.getAllSkills(a).some((e) => y.REMOTE_STRIKE_SKILLS.includes(e)) || a.equippedItems && a.equippedItems.some((e) => y.REMOTE_STRIKE_ITEMS.includes(e.effectId));
 				for (const e of E) {
-					const i = o[e.r][e.c], a = !(!i || i.color === r);
+					const r = o[e.r][e.c], a = !(!r || r.color === i);
 					t && !a || (l && a ? n.push({
 						type: "strike",
 						from: {
@@ -12949,7 +13088,7 @@ var ve = class {
 							r: e.r,
 							c: e.c
 						}
-					}) : i && i.color === r ? t || n.push({
+					}) : r && r.color === i ? t || n.push({
 						type: "swap",
 						from: {
 							r: p,
@@ -12974,34 +13113,34 @@ var ve = class {
 	}
 };
 const We = {
-	[r.PAWN]: 100,
-	[r.KNIGHT]: 320,
-	[r.BISHOP]: 330,
-	[r.ROOK]: 500,
-	[r.QUEEN]: 900,
-	[r.KING]: 5e4
+	[i.PAWN]: 100,
+	[i.KNIGHT]: 320,
+	[i.BISHOP]: 330,
+	[i.ROOK]: 500,
+	[i.QUEEN]: 900,
+	[i.KING]: 5e4
 };
 var Be = class {
 	static isCapture(e, t) {
 		if ("strike" === t.type) return !0;
 		if ("move" === t.type && t.from && t.to) {
-			const o = e.board[t.to.r][t.to.c], r = e.board[t.from.r][t.from.c];
-			return !(!o || !r || o.color === r.color);
+			const o = e.board[t.to.r][t.to.c], i = e.board[t.from.r][t.from.c];
+			return !(!o || !i || o.color === i.color);
 		}
 		return !1;
 	}
-	static SEE_Approx(e, r) {
-		if (!r.from || !r.to) return 0;
-		const i = e.board[r.from.r][r.from.c], s = e.board[r.to.r][r.to.c];
-		if (!i || !s) return 0;
-		const a = We[i.type] || 0, c = We[s.type] || 0, n = i.color === t ? o : t, d = e.metadata.cache ? n === t ? e.metadata.cache.whiteNetwork : e.metadata.cache.blackNetwork : void 0;
+	static SEE_Approx(e, i) {
+		if (!i.from || !i.to) return 0;
+		const r = e.board[i.from.r][i.from.c], s = e.board[i.to.r][i.to.c];
+		if (!r || !s) return 0;
+		const a = We[r.type] || 0, c = We[s.type] || 0, n = r.color === t ? o : t, d = e.metadata.cache ? n === t ? e.metadata.cache.whiteNetwork : e.metadata.cache.blackNetwork : void 0;
 		let p = !1;
 		for (let t = 0; t < 8; t++) {
 			for (let o = 0; o < 8; o++) {
-				const i = e.board[t][o];
-				if (i && i.color === n) {
-					const i = ke(e.board, t, o, d, e.metadata);
-					for (let e = 0; e < i.length; e++) if (i[e].r === r.to.r && i[e].c === r.to.c) {
+				const r = e.board[t][o];
+				if (r && r.color === n) {
+					const r = ke(e.board, t, o, d, e.metadata);
+					for (let e = 0; e < r.length; e++) if (r[e].r === i.to.r && r[e].c === i.to.c) {
 						p = !0;
 						break;
 					}
@@ -13012,12 +13151,12 @@ var Be = class {
 		}
 		return p ? c - a : c;
 	}
-	static isKingInCheck(e, i) {
+	static isKingInCheck(e, r) {
 		let s = -1, a = -1;
 		for (let t = 0; t < 8; t++) {
 			for (let o = 0; o < 8; o++) {
 				const c = e.board[t][o];
-				if (c?.type === r.KING && c.color === i) {
+				if (c?.type === i.KING && c.color === r) {
 					s = t, a = o;
 					break;
 				}
@@ -13025,42 +13164,42 @@ var Be = class {
 			if (-1 !== s) break;
 		}
 		if (-1 === s) return !1;
-		const c = i === t ? o : t, n = e.metadata.cache ? c === t ? e.metadata.cache.whiteNetwork : e.metadata.cache.blackNetwork : void 0;
+		const c = r === t ? o : t, n = e.metadata.cache ? c === t ? e.metadata.cache.whiteNetwork : e.metadata.cache.blackNetwork : void 0;
 		for (let t = 0; t < 8; t++) for (let o = 0; o < 8; o++) {
-			const r = e.board[t][o];
-			if (r && r.color === c) {
-				const r = ke(e.board, t, o, n, e.metadata);
-				for (let e = 0; e < r.length; e++) if (r[e].r === s && r[e].c === a) return !0;
+			const i = e.board[t][o];
+			if (i && i.color === c) {
+				const i = ke(e.board, t, o, n, e.metadata);
+				for (let e = 0; e < i.length; e++) if (i[e].r === s && i[e].c === a) return !0;
 			}
 		}
 		return !1;
 	}
 	static isBadCapture(e, t) {
-		return ("move" === t.type || "strike" === t.type) && !!t.to && e.board[t.to.r][t.to.c]?.type !== r.KING && !this.isKingInCheck(e, e.turn) && this.SEE_Approx(e, t) < -50;
+		return ("move" === t.type || "strike" === t.type) && !!t.to && e.board[t.to.r][t.to.c]?.type !== i.KING && !this.isKingInCheck(e, e.turn) && this.SEE_Approx(e, t) < -50;
 	}
 }, Fe = class {
-	static evaluate(e, i) {
-		if (e.winner === o) return i === o ? 1e6 : -1e6;
-		if (e.winner === t) return i === t ? 1e6 : -1e6;
+	static evaluate(e, r) {
+		if (e.winner === o) return r === o ? 1e6 : -1e6;
+		if (e.winner === t) return r === t ? 1e6 : -1e6;
 		let s = 0;
 		const { board: a, metadata: c } = e;
-		if (i === t && e.levelConstraints?.proxyKing) {
+		if (r === t && e.levelConstraints?.proxyKing) {
 			let e = !1, t = 0;
-			a.forEach((i) => i.forEach((i) => {
-				i && i.color === o && (i.type === r.KING || Pe.isProxyKing(i) ? e = !0 : t++);
+			a.forEach((r) => r.forEach((r) => {
+				r && r.color === o && (r.type === i.KING || Pe.isProxyKing(r) ? e = !0 : t++);
 			})), !e && t > 0 && (s += 8e4);
 		}
 		let n = null, d = null;
 		const p = [], l = [];
 		for (let o = 0; o < 8; o++) for (let e = 0; e < 8; e++) {
-			const i = a[o][e];
-			i && (i.type === r.KING ? i.color === t ? n = {
+			const r = a[o][e];
+			r && (r.type === i.KING ? r.color === t ? n = {
 				r: o,
 				c: e
 			} : d = {
 				r: o,
 				c: e
-			} : i.color === t ? p.push({
+			} : r.color === t ? p.push({
 				r: o,
 				c: e
 			}) : l.push({
@@ -13069,26 +13208,26 @@ var Be = class {
 			}));
 		}
 		const u = c.cache ? c.cache.whiteNetwork : void 0, A = c.cache ? c.cache.blackNetwork : void 0;
-		let I = 0, m = 0, T = 0, O = 0;
+		let m = 0, I = 0, T = 0, O = 0;
 		const _ = Array(8).fill(!1).map(() => Array(8).fill(!1)), f = Array(8).fill(!1).map(() => Array(8).fill(!1));
 		for (let o = 0; o < 8; o++) for (let e = 0; e < 8; e++) {
-			const r = a[o][e];
-			r && (r.color === t ? ke(a, o, e, u, c).forEach((e) => _[e.r][e.c] = !0) : ke(a, o, e, A, c).forEach((e) => f[e.r][e.c] = !0));
+			const i = a[o][e];
+			i && (i.color === t ? ke(a, o, e, u, c).forEach((e) => _[e.r][e.c] = !0) : ke(a, o, e, A, c).forEach((e) => f[e.r][e.c] = !0));
 		}
 		for (let t = 0; t < 8; t++) for (let e = 0; e < 8; e++) {
 			_[t][e] && T++, f[t][e] && O++;
 			const o = c.squares?.[`${t},${e}`] || [];
-			for (const r of o) r.id === E && (f[t][e] && (s += 30), _[t][e] && (s -= 30));
+			for (const i of o) i.id === E && (f[t][e] && (s += 30), _[t][e] && (s -= 30));
 		}
-		a.forEach((e, t) => e.forEach((e, i) => {
+		a.forEach((e, t) => e.forEach((e, r) => {
 			if (!e) return;
-			const s = e.color === o, c = s ? !A || A[t][i] : !u || u[t][i];
+			const s = e.color === o, c = s ? !A || A[t][r] : !u || u[t][r];
 			let n = 0;
-			const d = Pe.getModifiers(e, a, t, i).find((e) => e.pieceValueOverride)?.pieceValueOverride?.({
+			const d = Pe.getModifiers(e, a, t, r).find((e) => e.pieceValueOverride)?.pieceValueOverride?.({
 				board: a,
 				piece: e,
 				r: t,
-				c: i
+				c: r
 			});
 			n = void 0 !== d ? d : We[e.type] || 0;
 			const p = {
@@ -13101,7 +13240,7 @@ var Be = class {
 				GRAVITY_LOCKED: -20,
 				OVERLOADED: 40
 			};
-			e.statuses?.forEach((e) => n += p[e.id] || 0), c || e.type === r.KING || (n *= .2), Pe.getAllSkills(e).forEach((e) => {
+			e.statuses?.forEach((e) => n += p[e.id] || 0), c || e.type === i.KING || (n *= .2), Pe.getAllSkills(e).forEach((e) => {
 				const t = Pe.getDefinition(e);
 				n += {
 					COMMON: 20,
@@ -13116,31 +13255,31 @@ var Be = class {
 					EPIC: 200,
 					LEGENDARY: 500
 				}[e.tier || "COMMON"];
-			}), s ? m += n : I += n;
+			}), s ? I += n : m += n;
 		}));
-		const S = e.reserves;
-		if (S) for (const r of Object.keys(S[t])) I += (S[t][r] || 0) * (We[r] || 0) * .8, m += (S[o][r] || 0) * (We[r] || 0) * .8;
-		s += m - I, s += 8 * (O - T), Be.isKingInCheck(e, o) && (s -= 500), Be.isKingInCheck(e, t) && (s += 500);
-		const y = (e, t) => {
+		const y = e.reserves;
+		if (y) for (const i of Object.keys(y[t])) m += (y[t][i] || 0) * (We[i] || 0) * .8, I += (y[o][i] || 0) * (We[i] || 0) * .8;
+		s += I - m, s += 8 * (O - T), Be.isKingInCheck(e, o) && (s -= 500), Be.isKingInCheck(e, t) && (s += 500);
+		const S = (e, t) => {
 			if (!e) return 0;
 			let o = 0;
 			if (0 !== e.r && 7 !== e.r || 0 !== e.c && 7 !== e.c || !(t.length >= 2) || (o += 450), t.length > 0) {
-				let r = Infinity, i = 0;
+				let i = Infinity, r = 0;
 				for (const o of t) {
 					const t = Math.abs(e.r - o.r) + Math.abs(e.c - o.c);
-					t < r && (r = t), i += t;
+					t < i && (i = t), r += t;
 				}
-				const s = i / t.length;
-				r > 2 && (o += 180 * (r - 2)), s > 3.5 && (o += 60 * (s - 3.5));
+				const s = r / t.length;
+				i > 2 && (o += 180 * (i - 2)), s > 3.5 && (o += 60 * (s - 3.5));
 			}
 			return o;
 		};
-		s += y(n, p), s -= y(d, l);
-		const R = s + .1 * ((I + m + T + O) % 5);
-		return i === t ? -R : R;
+		s += S(n, p), s -= S(d, l);
+		const R = s + .1 * ((m + I + T + O) % 5);
+		return r === t ? -R : R;
 	}
 };
-Pe.register(U), Pe.register(ge), Pe.register(He), Pe.register(X), Pe.register($), Pe.register(Z), Pe.register(re), Pe.register(se), Pe.register(be);
+Pe.register(K), Pe.register(ge), Pe.register(He), Pe.register(j), Pe.register(J), Pe.register(z), Pe.register(ae), Pe.register(ne), Pe.register(be);
 const Qe = new class {
 	constructor() {
 		this.nodesVisited = 0, this.qNodesVisited = 0, this.prunedNodes = 0, this.startTime = 0, this.timeout = !1, this.thinkingColor = t, this.TIME_LIMIT = 1200, this.historyTable = new Int32Array(4096), this.killerMoves = [], this.ttCache = /* @__PURE__ */ new Map(), this.positionHistory = /* @__PURE__ */ new Map(), this.lastRootHash = null;
@@ -13150,20 +13289,20 @@ const Qe = new class {
 	}
 	async computeMove(e, t = "normal") {
 		this.nodesVisited = 0, this.qNodesVisited = 0, this.prunedNodes = 0, this.startTime = Date.now(), this.timeout = !1, this.thinkingColor = e.turn;
-		let o = "hard" === t ? 4e3 : 1200, r = "hard" === t ? 6 : 4;
+		let o = "hard" === t ? 4e3 : 1200, i = "hard" === t ? 6 : 4;
 		this.TIME_LIMIT && (o = this.TIME_LIMIT), this.killerMoves = Array(32).fill(null).map(() => []);
 		for (let p = 0; p < 4096; p++) this.historyTable[p] >>= 1;
 		this.ttCache.size > 1e5 && this.ttCache.clear();
-		const i = this.getHash(e);
-		this.positionHistory.size > 0 && null !== this.lastRootHash && !this.positionHistory.has(i) && this.positionHistory.clear(), this.lastRootHash = i;
-		const s = (this.positionHistory.get(i) ?? 0) + 1;
-		this.positionHistory.set(i, s), this.positionHistory.size > 300 && (this.positionHistory.clear(), this.positionHistory.set(i, 1));
-		const a = Se.fastCloneContext(e);
-		a.metadata.cache || (a.metadata.cache = Y.recompute(a.board, a.metadata, a.turn, a.levelConstraints, !0)), e.turn;
+		const r = this.getHash(e);
+		this.positionHistory.size > 0 && null !== this.lastRootHash && !this.positionHistory.has(r) && this.positionHistory.clear(), this.lastRootHash = r;
+		const s = (this.positionHistory.get(r) ?? 0) + 1;
+		this.positionHistory.set(r, s), this.positionHistory.size > 300 && (this.positionHistory.clear(), this.positionHistory.set(r, 1));
+		const a = ye.fastCloneContext(e);
+		a.metadata.cache || (a.metadata.cache = q.recompute(a.board, a.metadata, a.turn, a.levelConstraints, !0)), e.turn;
 		let c = null, n = 0, d = 0;
 		this.thinkingColor;
 		this.checkTimeout = (e = o) => Date.now() - this.startTime > e && (this.timeout = !0, !0);
-		for (let p = 1; p <= r; p++) {
+		for (let p = 1; p <= i; p++) {
 			const e = this.search(a, p, -Infinity, Infinity, !0, 0);
 			if (this.timeout) {
 				c || (c = e.action);
@@ -13172,16 +13311,16 @@ const Qe = new class {
 			if (d = p, c = e.action || c, n = e.score, n > 4e4) break;
 		}
 		if (c && !this.timeout) {
-			const e = Se.fastCloneContext(a), t = this.makeMove(e, c), o = this.getHash(e);
+			const e = ye.fastCloneContext(a), t = this.makeMove(e, c), o = this.getHash(e);
 			this.unmakeMove(e, t);
 			if ((this.positionHistory.get(o) ?? 0) >= 2) {
 				const e = xe.generateAllActions(a, !1), t = this.ttCache.get(this.getHash(a))?.bestAction ?? null;
 				this.sortActions(e, a, d, t);
 				let o = null;
-				for (const r of e) {
-					const e = Se.fastCloneContext(a), t = this.makeMove(e, r), i = this.getHash(e);
-					if (this.unmakeMove(e, t), (this.positionHistory.get(i) ?? 0) < 2) {
-						o = r;
+				for (const i of e) {
+					const e = ye.fastCloneContext(a), t = this.makeMove(e, i), r = this.getHash(e);
+					if (this.unmakeMove(e, t), (this.positionHistory.get(r) ?? 0) < 2) {
+						o = i;
 						break;
 					}
 				}
@@ -13192,10 +13331,10 @@ const Qe = new class {
 		return c;
 	}
 	countPiecesByColor(e) {
-		let r = 0, i = 0;
+		let i = 0, r = 0;
 		for (let o = 0; o < 8; o++) for (let s = 0; s < 8; s++) {
 			const a = e.board[o][s];
-			a && (a.color === t ? r++ : i++);
+			a && (a.color === t ? i++ : r++);
 		}
 		const s = (e) => {
 			if (!e) return 0;
@@ -13204,8 +13343,8 @@ const Qe = new class {
 			return t;
 		};
 		return {
-			boardWhite: r,
-			boardBlack: i,
+			boardWhite: i,
+			boardBlack: r,
 			reserveWhite: s(e.reserves?.[t]),
 			reserveBlack: s(e.reserves?.[o])
 		};
@@ -13214,14 +13353,14 @@ const Qe = new class {
 		return (this.nodesVisited + this.qNodesVisited) % 64 == 0 && Date.now() - this.startTime > this.TIME_LIMIT && (this.timeout = !0), this.timeout;
 	}
 	getHash(e) {
-		let r = e.turn === t ? t : o;
-		for (let i = 0; i < 8; i++) for (let s = 0; s < 8; s++) {
-			const a = e.board[i][s];
-			a && (r += `|${i}${s}${a.type}${a.color === t ? t : o}${a.statuses?.length || 0}`);
+		let i = e.turn === t ? t : o;
+		for (let r = 0; r < 8; r++) for (let s = 0; s < 8; s++) {
+			const a = e.board[r][s];
+			a && (i += `|${r}${s}${a.type}${a.color === t ? t : o}${a.statuses?.length || 0}`);
 		}
-		return r;
+		return i;
 	}
-	search(e, r, i, s, a, c = 0) {
+	search(e, i, r, s, a, c = 0) {
 		if (this.nodesVisited++, this.checkTimeout()) return {
 			score: 0,
 			action: null
@@ -13238,31 +13377,31 @@ const Qe = new class {
 			}
 		}
 		const d = this.ttCache.get(n);
-		if (d && d.depth >= r) {
+		if (d && d.depth >= i) {
 			if (0 === d.flag) return {
 				score: d.score,
 				action: d.bestAction
 			};
-			if (1 === d.flag && (s = Math.min(s, d.score)), 2 === d.flag && (i = Math.max(i, d.score)), i >= s) return {
+			if (1 === d.flag && (s = Math.min(s, d.score)), 2 === d.flag && (r = Math.max(r, d.score)), r >= s) return {
 				score: d.score,
 				action: d.bestAction
 			};
 		}
-		if (r <= 0 || e.winner) return {
-			score: this.quiescence(e, i, s, a),
+		if (i <= 0 || e.winner) return {
+			score: this.quiescence(e, r, s, a),
 			action: null
 		};
 		const p = Be.isKingInCheck(e, e.turn);
-		if (r >= 3 && !p) {
+		if (i >= 3 && !p) {
 			const n = e.turn;
 			e.turn = e.turn === t ? o : t;
-			const d = this.search(e, r - 3, i, s, !a, c + 1).score;
+			const d = this.search(e, i - 3, r, s, !a, c + 1).score;
 			if (e.turn = n, a && d >= s) return {
 				score: s,
 				action: null
 			};
-			if (!a && d <= i) return {
-				score: i,
+			if (!a && d <= r) return {
+				score: r,
 				action: null
 			};
 		}
@@ -13271,30 +13410,30 @@ const Qe = new class {
 			score: a ? -2e4 : 2e4,
 			action: null
 		};
-		this.sortActions(E, e, r, d?.bestAction);
-		let l = E[0], u = a ? -Infinity : Infinity, A = i, I = s;
+		this.sortActions(E, e, i, d?.bestAction);
+		let l = E[0], u = a ? -Infinity : Infinity, A = r, m = s;
 		for (let t = 0; t < E.length; t++) {
 			const o = E[t], n = this.makeMove(e, o), d = this.getHash(e);
 			this.positionHistory.set(d, (this.positionHistory.get(d) ?? 0) + 1);
 			let A = 0;
-			const I = Be.isCapture(e, o), m = n.turnSnapshot !== e.turn ? !a : a;
-			r >= 3 && t >= 3 && !I && !p && "use_skill" !== o.type ? (A = this.search(e, r - 2, i, s, m, c + 1).score, (a ? A > i : A < s) && (A = this.search(e, r - 1, i, s, m, c + 1).score)) : A = this.search(e, r - 1, i, s, m, c + 1).score;
+			const m = Be.isCapture(e, o), I = n.turnSnapshot !== e.turn ? !a : a;
+			i >= 3 && t >= 3 && !m && !p && "use_skill" !== o.type ? (A = this.search(e, i - 2, r, s, I, c + 1).score, (a ? A > r : A < s) && (A = this.search(e, i - 1, r, s, I, c + 1).score)) : A = this.search(e, i - 1, r, s, I, c + 1).score;
 			const T = this.positionHistory.get(d) ?? 1;
 			if (T <= 1 ? this.positionHistory.delete(d) : this.positionHistory.set(d, T - 1), this.unmakeMove(e, n), this.timeout) break;
 			if (a) {
-				if (A > u && (u = A, l = o), s <= (i = Math.max(i, A))) {
-					this.prunedNodes++, I || this.storeKillerAndHistory(o, r);
+				if (A > u && (u = A, l = o), s <= (r = Math.max(r, A))) {
+					this.prunedNodes++, m || this.storeKillerAndHistory(o, i);
 					break;
 				}
-			} else if (A < u && (u = A, l = o), (s = Math.min(s, A)) <= i) {
-				this.prunedNodes++, I || this.storeKillerAndHistory(o, r);
+			} else if (A < u && (u = A, l = o), (s = Math.min(s, A)) <= r) {
+				this.prunedNodes++, m || this.storeKillerAndHistory(o, i);
 				break;
 			}
 		}
 		if (!this.timeout) {
 			let e = 0;
-			u <= A ? e = 1 : u >= I && (e = 2), this.ttCache.set(n, {
-				depth: r,
+			u <= A ? e = 1 : u >= m && (e = 2), this.ttCache.set(n, {
+				depth: i,
 				score: u,
 				flag: e,
 				bestAction: l
@@ -13305,65 +13444,65 @@ const Qe = new class {
 			action: l
 		};
 	}
-	quiescence(e, t, o, r) {
+	quiescence(e, t, o, i) {
 		if (this.qNodesVisited++, this.checkTimeout() || e.winner) return Fe.evaluate(e, this.thinkingColor);
-		const i = Fe.evaluate(e, this.thinkingColor);
-		if (r) {
-			if (i >= o) return o;
-			t < i && (t = i);
+		const r = Fe.evaluate(e, this.thinkingColor);
+		if (i) {
+			if (r >= o) return o;
+			t < r && (t = r);
 		} else {
-			if (i <= t) return t;
-			o > i && (o = i);
+			if (r <= t) return t;
+			o > r && (o = r);
 		}
 		const s = xe.generateAllActions(e, !0);
-		if (this.sortActions(s, e, 0), 0 === s.length) return i;
-		if (r) {
-			let r = i;
-			for (const i of s) {
-				if (Be.isBadCapture(e, i)) continue;
-				const s = this.makeMove(e, i), a = s.turnSnapshot === e.turn, c = this.quiescence(e, t, o, a);
-				if (this.unmakeMove(e, s), c > r && (r = c), o <= (t = Math.max(t, c))) break;
+		if (this.sortActions(s, e, 0), 0 === s.length) return r;
+		if (i) {
+			let i = r;
+			for (const r of s) {
+				if (Be.isBadCapture(e, r)) continue;
+				const s = this.makeMove(e, r), a = s.turnSnapshot === e.turn, c = this.quiescence(e, t, o, a);
+				if (this.unmakeMove(e, s), c > i && (i = c), o <= (t = Math.max(t, c))) break;
 			}
-			return r;
+			return i;
 		}
 		{
-			let r = i;
-			for (const i of s) {
-				if (Be.isBadCapture(e, i)) continue;
-				const s = this.makeMove(e, i), a = s.turnSnapshot !== e.turn, c = this.quiescence(e, t, o, a);
-				if (this.unmakeMove(e, s), c < r && (r = c), (o = Math.min(o, c)) <= t) break;
+			let i = r;
+			for (const r of s) {
+				if (Be.isBadCapture(e, r)) continue;
+				const s = this.makeMove(e, r), a = s.turnSnapshot !== e.turn, c = this.quiescence(e, t, o, a);
+				if (this.unmakeMove(e, s), c < i && (i = c), (o = Math.min(o, c)) <= t) break;
 			}
-			return r;
+			return i;
 		}
 	}
 	makeMove(e, t) {
-		const o = t.from && e.board[t.from.r][t.from.c] || void 0, r = ve.resolve(t, e);
-		return fe.simulateAIActionWithUndo(r, e, o);
+		const o = t.from && e.board[t.from.r][t.from.c] || void 0, i = ve.resolve(t, e);
+		return fe.simulateAIActionWithUndo(i, e, o);
 	}
 	unmakeMove(e, t) {
 		fe.undo(e, t);
 	}
 	storeKillerAndHistory(e, t) {
 		if (!e.from) return;
-		const o = Math.min(t, 31), r = this.killerMoves[o];
-		if (r[0] && r[0].fromR === e.from.r && r[0].type === e.type || (r[1] = r[0], r[0] = {
+		const o = Math.min(t, 31), i = this.killerMoves[o];
+		if (i[0] && i[0].fromR === e.from.r && i[0].type === e.type || (i[1] = i[0], i[0] = {
 			fromR: e.from.r,
 			fromC: e.from.c,
 			toR: e.to?.r,
 			toC: e.to?.c,
 			type: e.type
 		}), e.to) {
-			const o = 8 * e.from.r + e.from.c, r = 8 * e.to.r + e.to.c;
-			this.historyTable[64 * o + r] += t * t;
+			const o = 8 * e.from.r + e.from.c, i = 8 * e.to.r + e.to.c;
+			this.historyTable[64 * o + i] += t * t;
 		}
 	}
-	sortActions(e, t, o, r) {
-		const i = Math.min(Math.max(o, 0), 31), s = this.killerMoves[i] || [], a = (e) => {
-			if (r && e.type === r.type && e.from?.r === r.from?.r && e.to?.r === r.to?.r && e.to?.c === r.to?.c && e.skillId === r.skillId) return 2e6;
+	sortActions(e, t, o, i) {
+		const r = Math.min(Math.max(o, 0), 31), s = this.killerMoves[r] || [], a = (e) => {
+			if (i && e.type === i.type && e.from?.r === i.from?.r && e.to?.r === i.to?.r && e.to?.c === i.to?.c && e.skillId === i.skillId) return 2e6;
 			if ("use_skill" === e.type) return 15e5;
 			if ("strike" === e.type || "move" === e.type && e.from && e.to && t.board[e.to.r][e.to.c]) {
-				const o = t.board[e.to.r][e.to.c], r = e.from ? t.board[e.from.r][e.from.c] : null;
-				if (o && r && o.color !== r.color) return 10 * (We[o.type] || 0) - (We[r.type] || 0) + 1e6;
+				const o = t.board[e.to.r][e.to.c], i = e.from ? t.board[e.from.r][e.from.c] : null;
+				if (o && i && o.color !== i.color) return 10 * (We[o.type] || 0) - (We[i.type] || 0) + 1e6;
 			}
 			if (e.from && ("move" === e.type || "swap" === e.type)) {
 				if (s[0] && s[0].fromR === e.from.r && s[0].toR === e.to.r && s[0].toC === e.to.c) return 9e5;
@@ -13378,10 +13517,10 @@ const Qe = new class {
 }();
 self.onmessage = async (e) => {
 	try {
-		const { state: t, difficulty: o } = e.data, r = await Qe.computeMove(t, o);
+		const { state: t, difficulty: o } = e.data, i = await Qe.computeMove(t, o);
 		self.postMessage({
 			type: "SUCCESS",
-			action: r
+			action: i
 		});
 	} catch (t) {
 		self.postMessage({
