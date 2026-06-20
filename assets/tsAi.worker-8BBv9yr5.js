@@ -10712,6 +10712,7 @@ const ge = [
 		tier: "LEGENDARY",
 		pieceType: r.KING,
 		description: "游戏开始时，国王拥有等同于后+马的移动范围。一旦你部署了任何其他棋子，该效果永久失效。",
+		tags: ["GLOBAL"],
 		modifiers: { movement: ({ board: e, piece: t, r: o, c: s }, a) => (t.type !== r.KING || t.statuses?.some((e) => e.id === i.EQ_ARROGANT_CREED_DISABLED) || ([...y.R, ...y.B].forEach(([r, i]) => {
 			let c = o + r, n = s + i;
 			for (; c >= 0 && c < 8 && n >= 0 && n < 8;) {
@@ -13049,61 +13050,94 @@ var Be = class {
 				i && i.color === o && (i.type === r.KING || Pe.isProxyKing(i) ? e = !0 : t++);
 			})), !e && t > 0 && (s += 8e4);
 		}
-		const n = c.cache ? c.cache.whiteNetwork : void 0, d = c.cache ? c.cache.blackNetwork : void 0;
-		let p = 0, l = 0, u = 0, A = 0;
-		const I = Array(8).fill(!1).map(() => Array(8).fill(!1)), m = Array(8).fill(!1).map(() => Array(8).fill(!1));
+		let n = null, d = null;
+		const p = [], l = [];
+		for (let o = 0; o < 8; o++) for (let e = 0; e < 8; e++) {
+			const i = a[o][e];
+			i && (i.type === r.KING ? i.color === t ? n = {
+				r: o,
+				c: e
+			} : d = {
+				r: o,
+				c: e
+			} : i.color === t ? p.push({
+				r: o,
+				c: e
+			}) : l.push({
+				r: o,
+				c: e
+			}));
+		}
+		const u = c.cache ? c.cache.whiteNetwork : void 0, A = c.cache ? c.cache.blackNetwork : void 0;
+		let I = 0, m = 0, T = 0, O = 0;
+		const _ = Array(8).fill(!1).map(() => Array(8).fill(!1)), f = Array(8).fill(!1).map(() => Array(8).fill(!1));
 		for (let o = 0; o < 8; o++) for (let e = 0; e < 8; e++) {
 			const r = a[o][e];
-			r && (r.color === t ? ke(a, o, e, n, c).forEach((e) => I[e.r][e.c] = !0) : ke(a, o, e, d, c).forEach((e) => m[e.r][e.c] = !0));
+			r && (r.color === t ? ke(a, o, e, u, c).forEach((e) => _[e.r][e.c] = !0) : ke(a, o, e, A, c).forEach((e) => f[e.r][e.c] = !0));
 		}
 		for (let t = 0; t < 8; t++) for (let e = 0; e < 8; e++) {
-			I[t][e] && u++, m[t][e] && A++;
+			_[t][e] && T++, f[t][e] && O++;
 			const o = c.squares?.[`${t},${e}`] || [];
-			for (const r of o) r.id === E && (m[t][e] && (s += 30), I[t][e] && (s -= 30));
+			for (const r of o) r.id === E && (f[t][e] && (s += 30), _[t][e] && (s -= 30));
 		}
 		a.forEach((e, t) => e.forEach((e, i) => {
 			if (!e) return;
-			const s = e.color === o, c = s ? !d || d[t][i] : !n || n[t][i];
-			let E = 0;
-			const u = Pe.getModifiers(e, a, t, i).find((e) => e.pieceValueOverride)?.pieceValueOverride?.({
+			const s = e.color === o, c = s ? !A || A[t][i] : !u || u[t][i];
+			let n = 0;
+			const d = Pe.getModifiers(e, a, t, i).find((e) => e.pieceValueOverride)?.pieceValueOverride?.({
 				board: a,
 				piece: e,
 				r: t,
 				c: i
 			});
-			E = void 0 !== u ? u : We[e.type] || 0;
-			const A = {
-				FROZEN: .8 * -E,
-				PETRIFIED: .9 * -E,
+			n = void 0 !== d ? d : We[e.type] || 0;
+			const p = {
+				FROZEN: .8 * -n,
+				PETRIFIED: .9 * -n,
 				SILENCED: -30,
 				SHIELDED: 50,
 				INVISIBLE: 30,
-				BETRAYED: 2 * -E,
+				BETRAYED: 2 * -n,
 				GRAVITY_LOCKED: -20,
 				OVERLOADED: 40
 			};
-			e.statuses?.forEach((e) => E += A[e.id] || 0), c || e.type === r.KING || (E *= .2), Pe.getAllSkills(e).forEach((e) => {
+			e.statuses?.forEach((e) => n += p[e.id] || 0), c || e.type === r.KING || (n *= .2), Pe.getAllSkills(e).forEach((e) => {
 				const t = Pe.getDefinition(e);
-				E += {
+				n += {
 					COMMON: 20,
 					RARE: 60,
 					EPIC: 150,
 					LEGENDARY: 400
 				}[t?.tier || "COMMON"];
 			}), e.equippedItems?.forEach((e) => {
-				E += {
+				n += {
 					COMMON: 30,
 					RARE: 80,
 					EPIC: 200,
 					LEGENDARY: 500
 				}[e.tier || "COMMON"];
-			}), s ? l += E : p += E;
+			}), s ? m += n : I += n;
 		}));
-		const T = e.reserves;
-		if (T) for (const r of Object.keys(T[t])) p += (T[t][r] || 0) * (We[r] || 0) * .8, l += (T[o][r] || 0) * (We[r] || 0) * .8;
-		s += l - p, s += 8 * (A - u), Be.isKingInCheck(e, o) && (s -= 500), Be.isKingInCheck(e, t) && (s += 500);
-		const O = s + .1 * ((p + l + u + A) % 5);
-		return i === t ? -O : O;
+		const S = e.reserves;
+		if (S) for (const r of Object.keys(S[t])) I += (S[t][r] || 0) * (We[r] || 0) * .8, m += (S[o][r] || 0) * (We[r] || 0) * .8;
+		s += m - I, s += 8 * (O - T), Be.isKingInCheck(e, o) && (s -= 500), Be.isKingInCheck(e, t) && (s += 500);
+		const y = (e, t) => {
+			if (!e) return 0;
+			let o = 0;
+			if (0 !== e.r && 7 !== e.r || 0 !== e.c && 7 !== e.c || !(t.length >= 2) || (o += 450), t.length > 0) {
+				let r = Infinity, i = 0;
+				for (const o of t) {
+					const t = Math.abs(e.r - o.r) + Math.abs(e.c - o.c);
+					t < r && (r = t), i += t;
+				}
+				const s = i / t.length;
+				r > 2 && (o += 180 * (r - 2)), s > 3.5 && (o += 60 * (s - 3.5));
+			}
+			return o;
+		};
+		s += y(n, p), s -= y(d, l);
+		const R = s + .1 * ((I + m + T + O) % 5);
+		return i === t ? -R : R;
 	}
 };
 Pe.register(U), Pe.register(ge), Pe.register(He), Pe.register(X), Pe.register($), Pe.register(Z), Pe.register(re), Pe.register(se), Pe.register(be);
@@ -13130,7 +13164,7 @@ const Qe = new class {
 		this.thinkingColor;
 		this.checkTimeout = (e = o) => Date.now() - this.startTime > e && (this.timeout = !0, !0);
 		for (let p = 1; p <= r; p++) {
-			const e = this.search(a, p, -Infinity, Infinity, !0);
+			const e = this.search(a, p, -Infinity, Infinity, !0, 0);
 			if (this.timeout) {
 				c || (c = e.action);
 				break;
@@ -13187,20 +13221,23 @@ const Qe = new class {
 		}
 		return r;
 	}
-	search(e, r, i, s, a) {
+	search(e, r, i, s, a, c = 0) {
 		if (this.nodesVisited++, this.checkTimeout()) return {
 			score: 0,
 			action: null
 		};
-		const c = this.getHash(e), n = this.positionHistory.get(c) ?? 0;
-		if (n >= 2) {
-			const e = n >= 3 ? 900 : 450;
-			return {
-				score: a ? -e : e,
-				action: null
-			};
+		const n = this.getHash(e);
+		if (c > 0) {
+			const e = this.positionHistory.get(n) ?? 0;
+			if (e >= 2) {
+				const t = e >= 3 ? 900 : 450;
+				return {
+					score: a ? -t : t,
+					action: null
+				};
+			}
 		}
-		const d = this.ttCache.get(c);
+		const d = this.ttCache.get(n);
 		if (d && d.depth >= r) {
 			if (0 === d.flag) return {
 				score: d.score,
@@ -13217,14 +13254,14 @@ const Qe = new class {
 		};
 		const p = Be.isKingInCheck(e, e.turn);
 		if (r >= 3 && !p) {
-			const c = e.turn;
+			const n = e.turn;
 			e.turn = e.turn === t ? o : t;
-			const n = this.search(e, r - 3, i, s, !a).score;
-			if (e.turn = c, a && n >= s) return {
+			const d = this.search(e, r - 3, i, s, !a, c + 1).score;
+			if (e.turn = n, a && d >= s) return {
 				score: s,
 				action: null
 			};
-			if (!a && n <= i) return {
+			if (!a && d <= i) return {
 				score: i,
 				action: null
 			};
@@ -13237,26 +13274,26 @@ const Qe = new class {
 		this.sortActions(E, e, r, d?.bestAction);
 		let l = E[0], u = a ? -Infinity : Infinity, A = i, I = s;
 		for (let t = 0; t < E.length; t++) {
-			const o = E[t], c = this.makeMove(e, o), n = this.getHash(e);
-			this.positionHistory.set(n, (this.positionHistory.get(n) ?? 0) + 1);
-			let d = 0;
-			const A = Be.isCapture(e, o), I = c.turnSnapshot !== e.turn ? !a : a;
-			r >= 3 && t >= 3 && !A && !p && "use_skill" !== o.type ? (d = this.search(e, r - 2, i, s, I).score, (a ? d > i : d < s) && (d = this.search(e, r - 1, i, s, I).score)) : d = this.search(e, r - 1, i, s, I).score;
-			const m = this.positionHistory.get(n) ?? 1;
-			if (m <= 1 ? this.positionHistory.delete(n) : this.positionHistory.set(n, m - 1), this.unmakeMove(e, c), this.timeout) break;
+			const o = E[t], n = this.makeMove(e, o), d = this.getHash(e);
+			this.positionHistory.set(d, (this.positionHistory.get(d) ?? 0) + 1);
+			let A = 0;
+			const I = Be.isCapture(e, o), m = n.turnSnapshot !== e.turn ? !a : a;
+			r >= 3 && t >= 3 && !I && !p && "use_skill" !== o.type ? (A = this.search(e, r - 2, i, s, m, c + 1).score, (a ? A > i : A < s) && (A = this.search(e, r - 1, i, s, m, c + 1).score)) : A = this.search(e, r - 1, i, s, m, c + 1).score;
+			const T = this.positionHistory.get(d) ?? 1;
+			if (T <= 1 ? this.positionHistory.delete(d) : this.positionHistory.set(d, T - 1), this.unmakeMove(e, n), this.timeout) break;
 			if (a) {
-				if (d > u && (u = d, l = o), s <= (i = Math.max(i, d))) {
-					this.prunedNodes++, A || this.storeKillerAndHistory(o, r);
+				if (A > u && (u = A, l = o), s <= (i = Math.max(i, A))) {
+					this.prunedNodes++, I || this.storeKillerAndHistory(o, r);
 					break;
 				}
-			} else if (d < u && (u = d, l = o), (s = Math.min(s, d)) <= i) {
-				this.prunedNodes++, A || this.storeKillerAndHistory(o, r);
+			} else if (A < u && (u = A, l = o), (s = Math.min(s, A)) <= i) {
+				this.prunedNodes++, I || this.storeKillerAndHistory(o, r);
 				break;
 			}
 		}
 		if (!this.timeout) {
 			let e = 0;
-			u <= A ? e = 1 : u >= I && (e = 2), this.ttCache.set(c, {
+			u <= A ? e = 1 : u >= I && (e = 2), this.ttCache.set(n, {
 				depth: r,
 				score: u,
 				flag: e,
