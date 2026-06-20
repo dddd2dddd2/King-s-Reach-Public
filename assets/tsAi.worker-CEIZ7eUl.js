@@ -47,7 +47,7 @@ const t = "W", o = "B", i = {
 	JAMMING_TOWER: "JAMMING_TOWER",
 	ROOTED: "ROOTED",
 	CROSS_AURA: "CROSS_AURA"
-}, s = "VOID_ANCHOR", a = "FROZEN_TRAP", c = "PORTAL_ENTRY", n = "SQUARE_RAILWAY", d = "IRON_CURTAIN", p = "SQ_AFTERIMAGE", E = "SQUARE_BASTION_FIELD", l = "BARRICADE", u = "JAMMING_TOWER", A = "VOID_FISSURE_SQUARE", m = "SUPPLY_DEPOT_SQUARE", I = "ANTI_PAWN_MINE", T = "ICE_SLICK", O = "WORMHOLE_A", _ = "WORMHOLE_B", f = "WARP_STORM_PORTAL", y = {
+}, s = "VOID_ANCHOR", a = "FROZEN_TRAP", c = "PORTAL_ENTRY", n = "SQUARE_RAILWAY", d = "IRON_CURTAIN", p = "SQ_AFTERIMAGE", E = "SQUARE_BASTION_FIELD", l = "BARRICADE", u = "JAMMING_TOWER", A = "VOID_FISSURE_SQUARE", m = "SUPPLY_DEPOT_SQUARE", I = "ANTI_PAWN_MINE", T = "ICE_SLICK", O = "WORMHOLE_A", f = "WORMHOLE_B", _ = "WARP_STORM_PORTAL", y = {
 	DESTRUCTIVE_SKILLS: [
 		"PAWN_ASSASSIN",
 		"PAWN_PROMOTE",
@@ -1340,7 +1340,7 @@ var V = class {
 			movement: [],
 			invulnerable: [],
 			squareBlock: []
-		}, i = fe.getActivePieces(e);
+		}, i = _e.getActivePieces(e);
 		for (const { piece: r, r: s, c: a } of i) {
 			if (!r.uid) continue;
 			const t = F.getModifiers(r, e, s, a);
@@ -6231,7 +6231,7 @@ var Te = class {
 				}
 			}
 			if (r) continue;
-			if (fe.apply(t, s), s.script && s.script.length > 0) {
+			if (_e.apply(t, s), s.script && s.script.length > 0) {
 				const e = me(s.board), t = Ie(s.metadata);
 				for (const o of s.script) d.push({
 					action: o,
@@ -6278,7 +6278,7 @@ var Te = class {
 						}
 					}, n.length > 0 && "MOVE" === n[0].type && n[0]._killInjected) {
 						const e = n.shift();
-						fe.apply(e, s), d.push({
+						_e.apply(e, s), d.push({
 							action: e,
 							boardSnapshot: me(s.board),
 							metadataSnapshot: Ie(s.metadata)
@@ -6387,6 +6387,14 @@ var Te = class {
 					key: "earlyKills",
 					value: 1,
 					isLifetimeOnly: !0
+				}), s.type === i.BISHOP && e.from && c && Math.max(Math.abs(c.r - e.from.r), Math.abs(c.c - e.from.c)) >= 6 && U.emit(G, {
+					key: "bishopSnipe6",
+					value: 1,
+					isLifetimeOnly: !0
+				}), s.type === i.ROOK && e.from && c && Math.max(Math.abs(c.r - e.from.r), Math.abs(c.c - e.from.c)) >= 7 && U.emit(G, {
+					key: "rookCrossBoard",
+					value: 1,
+					isLifetimeOnly: !0
 				}));
 			}
 		} else if ("SPAWN" === e.type) {
@@ -6443,7 +6451,7 @@ var Te = class {
 		if (e.pos) return e.pos;
 	}
 };
-const _e = {
+const fe = {
 	MOVE: (e, t) => {
 		const { board: o } = t, i = o[e.from.r][e.from.c];
 		if (i) {
@@ -6597,7 +6605,7 @@ const _e = {
 		}
 	},
 	UPDATE_ROSTER_PIECE: (e, t) => {
-		const o = fe.getActivePieces(t.board);
+		const o = _e.getActivePieces(t.board);
 		for (const { r: i, c: r, piece: s } of o) if (s.uid === e.pieceUid) {
 			const o = {
 				...s,
@@ -6648,7 +6656,7 @@ const _e = {
 	SET_UI_SELECTION: () => {},
 	DELAY: () => {}
 };
-var fe = class e {
+var _e = class e {
 	static finalizeInference(e) {
 		for (let o = 0; o < 8; o++) for (let t = 0; t < 8; t++) {
 			const i = e.board[o][t];
@@ -6668,7 +6676,7 @@ var fe = class e {
 		e.metadata.cache = X.apply(e.metadata.cache, e.board, e.metadata, e.turn, [], e.levelConstraints, t);
 	}
 	static apply(t, o) {
-		const i = _e[t.type];
+		const i = fe[t.type];
 		i && i(t, o);
 		const r = [];
 		"pos" in t && t.pos && r.push(t.pos), "from" in t && t.from && r.push(t.from), "to" in t && t.to && r.push(t.to), "posA" in t && t.posA && r.push(t.posA), "posB" in t && t.posB && r.push(t.posB);
@@ -6831,7 +6839,7 @@ var fe = class e {
 };
 function Se(e, t) {
 	if (e.targetId) {
-		const o = fe.getActivePieces(t);
+		const o = _e.getActivePieces(t);
 		for (const { r: t, c: i, piece: r } of o) {
 			if (r.id === e.targetId || r.uid === e.targetId) return {
 				r: t,
@@ -6871,7 +6879,7 @@ var Ne = class {
 	}
 	static build(e, t) {
 		this.globalInvulnerabilityMods = [], this.globalSquareBlockMods = [];
-		const o = fe.getActivePieces(e);
+		const o = _e.getActivePieces(e);
 		for (const { piece: i, r, c: s } of o) {
 			const t = F.getModifiers(i, e, r, s);
 			for (const e of t) e.invulnerable && this.globalInvulnerabilityMods.push({
@@ -7038,7 +7046,7 @@ var Ne = class {
 				}
 			}
 			if ("onUse" !== e && t.board && t.piece) {
-				const i = fe.getActivePieces(t.board);
+				const i = _e.getActivePieces(t.board);
 				for (const { piece: r, r: s, c: a } of i) {
 					if (r.uid === t.piece.uid) continue;
 					if (B.isSilenced(r)) continue;
@@ -9919,7 +9927,7 @@ const ge = [
 		hooks: {
 			onTurnStart: ({ board: e, emit: t, prng: o, metadata: i }) => {
 				if (i?.squares) {
-					for (const s in i.squares) if (i.squares[s].some((e) => e.id === f)) {
+					for (const s in i.squares) if (i.squares[s].some((e) => e.id === _)) {
 						const [e, o] = s.split(",").map(Number);
 						t({
 							type: "REMOVE_SQUARE",
@@ -9927,7 +9935,7 @@ const ge = [
 								r: e,
 								c: o
 							},
-							statusId: f
+							statusId: _
 						});
 					}
 				}
@@ -9943,14 +9951,14 @@ const ge = [
 						type: "SET_SQUARE",
 						pos: r.splice(e, 1)[0],
 						status: {
-							id: f,
+							id: _,
 							duration: 1
 						}
 					});
 				}
 			},
 			onAfterMove: ({ board: e, r: t, c: o, emit: i, prng: r, metadata: s }) => {
-				if (s?.squares?.[`${t},${o}`]?.some((e) => e.id === f)) {
+				if (s?.squares?.[`${t},${o}`]?.some((e) => e.id === _)) {
 					const s = [];
 					if (e.forEach((e, t) => e.forEach((e, o) => {
 						e || s.push({
@@ -10488,7 +10496,7 @@ const ge = [
 		description: "",
 		hooks: { onAfterMove: ({ r: e, c: t, emit: o, metadata: i, board: r }) => {
 			const s = i?.squares || {};
-			for (const a in s) if (s[a].some((e) => e.id === _)) {
+			for (const a in s) if (s[a].some((e) => e.id === f)) {
 				const [i, s] = a.split(",").map(Number);
 				r[i][s] || (o({
 					type: "PLAY_SOUND",
@@ -13209,15 +13217,15 @@ var Be = class {
 		}
 		const u = c.cache ? c.cache.whiteNetwork : void 0, A = c.cache ? c.cache.blackNetwork : void 0;
 		let m = 0, I = 0, T = 0, O = 0;
-		const _ = Array(8).fill(!1).map(() => Array(8).fill(!1)), f = Array(8).fill(!1).map(() => Array(8).fill(!1));
+		const f = Array(8).fill(!1).map(() => Array(8).fill(!1)), _ = Array(8).fill(!1).map(() => Array(8).fill(!1));
 		for (let o = 0; o < 8; o++) for (let e = 0; e < 8; e++) {
 			const i = a[o][e];
-			i && (i.color === t ? ke(a, o, e, u, c).forEach((e) => _[e.r][e.c] = !0) : ke(a, o, e, A, c).forEach((e) => f[e.r][e.c] = !0));
+			i && (i.color === t ? ke(a, o, e, u, c).forEach((e) => f[e.r][e.c] = !0) : ke(a, o, e, A, c).forEach((e) => _[e.r][e.c] = !0));
 		}
 		for (let t = 0; t < 8; t++) for (let e = 0; e < 8; e++) {
-			_[t][e] && T++, f[t][e] && O++;
+			f[t][e] && T++, _[t][e] && O++;
 			const o = c.squares?.[`${t},${e}`] || [];
-			for (const i of o) i.id === E && (f[t][e] && (s += 30), _[t][e] && (s -= 30));
+			for (const i of o) i.id === E && (_[t][e] && (s += 30), f[t][e] && (s -= 30));
 		}
 		a.forEach((e, t) => e.forEach((e, r) => {
 			if (!e) return;
@@ -13477,10 +13485,10 @@ const Qe = new class {
 	}
 	makeMove(e, t) {
 		const o = t.from && e.board[t.from.r][t.from.c] || void 0, i = ve.resolve(t, e);
-		return fe.simulateAIActionWithUndo(i, e, o);
+		return _e.simulateAIActionWithUndo(i, e, o);
 	}
 	unmakeMove(e, t) {
-		fe.undo(e, t);
+		_e.undo(e, t);
 	}
 	storeKillerAndHistory(e, t) {
 		if (!e.from) return;
