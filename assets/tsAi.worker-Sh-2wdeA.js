@@ -47,7 +47,7 @@ const t = "W", o = "B", r = {
 	JAMMING_TOWER: "JAMMING_TOWER",
 	ROOTED: "ROOTED",
 	CROSS_AURA: "CROSS_AURA"
-}, s = "VOID_ANCHOR", a = "FROZEN_TRAP", c = "PORTAL_ENTRY", n = "SQUARE_RAILWAY", d = "IRON_CURTAIN", p = "SQ_AFTERIMAGE", E = "SQUARE_BASTION_FIELD", l = "BARRICADE", u = "JAMMING_TOWER", A = "VOID_FISSURE_SQUARE", I = "SUPPLY_DEPOT_SQUARE", T = "ANTI_PAWN_MINE", m = "ICE_SLICK", O = "WORMHOLE_A", _ = "WORMHOLE_B", f = "WARP_STORM_PORTAL", S = {
+}, s = "VOID_ANCHOR", a = "FROZEN_TRAP", c = "PORTAL_ENTRY", n = "SQUARE_RAILWAY", d = "IRON_CURTAIN", p = "SQ_AFTERIMAGE", E = "SQUARE_BASTION_FIELD", l = "BARRICADE", u = "JAMMING_TOWER", A = "VOID_FISSURE_SQUARE", I = "SUPPLY_DEPOT_SQUARE", m = "ANTI_PAWN_MINE", T = "ICE_SLICK", O = "WORMHOLE_A", _ = "WORMHOLE_B", f = "WARP_STORM_PORTAL", S = {
 	DESTRUCTIVE_SKILLS: [
 		"PAWN_ASSASSIN",
 		"PAWN_PROMOTE",
@@ -68,7 +68,7 @@ const t = "W", o = "B", r = {
 		"GRAVITY_LOCKED",
 		"AURA_SUPPRESSED"
 	]
-}, R = {
+}, y = {
 	R: [
 		[0, 1],
 		[0, -1],
@@ -111,7 +111,7 @@ const t = "W", o = "B", r = {
 		[-1, 2],
 		[-1, -2]
 	]
-}, y = (r.PAWN, r.KNIGHT, r.BISHOP, r.ROOK, r.QUEEN, [
+}, R = (r.PAWN, r.KNIGHT, r.BISHOP, r.ROOK, r.QUEEN, [
 	"SELL_PIECE",
 	"SELL_ITEM",
 	"RECYCLE",
@@ -827,23 +827,36 @@ const L = (e, t) => Math.atan2(e, t) * (180 / Math.PI), U = [
 		description: "每当象斜线上的单位阵亡，玩家获得 2 金币。",
 		tags: ["GLOBAL"],
 		hooks: { onDeath: ({ board: e, piece: o, ownerPos: r, subject: i, r: s, c: a, emit: c }) => {
-			if (r && i && o.color === t && o.equippedItems.some((e) => "EQ_FAITH_SIPHON" === e.effectId)) {
-				const t = Math.abs(r.r - s), o = Math.abs(r.c - a);
-				if (t === o && t > 0) {
-					const i = (s - r.r) / t, n = (a - r.c) / o;
-					let d = r.r + i, p = r.c + n, E = !1;
-					for (; d !== s || p !== a;) {
-						if (e[d][p]) {
-							E = !0;
+			if (r && i && "number" == typeof s && "number" == typeof a && o.color === t) {
+				const t = Math.abs(r.r - s);
+				if (t === Math.abs(r.c - a) && t > 0) {
+					const t = Math.sign(s - r.r), o = Math.sign(a - r.c);
+					let i = r.r + t, n = r.c + o, d = !1;
+					for (; i !== s && n !== a;) {
+						if (e[i][n]) {
+							d = !0;
 							break;
 						}
-						d += i, p += n;
+						i += t, n += o;
 					}
-					E || c({
+					d || (c({
 						type: "MODIFY_GOLD",
 						amount: 2,
-						reason: "FAITH_SIPHON"
-					});
+						reason: "FAITH_SIPHON",
+						pos: {
+							r: s,
+							c: a
+						}
+					}), c({
+						type: "SHOW_TEXT",
+						text: "Faith Siphon +2",
+						textKey: "LOG_FAITH_SIPHON",
+						style: "gold",
+						pos: {
+							r: s,
+							c: a
+						}
+					}));
 				}
 			}
 		} }
@@ -1035,7 +1048,7 @@ const W = {
 	KING_REFLECTION_OLD: ["NET_MIRROR"],
 	EQ_REFLECTIVE_ARMOR_OLD: ["NET_MIRROR"]
 };
-var Q = class {
+var F = class {
 	static resolveMask(e) {
 		let t = 0n;
 		return this.getUniqueSkillIds(e).forEach((e) => {
@@ -1069,7 +1082,7 @@ var Q = class {
 	static hasBit(e, t) {
 		return void 0 !== e.abilityMask && null !== e.abilityMask && 0n !== (BigInt(e.abilityMask) & BigInt(t));
 	}
-}, F = class e {
+}, Q = class e {
 	constructor(e) {
 		this.seed = e >>> 0;
 	}
@@ -3128,7 +3141,7 @@ const q = () => crypto.randomUUID(), X = [
 		hooks: {
 			onDeath: (e) => {
 				const { piece: t, victim: o } = e;
-				o && t.uid === o.uid && J(e.r, e.c, 1, e);
+				o && t.uid === o.uid && j(e.r, e.c, 1, e);
 			},
 			onKill: (e) => {
 				const { r: t, c: o, piece: r, emit: i, prng: s } = e;
@@ -3318,21 +3331,38 @@ const q = () => crypto.randomUUID(), X = [
 		tier: "LEGENDARY",
 		pieceType: r.PAWN,
 		description: "模拟其网络连线上己方高级棋子的移动和攻击方式。",
-		modifiers: { movement: ({ board: e, piece: t, r: o, c: i, metadata: s, networkedMap: a }, c) => {
-			if (!a) return c;
-			if (!a[o][i]) return c;
-			const n = [];
-			return C.findPieces(e, (e, o, i) => e.color === t.color && e.type !== r.PAWN && e.type !== r.KING && !!a?.[o]?.[i]).forEach(({ r, c }) => {
+		modifiers: { movement: ({ board: e, piece: t, r: o, c: i, metadata: s, networkedMap: a, isControlSquares: c }, n) => {
+			if (!a) return n;
+			if (!a[o][i]) return n;
+			const d = [];
+			return C.findPieces(e, (e, o, i) => e.color === t.color && e.type !== r.PAWN && e.type !== r.KING && !!a?.[o]?.[i]).forEach(({ r, c: n }) => {
 				(function(e, t, o, r, i, s) {
 					return De.getPseudoLegalMoves(e, t, o, r, i, s);
-				})(e, r, c, s, a).forEach((s) => {
-					const a = o + (s.r - r), d = i + (s.c - c);
-					C.isValidPos(a, d) && e[a][d]?.color !== t.color && n.push({
-						r: a,
-						c: d
-					});
+				})(e, r, n, s, a).forEach((s) => {
+					const a = s.r - r, p = s.c - n, E = o + a, l = i + p;
+					if (C.isValidPos(E, l)) {
+						let r = !1;
+						const s = Math.abs(a), n = Math.abs(p);
+						if ((0 === a || 0 === p || s === n) && Math.max(s, n) > 1) {
+							const t = Math.sign(a), c = Math.sign(p), d = Math.max(s, n);
+							for (let s = 1; s < d; s++) {
+								const a = i + s * c;
+								if (e[o + s * t][a]) {
+									r = !0;
+									break;
+								}
+							}
+						}
+						if (!r) {
+							const o = e[E][l];
+							o && o.color === t.color && !c || d.push({
+								r: E,
+								c: l
+							});
+						}
+					}
 				});
-			}), [...c, ...n];
+			}), [...n, ...d];
 		} }
 	},
 	{
@@ -3340,11 +3370,66 @@ const q = () => crypto.randomUUID(), X = [
 		name: "卫星链路",
 		tier: "LEGENDARY",
 		pieceType: r.PAWN,
-		description: "永远不需要网络连接，且国王死后可作为代理王。",
+		description: "永远不需要网络连接，且国王死后可作为代理王（proxy king）。",
 		modifiers: {
 			alwaysNetworked: () => !0,
 			proxyKing: () => !0
-		}
+		},
+		tags: ["GLOBAL"],
+		hooks: { onDeath: (e) => {
+			const { piece: t, ownerPos: o, subject: i, r: s, c: a, emit: c, cancelAction: n } = e;
+			i && i.type === r.KING && i.color === t.color && o && (n?.(), c({
+				type: "REMOVE_PIECE",
+				pos: {
+					r: s,
+					c: a
+				}
+			}), c({
+				type: "UPDATE_ROSTER_PIECE",
+				pieceUid: t.uid,
+				updates: {
+					type: r.KING,
+					level: 1,
+					skills: [],
+					learnedSkills: [],
+					traits: [],
+					maxSlots: 3,
+					equippedItems: [],
+					metadata: {}
+				}
+			}), c({
+				type: "REMOVE_PIECE",
+				pos: o
+			}), c({
+				type: "SPAWN",
+				pos: o,
+				piece: {
+					id: q(),
+					uid: t.uid,
+					type: r.KING,
+					color: t.color,
+					level: 1,
+					skills: [],
+					learnedSkills: [],
+					traits: [],
+					statuses: [],
+					maxSlots: 3,
+					equippedItems: [],
+					metadata: {}
+				}
+			}), c({
+				type: "SHOW_TEXT",
+				text: "卫星唤醒：新皇登基！",
+				textKey: "LOG_SATELLITE_ASCENSION",
+				style: "gold",
+				pos: o
+			}), c({
+				type: "ANIMATE",
+				name: "ITEM_USE_FLASH",
+				pos: o,
+				duration: 600
+			}));
+		} }
 	},
 	{
 		id: "EQ_HIVE_CORE",
@@ -3397,7 +3482,7 @@ const q = () => crypto.randomUUID(), X = [
 		hooks: { onDeath: ({ board: e, r: t, c: o, emit: r }) => {} }
 	}
 ];
-function J(e, t, o, i) {
+function j(e, t, o, i) {
 	const s = i.metadata;
 	if (s && (s.unstableCount = (s.unstableCount || 0) + 1, s.unstableCount > 10)) return;
 	const { emit: a, board: c, prng: n } = i;
@@ -3426,11 +3511,11 @@ function J(e, t, o, i) {
 			n.next() < e && (a({
 				type: "DELAY",
 				duration: 100
-			}), J(p, E, e, i));
+			}), j(p, E, e, i));
 		}
 	}
 }
-const j = {
+const J = {
 	PIECE: {
 		[r.PAWN]: 10,
 		[r.KNIGHT]: 25,
@@ -3471,7 +3556,7 @@ function z(e, o = t) {
 	};
 }
 function ee(e, t) {
-	const o = j.PIECE[e] || 10;
+	const o = J.PIECE[e] || 10;
 	return Math.floor(o / 20) + t;
 }
 function te(e, t, o, r, i) {
@@ -4252,7 +4337,7 @@ const re = [
 			}] : [],
 			execute: (e, t, o, r, i, s) => {
 				if (i) {
-					const e = j.PIECE[i.type] || 10, r = [], a = i.r - t, c = i.c - o;
+					const e = J.PIECE[i.type] || 10, r = [], a = i.r - t, c = i.c - o;
 					if (0 === a || 0 === c || Math.abs(a) === Math.abs(c)) {
 						const e = Math.sign(a), s = Math.sign(c);
 						let n = t, d = o, p = 0;
@@ -5779,7 +5864,7 @@ const pe = {
 			const s = e[7][4];
 			s && s.type === r.KING && (s.traits = Array.from(new Set([...s.traits || [], "HAPPY_PRINCE_IMMORTAL"])), s.skills = Array.from(new Set([...s.skills || [], "HAPPY_PRINCE_IMMORTAL"])));
 		},
-		interceptAction: (e) => "MODIFY_GOLD" === e.type && e.amount > 0 && !y.includes(e.reason) ? {
+		interceptAction: (e) => "MODIFY_GOLD" === e.type && e.amount > 0 && !R.includes(e.reason) ? {
 			...e,
 			amount: 0
 		} : e,
@@ -5850,11 +5935,11 @@ const pe = {
 };
 var Ee = class {
 	static filterGoldGain(e, t, o) {
-		return t <= 0 ? t : e === M ? y.includes(o) ? t : 0 : t;
+		return t <= 0 ? t : e === M ? R.includes(o) ? t : 0 : t;
 	}
 	static interceptSync(e, t, o) {
 		if (e === M) {
-			if ("MODIFY_GOLD" === t.type && t.amount > 0 && !y.includes(t.reason)) return {
+			if ("MODIFY_GOLD" === t.type && t.amount > 0 && !R.includes(t.reason)) return {
 				...t,
 				amount: 0
 			};
@@ -5950,8 +6035,8 @@ const Ae = "undefined" != typeof window ? window : "undefined" != typeof self ? 
 	}
 }();
 void 0 !== Ae && (Ae.gameEvents = Ie);
-const Te = "STAT_TRACK";
-var me = class {
+const me = "STAT_TRACK";
+var Te = class {
 	static handleKillExp(e, o, i, s) {
 		if (!e.uid || e.color !== t || e.type === r.KING) return;
 		const a = H.hasSkill(e, "PAWN_PROMOTE"), c = e.level || 1;
@@ -5980,7 +6065,7 @@ var me = class {
 				}), i({
 					type: "LEVEL_UP",
 					pos: o
-				}), Ie.emit(Te, {
+				}), Ie.emit(me, {
 					key: "maxLevelReached",
 					value: t,
 					type: "max",
@@ -6024,7 +6109,7 @@ var me = class {
 	}
 	static produceScript(i, s, a) {
 		Ne.build(s.board, s.metadata), s.interceptors = w.build(s.board, s.metadata);
-		const c = new F(s.currentSeed || Date.now()), n = [...i], d = [], p = /* @__PURE__ */ new Set();
+		const c = new Q(s.currentSeed || Date.now()), n = [...i], d = [], p = /* @__PURE__ */ new Set();
 		s.depth = 0, s.actionCount = 0;
 		let E = !1;
 		for (; n.length > 0 && !(s.actionCount > e.MAX_ACTIONS || s.depth > e.MAX_DEPTH);) {
@@ -6115,23 +6200,36 @@ var me = class {
 			const A = t.pos || t.to || null;
 			if (this.triggerHooksSync(t, s, (e) => {
 				"DELAY" !== e.type && "SHOW_TEXT" !== e.type && s.actionCount++, n.push(e);
-			}, a || null, l, A, c), "KILL" === t.type && l?.type === r.KING && (!s.levelConstraints?.proxyKing || l.color !== o)) {
-				if (s.fatalBlow = {
-					attackerId: a?.id || "",
-					victimId: l.id,
-					victimPos: u || t.pos || {
-						r: 0,
-						c: 0
+			}, a || null, l, A, c), "KILL" === t.type && l?.type === r.KING) {
+				let e = !1;
+				for (let t = 0; t < 8; t++) {
+					for (let o = 0; o < 8; o++) {
+						const i = s.board[t][o];
+						if (i && i.color === l.color && i.id !== l.id && (i.type === r.KING || Pe.isProxyKing(i))) {
+							e = !0;
+							break;
+						}
 					}
-				}, n.length > 0 && "MOVE" === n[0].type && n[0]._killInjected) {
-					const e = n.shift();
-					fe.apply(e, s), d.push({
-						action: e,
-						boardSnapshot: le(s.board),
-						metadataSnapshot: ue(s.metadata)
-					});
+					if (e) break;
 				}
-				break;
+				if (!(s.levelConstraints?.proxyKing && l.color === o || e)) {
+					if (s.fatalBlow = {
+						attackerId: a?.id || "",
+						victimId: l.id,
+						victimPos: u || t.pos || {
+							r: 0,
+							c: 0
+						}
+					}, n.length > 0 && "MOVE" === n[0].type && n[0]._killInjected) {
+						const e = n.shift();
+						fe.apply(e, s), d.push({
+							action: e,
+							boardSnapshot: le(s.board),
+							metadataSnapshot: ue(s.metadata)
+						});
+					}
+					break;
+				}
 			}
 		}
 		if (s.currentSeed = c.getSeed(), E) {
@@ -6196,7 +6294,7 @@ var me = class {
 					r: a.r,
 					c: a.c,
 					from: e.from
-				}), me.handleKillExp(i, a, o, t.activeMonarchId);
+				}), Te.handleKillExp(i, a, o, t.activeMonarchId);
 			}
 		} else if ("SPAWN" === e.type) {
 			const t = this.resolvePos(e, c);
@@ -6262,11 +6360,11 @@ const _e = {
 				for (; e.stackedPiece;) e.stackedPiece = { ...e.stackedPiece }, e = e.stackedPiece;
 				e.stackedPiece = i;
 			}
-			o[e.from.r][e.from.c] = r.stackedPiece || null, s.stackedPiece = s.stackedPiece || void 0, o[e.to.r][e.to.c] = s, s.abilityMask = Q.resolveMask(s);
+			o[e.from.r][e.from.c] = r.stackedPiece || null, s.stackedPiece = s.stackedPiece || void 0, o[e.to.r][e.to.c] = s, s.abilityMask = F.resolveMask(s);
 		}
 	},
 	KILL: (e, t) => {
-		const o = Re(e, t.board);
+		const o = ye(e, t.board);
 		if (o) {
 			const e = t.board[o.r][o.c];
 			e && (t.metadata.recentDeaths = {
@@ -6276,14 +6374,14 @@ const _e = {
 		}
 	},
 	SPAWN: (e, t) => {
-		const o = Re(e, t.board);
+		const o = ye(e, t.board);
 		if (o) {
 			const r = { ...e.piece };
 			r.skills = [...new Set([
 				...r.skills || [],
 				...r.learnedSkills || [],
 				...r.traits || []
-			])], r.abilityMask = Q.resolveMask(r), t.board[o.r][o.c] = r;
+			])], r.abilityMask = F.resolveMask(r), t.board[o.r][o.c] = r;
 		}
 	},
 	SWAP_PIECES: (e, t) => {
@@ -6291,7 +6389,7 @@ const _e = {
 		o[e.posA.r][e.posA.c] = i ? { ...i } : null, o[e.posB.r][e.posB.c] = r ? { ...r } : null;
 	},
 	ADD_STATUS: (e, t) => {
-		const o = Re(e, t.board);
+		const o = ye(e, t.board);
 		if (o) {
 			const r = t.board[o.r][o.c];
 			if (r) {
@@ -6299,7 +6397,7 @@ const _e = {
 					...r,
 					statuses: [...r.statuses || []]
 				};
-				Pe.applyStatus(i, e.statusId, e.duration, e.metadata), i.abilityMask = Q.resolveMask(i), t.board[o.r][o.c] = i, t.roster && (t.roster = t.roster.map((e) => e.uid === r.uid ? i : e)), t.script && ("FROZEN" === e.statusId ? t.script.push({
+				Pe.applyStatus(i, e.statusId, e.duration, e.metadata), i.abilityMask = F.resolveMask(i), t.board[o.r][o.c] = i, t.roster && (t.roster = t.roster.map((e) => e.uid === r.uid ? i : e)), t.script && ("FROZEN" === e.statusId ? t.script.push({
 					type: "ANIMATE",
 					name: "RIPPLE",
 					pos: o,
@@ -6315,7 +6413,7 @@ const _e = {
 		}
 	},
 	REMOVE_STATUS: (e, t) => {
-		const o = Re(e, t.board);
+		const o = ye(e, t.board);
 		if (o) {
 			const r = t.board[o.r][o.c];
 			if (r && r.statuses) {
@@ -6323,7 +6421,7 @@ const _e = {
 					...r,
 					statuses: r.statuses.filter((t) => t.id !== e.statusId)
 				};
-				i.abilityMask = Q.resolveMask(i), t.board[o.r][o.c] = i, t.roster && (t.roster = t.roster.map((e) => e.uid === r.uid ? i : e));
+				i.abilityMask = F.resolveMask(i), t.board[o.r][o.c] = i, t.roster && (t.roster = t.roster.map((e) => e.uid === r.uid ? i : e));
 			}
 		}
 	},
@@ -6349,7 +6447,7 @@ const _e = {
 		t.deployedUids = t.deployedUids.filter((t) => t !== e.uid);
 	},
 	REMOVE_PIECE: (e, t) => {
-		const o = Re(e, t.board);
+		const o = ye(e, t.board);
 		if (o) {
 			const e = t.board[o.r][o.c];
 			e && (t.metadata.recentDeaths = {
@@ -6367,8 +6465,8 @@ const _e = {
 	TICK_PIECE: (e, t) => {
 		const o = t.board[e.pos.r][e.pos.c];
 		if (o) {
-			const r = ye(o);
-			r.abilityMask = Q.resolveMask(r), t.board[e.pos.r][e.pos.c] = r, t.roster && (t.roster = t.roster.map((e) => e.uid === o.uid ? r : e));
+			const r = Re(o);
+			r.abilityMask = F.resolveMask(r), t.board[e.pos.r][e.pos.c] = r, t.roster && (t.roster = t.roster.map((e) => e.uid === o.uid ? r : e));
 		}
 	},
 	SWITCH_TURN: (e, t) => {
@@ -6385,7 +6483,7 @@ const _e = {
 				level: r,
 				maxSlots: i
 			};
-			s.abilityMask = Q.resolveMask(s), t.board[e.pos.r][e.pos.c] = s, t.roster && (t.roster = t.roster.map((e) => e.uid === o.uid ? s : e)), t.script && t.script.push({
+			s.abilityMask = F.resolveMask(s), t.board[e.pos.r][e.pos.c] = s, t.roster && (t.roster = t.roster.map((e) => e.uid === o.uid ? s : e)), t.script && t.script.push({
 				type: "ANIMATE",
 				name: "LEVEL_UP",
 				pos: e.pos,
@@ -6404,7 +6502,7 @@ const _e = {
 				...o.skills || [],
 				...o.learnedSkills || [],
 				...o.traits || []
-			])], o.abilityMask = Q.resolveMask(o), t.board[r][i] = o;
+			])], o.abilityMask = F.resolveMask(o), t.board[r][i] = o;
 		}
 		t.roster && (t.roster = t.roster.map((t) => t.uid === e.pieceUid ? {
 			...t,
@@ -6449,7 +6547,7 @@ var fe = class e {
 	static finalizeInference(e) {
 		for (let o = 0; o < 8; o++) for (let t = 0; t < 8; t++) {
 			const r = e.board[o][t];
-			r && (r.abilityMask = Q.resolveMask(r));
+			r && (r.abilityMask = F.resolveMask(r));
 		}
 		const t = e.isAISimulation || !0 === globalThis.isAISimulation;
 		e.metadata.cache = V.apply(e.metadata.cache, e.board, e.metadata, e.turn, [], e.levelConstraints, t);
@@ -6457,7 +6555,7 @@ var fe = class e {
 	static refreshAbilityMasks(e) {
 		for (let t = 0; t < 8; t++) for (let o = 0; o < 8; o++) {
 			const r = e[t][o];
-			r && (r.abilityMask = Q.resolveMask(r));
+			r && (r.abilityMask = F.resolveMask(r));
 		}
 	}
 	static updateCache(e) {
@@ -6471,11 +6569,11 @@ var fe = class e {
 		"pos" in t && t.pos && i.push(t.pos), "from" in t && t.from && i.push(t.from), "to" in t && t.to && i.push(t.to), "posA" in t && t.posA && i.push(t.posA), "posB" in t && t.posB && i.push(t.posB);
 		for (const e of i) {
 			const t = o.board[e.r][e.c];
-			t && (t.abilityMask = Q.resolveMask(t));
+			t && (t.abilityMask = F.resolveMask(t));
 		}
 		if ("UPDATE_ROSTER_PIECE" === t.type) {
 			const r = e.getActivePieces(o.board);
-			for (const { r: e, c: o, piece: i } of r) i.uid === t.pieceUid && (i.abilityMask = Q.resolveMask(i));
+			for (const { r: e, c: o, piece: i } of r) i.uid === t.pieceUid && (i.abilityMask = F.resolveMask(i));
 		}
 		o.metadata.cache = V.apply(o.metadata.cache, o.board, o.metadata, o.turn, [t], o.levelConstraints, o.isAISimulation);
 	}
@@ -6499,7 +6597,7 @@ var fe = class e {
 			seedSnapshot: i.currentSeed
 		};
 		i.isAISimulation = !0, globalThis.isAISimulation = !0;
-		const c = new F(i.currentSeed || Date.now());
+		const c = new Q(i.currentSeed || Date.now());
 		try {
 			i.interceptors = w.build(i.board, i.metadata), Oe.calculateSequence(r, i, s);
 			for (let t = 0; t < 8; t++) for (let o = 0; o < 8; o++) {
@@ -6626,7 +6724,7 @@ var fe = class e {
 		};
 	}
 };
-function Re(e, t) {
+function ye(e, t) {
 	if (e.targetId) {
 		const o = fe.getActivePieces(t);
 		for (const { r: t, c: r, piece: i } of o) {
@@ -6642,13 +6740,13 @@ function Re(e, t) {
 	}
 	return e.pos;
 }
-function ye(e) {
+function Re(e) {
 	const t = {
 		...e,
 		statuses: e.statuses ? e.statuses.map((e) => ({ ...e })) : [],
 		traits: e.traits ? [...e.traits] : []
 	};
-	t.type === r.KING && (t.statuses = t.statuses.filter((e) => e.id !== i.INVISIBLE && e.id !== i.PETRIFIED)), t.stackedPiece && (t.stackedPiece = ye(t.stackedPiece)), t.statuses.length > 0 && (t.statuses = t.statuses.map((e) => e.duration >= 99 ? e : (e.duration <= 1 && e.id === i.BETRAYED && e.originalColor && (t.color = e.originalColor), {
+	t.type === r.KING && (t.statuses = t.statuses.filter((e) => e.id !== i.INVISIBLE && e.id !== i.PETRIFIED)), t.stackedPiece && (t.stackedPiece = Re(t.stackedPiece)), t.statuses.length > 0 && (t.statuses = t.statuses.map((e) => e.duration >= 99 ? e : (e.duration <= 1 && e.id === i.BETRAYED && e.originalColor && (t.color = e.originalColor), {
 		...e,
 		duration: e.duration - 1
 	})).filter((e) => e.duration > 0));
@@ -6695,7 +6793,7 @@ var Ne = class {
 	}
 }, he = class {
 	static isSteady(e) {
-		return !!e && (Q.has(e, "KING_STEADY") || Q.has(e, "EQ_STABILIZER"));
+		return !!e && (F.has(e, "KING_STEADY") || F.has(e, "EQ_STABILIZER"));
 	}
 	static isHidden(e, t, o, r, s) {
 		if (!e.statuses?.some((e) => e.id === i.INVISIBLE || e.id === i.CAMOUFLAGED)) return !1;
@@ -6713,7 +6811,7 @@ var Ne = class {
 		return !a;
 	}
 	static isInvulnerable(e, t, o, r, i, s, a) {
-		for (const c of Ne.globalInvulnerabilityMods) if ((c.piece.id === e.id || Q.has(c.piece, "GENERIC_FIREWALL")) && c.fn({
+		for (const c of Ne.globalInvulnerabilityMods) if ((c.piece.id === e.id || F.has(c.piece, "GENERIC_FIREWALL")) && c.fn({
 			board: o,
 			piece: e,
 			r,
@@ -6735,14 +6833,14 @@ var Ne = class {
 		return !1;
 	}
 	static canAct(e, t, o, r, s, a, c) {
-		return !!e && !e.statuses?.some((e) => e.id === i.PETRIFIED) && (!(!a?.lockedActionUid || a.lockedActionUid !== e.uid) || (e.statuses?.some((e) => e.id === i.FROZEN) ? !!Q.has(e, "BYPASS_FROZEN") || x.getModifiers(e, o, r, s).some((t) => t.bypassFrozen && t.bypassFrozen({
+		return !!e && !e.statuses?.some((e) => e.id === i.PETRIFIED) && (!(!a?.lockedActionUid || a.lockedActionUid !== e.uid) || (e.statuses?.some((e) => e.id === i.FROZEN) ? !!F.has(e, "BYPASS_FROZEN") || x.getModifiers(e, o, r, s).some((t) => t.bypassFrozen && t.bypassFrozen({
 			board: o,
 			piece: e,
 			r,
 			c: s,
 			metadata: a,
 			networkedMap: c
-		})) : !!t || !!Q.has(e, "BYPASS_FROZEN") || x.getModifiers(e, o, r, s).some((t) => t.bypassFrozen && t.bypassFrozen({
+		})) : !!t || !!F.has(e, "BYPASS_FROZEN") || x.getModifiers(e, o, r, s).some((t) => t.bypassFrozen && t.bypassFrozen({
 			board: o,
 			piece: e,
 			r,
@@ -6768,11 +6866,11 @@ var Ne = class {
 			}, s = () => {
 				r = !0, t.setNoSkip && t.setNoSkip();
 			};
-			"onDeath" === e && o && Ie.emit(Te, {
+			"onDeath" === e && o && Ie.emit(me, {
 				key: "deathEvaded",
 				value: 1,
 				isLifetimeOnly: !0
-			}), "onUse" === e && t.prng && Ie.emit(Te, {
+			}), "onUse" === e && t.prng && Ie.emit(me, {
 				key: "rngTriggers",
 				value: 1,
 				isLifetimeOnly: !0
@@ -7090,7 +7188,7 @@ var Ne = class {
 		}
 	}
 	static generateSlidingMoves(e, t, o, r, i, s, a) {
-		const c = R[r.type], n = Q.has(r, "LEAP_OVER");
+		const c = y[r.type], n = F.has(r, "LEAP_OVER");
 		for (let d = 0; d < c.length; d++) {
 			let p = t + c[d][0], E = o + c[d][1], l = !1;
 			for (; p >= 0 && p < 8 && E >= 0 && E < 8 && !this.isSquarePassageBlocked(p, E, s, a);) {
@@ -7111,7 +7209,7 @@ var Ne = class {
 		}
 	}
 	static applyAbilityEnhancements(e, o, r, i, s, a) {
-		if (Q.has(i, "MOVE_SIDE") && Q.has(i, "STEP_LIMIT_1") && [
+		if (F.has(i, "MOVE_SIDE") && F.has(i, "STEP_LIMIT_1") && [
 			[-1, 0],
 			[1, 0],
 			[0, -1],
@@ -7122,7 +7220,7 @@ var Ne = class {
 				r: a,
 				c
 			}));
-		}), Q.has(i, "MOVE_FWD_CAPTURE")) {
+		}), F.has(i, "MOVE_FWD_CAPTURE")) {
 			const a = o + (i.color === t ? -1 : 1);
 			if (a >= 0 && a < 8) {
 				const t = e[a][r];
@@ -7279,16 +7377,16 @@ function Ge(e, i, s, a) {
 	}(e, i, c, d, E, s), !s?.globalJamming || s.globalJamming <= 0) (function(e, o, r, i, s, a, c, n, d, p, E) {
 		let l = 0;
 		for (; l < c.length;) {
-			const { r: p, c: u } = c[l++], A = e[p][u], I = s[p][u], T = ke(e, p, u, r, E);
+			const { r: p, c: u } = c[l++], A = e[p][u], I = s[p][u], m = ke(e, p, u, r, E);
 			Pe.getModifiers(A, e, p, u).forEach((t) => {
-				t.networkRange && T.push(...t.networkRange({
+				t.networkRange && m.push(...t.networkRange({
 					board: e,
 					piece: A,
 					r: p,
 					c: u
 				}));
 			});
-			for (const E of T) {
+			for (const E of m) {
 				if ("FORWARD" === d && !(o === t ? E.r <= p : E.r >= p)) continue;
 				const l = e[E.r][E.c];
 				i[E.r][E.c] = !0, l && l.color === o && !r[E.r][E.c] && (r[E.r][E.c] = !0, s[E.r][E.c] = I + 1, n || (c.push(E), a.push({
@@ -7374,7 +7472,7 @@ function ke(e, o, s, a, c) {
 	if (n.type !== r.KING && n.statuses?.some((e) => e.id === i.FROZEN || e.id === i.PETRIFIED)) return [];
 	const d = [], p = n.type, E = n.color;
 	if (p === r.KING || p === r.KNIGHT) {
-		const e = R[p];
+		const e = y[p];
 		for (let t = 0; t < e.length; t++) {
 			const r = o + e[t][0], i = s + e[t][1];
 			r >= 0 && r < 8 && i >= 0 && i < 8 && d.push({
@@ -7392,7 +7490,7 @@ function ke(e, o, s, a, c) {
 			c: s + 1
 		});
 	} else {
-		const t = R[p];
+		const t = y[p];
 		for (let r = 0; r < t.length; r++) {
 			let i = o + t[r][0], a = s + t[r][1];
 			for (; i >= 0 && i < 8 && a >= 0 && a < 8 && !Ue(0, i, a, c) && (d.push({
@@ -7713,7 +7811,7 @@ const ge = [
 					c: s + 1
 				}));
 			} else if (n === r.KNIGHT || n === r.KING) {
-				const e = R[n];
+				const e = y[n];
 				for (const [t, r] of e) {
 					const e = o + t, i = s + r;
 					e >= 0 && e < 8 && i >= 0 && i < 8 && p.push({
@@ -7722,7 +7820,7 @@ const ge = [
 					});
 				}
 			} else {
-				const t = R[n];
+				const t = y[n];
 				for (const [r, i] of t) {
 					let t = o + r, a = s + i;
 					for (; t >= 0 && t < 8 && a >= 0 && a < 8 && (p.push({
@@ -7799,7 +7897,7 @@ const ge = [
 						r: s + e,
 						c: a + 1
 					}));
-				} else d === r.KNIGHT ? R.N.forEach(([t, o]) => e(t, o, !1)) : (d !== r.BISHOP && d !== r.QUEEN || R.B.forEach(([t, o]) => e(t, o, !0)), d !== r.ROOK && d !== r.QUEEN || R.R.forEach(([t, o]) => e(t, o, !0)));
+				} else d === r.KNIGHT ? y.N.forEach(([t, o]) => e(t, o, !1)) : (d !== r.BISHOP && d !== r.QUEEN || y.B.forEach(([t, o]) => e(t, o, !0)), d !== r.ROOK && d !== r.QUEEN || y.R.forEach(([t, o]) => e(t, o, !0)));
 			}
 			return o;
 		} },
@@ -7998,7 +8096,7 @@ const ge = [
 					r: a + e,
 					c: c + 1
 				}));
-			} else d === r.KNIGHT ? R.N.forEach(([e, t]) => l(e, t, !1)) : d === r.BISHOP ? R.B.forEach(([e, t]) => l(e, t, !0)) : d === r.ROOK ? R.R.forEach(([e, t]) => l(e, t, !0)) : d !== r.QUEEN && d !== r.KING || R.Q.forEach(([e, t]) => l(e, t, d === r.QUEEN));
+			} else d === r.KNIGHT ? y.N.forEach(([e, t]) => l(e, t, !1)) : d === r.BISHOP ? y.B.forEach(([e, t]) => l(e, t, !0)) : d === r.ROOK ? y.R.forEach(([e, t]) => l(e, t, !0)) : d !== r.QUEEN && d !== r.KING || y.Q.forEach(([e, t]) => l(e, t, d === r.QUEEN));
 			return [...o, ...p];
 		} }
 	},
@@ -10130,7 +10228,7 @@ const ge = [
 						r: t,
 						c: o
 					},
-					statusId: T
+					statusId: m
 				}), s({
 					type: "ANIMATE",
 					name: "EXPLOSION",
@@ -10249,7 +10347,7 @@ const ge = [
 			for (; d >= 0 && d < 8 && p >= 0 && p < 8 && !i[d][p] && (E = {
 				r: d,
 				c: p
-			}, a?.squares?.[`${d},${p}`]?.some((e) => e.id === m));) d += c, p += n;
+			}, a?.squares?.[`${d},${p}`]?.some((e) => e.id === T));) d += c, p += n;
 			E && (s({
 				type: "UPDATE_ROSTER_PIECE",
 				pieceUid: e.uid,
@@ -10614,7 +10712,7 @@ const ge = [
 		tier: "LEGENDARY",
 		pieceType: r.KING,
 		description: "游戏开始时，国王拥有等同于后+马的移动范围。一旦你部署了任何其他棋子，该效果永久失效。",
-		modifiers: { movement: ({ board: e, piece: t, r: o, c: s }, a) => (t.type !== r.KING || t.statuses?.some((e) => e.id === i.EQ_ARROGANT_CREED_DISABLED) || ([...R.R, ...R.B].forEach(([r, i]) => {
+		modifiers: { movement: ({ board: e, piece: t, r: o, c: s }, a) => (t.type !== r.KING || t.statuses?.some((e) => e.id === i.EQ_ARROGANT_CREED_DISABLED) || ([...y.R, ...y.B].forEach(([r, i]) => {
 			let c = o + r, n = s + i;
 			for (; c >= 0 && c < 8 && n >= 0 && n < 8;) {
 				const o = e[c][n];
@@ -10630,7 +10728,7 @@ const ge = [
 					c: n
 				}), c += r, n += i;
 			}
-		}), R.N.forEach(([r, i]) => {
+		}), y.N.forEach(([r, i]) => {
 			const c = o + r, n = s + i;
 			c >= 0 && c < 8 && n >= 0 && n < 8 && e[c][n]?.color !== t.color && a.push({
 				r: c,
@@ -10844,7 +10942,7 @@ const ge = [
 					c: s
 				},
 				statusId: i.FROZEN,
-				duration: 2
+				duration: 5
 			}) : c?.();
 		} }
 	},
@@ -11627,7 +11725,7 @@ const ge = [
 		pieceType: r.QUEEN,
 		description: "威胁范围内有且仅有一个敌方单位且它无相邻友军时，将其策反 1 回合。",
 		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: s, emit: a }) => {
-			const c = [], n = [...R.R, ...R.B];
+			const c = [], n = [...y.R, ...y.B];
 			for (const [i, d] of n) {
 				let a = t + i, n = o + d;
 				for (; a >= 0 && a < 8 && n >= 0 && n < 8;) {
@@ -12939,7 +13037,7 @@ var Be = class {
 	static isBadCapture(e, t) {
 		return ("move" === t.type || "strike" === t.type) && !!t.to && e.board[t.to.r][t.to.c]?.type !== r.KING && !this.isKingInCheck(e, e.turn) && this.SEE_Approx(e, t) < -50;
 	}
-}, Qe = class {
+}, Fe = class {
 	static evaluate(e, i) {
 		if (e.winner === o) return i === o ? 1e6 : -1e6;
 		if (e.winner === t) return i === t ? 1e6 : -1e6;
@@ -12953,15 +13051,15 @@ var Be = class {
 		}
 		const n = c.cache ? c.cache.whiteNetwork : void 0, d = c.cache ? c.cache.blackNetwork : void 0;
 		let p = 0, l = 0, u = 0, A = 0;
-		const I = Array(8).fill(!1).map(() => Array(8).fill(!1)), T = Array(8).fill(!1).map(() => Array(8).fill(!1));
+		const I = Array(8).fill(!1).map(() => Array(8).fill(!1)), m = Array(8).fill(!1).map(() => Array(8).fill(!1));
 		for (let o = 0; o < 8; o++) for (let e = 0; e < 8; e++) {
 			const r = a[o][e];
-			r && (r.color === t ? ke(a, o, e, n, c).forEach((e) => I[e.r][e.c] = !0) : ke(a, o, e, d, c).forEach((e) => T[e.r][e.c] = !0));
+			r && (r.color === t ? ke(a, o, e, n, c).forEach((e) => I[e.r][e.c] = !0) : ke(a, o, e, d, c).forEach((e) => m[e.r][e.c] = !0));
 		}
 		for (let t = 0; t < 8; t++) for (let e = 0; e < 8; e++) {
-			I[t][e] && u++, T[t][e] && A++;
+			I[t][e] && u++, m[t][e] && A++;
 			const o = c.squares?.[`${t},${e}`] || [];
-			for (const r of o) r.id === E && (T[t][e] && (s += 30), I[t][e] && (s -= 30));
+			for (const r of o) r.id === E && (m[t][e] && (s += 30), I[t][e] && (s -= 30));
 		}
 		a.forEach((e, t) => e.forEach((e, i) => {
 			if (!e) return;
@@ -13001,35 +13099,82 @@ var Be = class {
 				}[e.tier || "COMMON"];
 			}), s ? l += E : p += E;
 		}));
-		const m = e.reserves;
-		if (m) for (const r of Object.keys(m[t])) p += (m[t][r] || 0) * (We[r] || 0) * .8, l += (m[o][r] || 0) * (We[r] || 0) * .8;
+		const T = e.reserves;
+		if (T) for (const r of Object.keys(T[t])) p += (T[t][r] || 0) * (We[r] || 0) * .8, l += (T[o][r] || 0) * (We[r] || 0) * .8;
 		s += l - p, s += 8 * (A - u), Be.isKingInCheck(e, o) && (s -= 500), Be.isKingInCheck(e, t) && (s += 500);
 		const O = s + .1 * ((p + l + u + A) % 5);
 		return i === t ? -O : O;
 	}
 };
 Pe.register(U), Pe.register(ge), Pe.register(He), Pe.register(X), Pe.register($), Pe.register(Z), Pe.register(re), Pe.register(se), Pe.register(be);
-const Fe = new class {
+const Qe = new class {
 	constructor() {
-		this.nodesVisited = 0, this.qNodesVisited = 0, this.prunedNodes = 0, this.startTime = 0, this.timeout = !1, this.thinkingColor = t, this.TIME_LIMIT = 1200, this.historyTable = new Int32Array(4096), this.killerMoves = [], this.ttCache = /* @__PURE__ */ new Map();
+		this.nodesVisited = 0, this.qNodesVisited = 0, this.prunedNodes = 0, this.startTime = 0, this.timeout = !1, this.thinkingColor = t, this.TIME_LIMIT = 1200, this.historyTable = new Int32Array(4096), this.killerMoves = [], this.ttCache = /* @__PURE__ */ new Map(), this.positionHistory = /* @__PURE__ */ new Map(), this.lastRootHash = null;
+	}
+	clearPositionHistory() {
+		this.positionHistory.clear(), this.lastRootHash = null;
 	}
 	async computeMove(e, t = "normal") {
 		this.nodesVisited = 0, this.qNodesVisited = 0, this.prunedNodes = 0, this.startTime = Date.now(), this.timeout = !1, this.thinkingColor = e.turn;
 		let o = "hard" === t ? 4e3 : 1200, r = "hard" === t ? 6 : 4;
 		this.TIME_LIMIT && (o = this.TIME_LIMIT), this.killerMoves = Array(32).fill(null).map(() => []);
-		for (let n = 0; n < 4096; n++) this.historyTable[n] >>= 1;
+		for (let p = 0; p < 4096; p++) this.historyTable[p] >>= 1;
 		this.ttCache.size > 1e5 && this.ttCache.clear();
-		const i = Se.fastCloneContext(e);
-		i.metadata.cache || (i.metadata.cache = Y.recompute(i.board, i.metadata, i.turn, i.levelConstraints, !0)), e.turn;
-		let s = null, a = 0;
+		const i = this.getHash(e);
+		this.positionHistory.size > 0 && null !== this.lastRootHash && !this.positionHistory.has(i) && this.positionHistory.clear(), this.lastRootHash = i;
+		const s = (this.positionHistory.get(i) ?? 0) + 1;
+		this.positionHistory.set(i, s), this.positionHistory.size > 300 && (this.positionHistory.clear(), this.positionHistory.set(i, 1));
+		const a = Se.fastCloneContext(e);
+		a.metadata.cache || (a.metadata.cache = Y.recompute(a.board, a.metadata, a.turn, a.levelConstraints, !0)), e.turn;
+		let c = null, n = 0, d = 0;
 		this.thinkingColor;
 		this.checkTimeout = (e = o) => Date.now() - this.startTime > e && (this.timeout = !0, !0);
-		for (let n = 1; n <= r; n++) {
-			const e = this.search(i, n, -Infinity, Infinity, !0);
-			if (this.timeout) break;
-			if (s = e.action || s, a = e.score, a > 4e4) break;
+		for (let p = 1; p <= r; p++) {
+			const e = this.search(a, p, -Infinity, Infinity, !0);
+			if (this.timeout) {
+				c || (c = e.action);
+				break;
+			}
+			if (d = p, c = e.action || c, n = e.score, n > 4e4) break;
 		}
-		return s;
+		if (c && !this.timeout) {
+			const e = Se.fastCloneContext(a), t = this.makeMove(e, c), o = this.getHash(e);
+			this.unmakeMove(e, t);
+			if ((this.positionHistory.get(o) ?? 0) >= 2) {
+				const e = xe.generateAllActions(a, !1), t = this.ttCache.get(this.getHash(a))?.bestAction ?? null;
+				this.sortActions(e, a, d, t);
+				let o = null;
+				for (const r of e) {
+					const e = Se.fastCloneContext(a), t = this.makeMove(e, r), i = this.getHash(e);
+					if (this.unmakeMove(e, t), (this.positionHistory.get(i) ?? 0) < 2) {
+						o = r;
+						break;
+					}
+				}
+				o && (c = o);
+			}
+		}
+		this.countPiecesByColor(a);
+		return c;
+	}
+	countPiecesByColor(e) {
+		let r = 0, i = 0;
+		for (let o = 0; o < 8; o++) for (let s = 0; s < 8; s++) {
+			const a = e.board[o][s];
+			a && (a.color === t ? r++ : i++);
+		}
+		const s = (e) => {
+			if (!e) return 0;
+			let t = 0;
+			for (const o of Object.keys(e)) t += Number(e[o]) || 0;
+			return t;
+		};
+		return {
+			boardWhite: r,
+			boardBlack: i,
+			reserveWhite: s(e.reserves?.[t]),
+			reserveBlack: s(e.reserves?.[o])
+		};
 	}
 	checkTimeout() {
 		return (this.nodesVisited + this.qNodesVisited) % 64 == 0 && Date.now() - this.startTime > this.TIME_LIMIT && (this.timeout = !0), this.timeout;
@@ -13047,23 +13192,31 @@ const Fe = new class {
 			score: 0,
 			action: null
 		};
-		const c = this.getHash(e), n = this.ttCache.get(c);
-		if (n && n.depth >= r) {
-			if (0 === n.flag) return {
-				score: n.score,
-				action: n.bestAction
+		const c = this.getHash(e), n = this.positionHistory.get(c) ?? 0;
+		if (n >= 2) {
+			const e = n >= 3 ? 900 : 450;
+			return {
+				score: a ? -e : e,
+				action: null
 			};
-			if (1 === n.flag && (s = Math.min(s, n.score)), 2 === n.flag && (i = Math.max(i, n.score)), i >= s) return {
-				score: n.score,
-				action: n.bestAction
+		}
+		const d = this.ttCache.get(c);
+		if (d && d.depth >= r) {
+			if (0 === d.flag) return {
+				score: d.score,
+				action: d.bestAction
+			};
+			if (1 === d.flag && (s = Math.min(s, d.score)), 2 === d.flag && (i = Math.max(i, d.score)), i >= s) return {
+				score: d.score,
+				action: d.bestAction
 			};
 		}
 		if (r <= 0 || e.winner) return {
 			score: this.quiescence(e, i, s, a),
 			action: null
 		};
-		const d = Be.isKingInCheck(e, e.turn);
-		if (r >= 3 && !d) {
+		const p = Be.isKingInCheck(e, e.turn);
+		if (r >= 3 && !p) {
 			const c = e.turn;
 			e.turn = e.turn === t ? o : t;
 			const n = this.search(e, r - 3, i, s, !a).score;
@@ -13076,45 +13229,48 @@ const Fe = new class {
 				action: null
 			};
 		}
-		const p = xe.generateAllActions(e, !1);
-		if (0 === p.length) return {
+		const E = xe.generateAllActions(e, !1);
+		if (0 === E.length) return {
 			score: a ? -2e4 : 2e4,
 			action: null
 		};
-		this.sortActions(p, e, r, n?.bestAction);
-		let E = p[0], l = a ? -Infinity : Infinity, u = i, A = s;
-		for (let t = 0; t < p.length; t++) {
-			const o = p[t], c = this.makeMove(e, o);
-			let n = 0;
-			const u = Be.isCapture(e, o), A = c.turnSnapshot !== e.turn ? !a : a;
-			if (r >= 3 && t >= 3 && !u && !d && "use_skill" !== o.type ? (n = this.search(e, r - 2, i, s, A).score, (a ? n > i : n < s) && (n = this.search(e, r - 1, i, s, A).score)) : n = this.search(e, r - 1, i, s, A).score, this.unmakeMove(e, c), this.timeout) break;
+		this.sortActions(E, e, r, d?.bestAction);
+		let l = E[0], u = a ? -Infinity : Infinity, A = i, I = s;
+		for (let t = 0; t < E.length; t++) {
+			const o = E[t], c = this.makeMove(e, o), n = this.getHash(e);
+			this.positionHistory.set(n, (this.positionHistory.get(n) ?? 0) + 1);
+			let d = 0;
+			const A = Be.isCapture(e, o), I = c.turnSnapshot !== e.turn ? !a : a;
+			r >= 3 && t >= 3 && !A && !p && "use_skill" !== o.type ? (d = this.search(e, r - 2, i, s, I).score, (a ? d > i : d < s) && (d = this.search(e, r - 1, i, s, I).score)) : d = this.search(e, r - 1, i, s, I).score;
+			const m = this.positionHistory.get(n) ?? 1;
+			if (m <= 1 ? this.positionHistory.delete(n) : this.positionHistory.set(n, m - 1), this.unmakeMove(e, c), this.timeout) break;
 			if (a) {
-				if (n > l && (l = n, E = o), s <= (i = Math.max(i, n))) {
-					this.prunedNodes++, u || this.storeKillerAndHistory(o, r);
+				if (d > u && (u = d, l = o), s <= (i = Math.max(i, d))) {
+					this.prunedNodes++, A || this.storeKillerAndHistory(o, r);
 					break;
 				}
-			} else if (n < l && (l = n, E = o), (s = Math.min(s, n)) <= i) {
-				this.prunedNodes++, u || this.storeKillerAndHistory(o, r);
+			} else if (d < u && (u = d, l = o), (s = Math.min(s, d)) <= i) {
+				this.prunedNodes++, A || this.storeKillerAndHistory(o, r);
 				break;
 			}
 		}
 		if (!this.timeout) {
 			let e = 0;
-			l <= u ? e = 1 : l >= A && (e = 2), this.ttCache.set(c, {
+			u <= A ? e = 1 : u >= I && (e = 2), this.ttCache.set(c, {
 				depth: r,
-				score: l,
+				score: u,
 				flag: e,
-				bestAction: E
+				bestAction: l
 			});
 		}
 		return {
-			score: l,
-			action: E
+			score: u,
+			action: l
 		};
 	}
 	quiescence(e, t, o, r) {
-		if (this.qNodesVisited++, this.checkTimeout() || e.winner) return Qe.evaluate(e, this.thinkingColor);
-		const i = Qe.evaluate(e, this.thinkingColor);
+		if (this.qNodesVisited++, this.checkTimeout() || e.winner) return Fe.evaluate(e, this.thinkingColor);
+		const i = Fe.evaluate(e, this.thinkingColor);
 		if (r) {
 			if (i >= o) return o;
 			t < i && (t = i);
@@ -13185,7 +13341,7 @@ const Fe = new class {
 }();
 self.onmessage = async (e) => {
 	try {
-		const { state: t, difficulty: o } = e.data, r = await Fe.computeMove(t, o);
+		const { state: t, difficulty: o } = e.data, r = await Qe.computeMove(t, o);
 		self.postMessage({
 			type: "SUCCESS",
 			action: r
