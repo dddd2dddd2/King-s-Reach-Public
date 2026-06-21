@@ -47,7 +47,7 @@ const t = "W", o = "B", i = {
 	JAMMING_TOWER: "JAMMING_TOWER",
 	ROOTED: "ROOTED",
 	CROSS_AURA: "CROSS_AURA"
-}, s = "VOID_ANCHOR", a = "FROZEN_TRAP", c = "PORTAL_ENTRY", n = "SQUARE_RAILWAY", d = "IRON_CURTAIN", p = "SQ_AFTERIMAGE", E = "SQUARE_BASTION_FIELD", l = "BARRICADE", u = "JAMMING_TOWER", A = "VOID_FISSURE_SQUARE", m = "SUPPLY_DEPOT_SQUARE", I = "ANTI_PAWN_MINE", T = "ICE_SLICK", O = "WORMHOLE_A", f = "WORMHOLE_B", _ = "WARP_STORM_PORTAL", y = {
+}, s = "VOID_ANCHOR", a = "FROZEN_TRAP", c = "PORTAL_ENTRY", n = "SQUARE_RAILWAY", d = "IRON_CURTAIN", p = "SQ_AFTERIMAGE", E = "SQUARE_BASTION_FIELD", l = "BARRICADE", u = "JAMMING_TOWER", m = "VOID_FISSURE_SQUARE", A = "SUPPLY_DEPOT_SQUARE", I = "ANTI_PAWN_MINE", T = "ICE_SLICK", O = "WORMHOLE_A", f = "WORMHOLE_B", _ = "WARP_STORM_PORTAL", y = {
 	DESTRUCTIVE_SKILLS: [
 		"PAWN_ASSASSIN",
 		"PAWN_PROMOTE",
@@ -1157,31 +1157,31 @@ var V = class {
 			validMovesMap: {},
 			isCheck: !1,
 			lastUpdateEpoch: Date.now()
-		}, A = {
+		}, m = {
 			...r,
 			cache: u
 		};
 		if (!c && 999 !== r.globalJamming && !0 !== r.isAISimulation && !0 !== globalThis.isAISimulation) {
-			u.validDeployments = Ce(e, s, A, a);
+			u.validDeployments = Ce(e, s, m, a);
 			const t = {};
 			for (let o = 0; o < 8; o++) for (let i = 0; i < 8; i++) {
 				const r = e[o][i];
-				r && (t[r.uid || r.id] = De(e, o, i, A, a));
+				r && (t[r.uid || r.id] = De(e, o, i, m, a));
 			}
 			u.validMovesMap = t;
 		}
-		let m = !1;
+		let A = !1;
 		for (let o = 0; o < 8; o++) {
 			for (let r = 0; r < 8; r++) {
 				const a = e[o][r];
 				if (a && a.color === s && (a.type === i.KING || Pe.isProxyKing(a)) && (s === t ? E : p)[o][r]) {
-					m = !0;
+					A = !0;
 					break;
 				}
 			}
-			if (m) break;
+			if (A) break;
 		}
-		return u.isCheck = m, u;
+		return u.isCheck = A, u;
 	}
 	static patchCache(e, o, r, s, a, c) {
 		let n = !0;
@@ -2567,8 +2567,8 @@ const Z = () => crypto.randomUUID(), j = [
 				if (!d && !E) return;
 				const l = s.metadata?.levelGoldEarned ?? 0;
 				if (l >= 40) return;
-				const u = Math.abs(i - e.r) + Math.abs(r - e.c), A = Math.min(u, 40 - l);
-				A <= 0 || (c({
+				const u = Math.abs(i - e.r) + Math.abs(r - e.c), m = Math.min(u, 40 - l);
+				m <= 0 || (c({
 					type: "SPAWN",
 					pos: {
 						r: i,
@@ -2578,12 +2578,12 @@ const Z = () => crypto.randomUUID(), j = [
 						...s,
 						metadata: {
 							...s.metadata,
-							levelGoldEarned: l + A
+							levelGoldEarned: l + m
 						}
 					}
 				}), s.color === t && c({
 					type: "MODIFY_GOLD",
-					amount: A,
+					amount: m,
 					reason: "MIDAS_TOUCH"
 				}));
 			},
@@ -4785,7 +4785,7 @@ const ae = [
 						c: d
 					},
 					status: {
-						id: m,
+						id: A,
 						duration: 2,
 						metadata: { ownerUid: i.uid }
 					}
@@ -5182,7 +5182,8 @@ const ae = [
 						},
 						status: {
 							id: d,
-							duration: 2
+							duration: 2,
+							metadata: { ownerColor: i.color }
 						}
 					});
 					s({
@@ -5269,12 +5270,13 @@ const ae = [
 						type: "SET_SQUARE",
 						pos: r,
 						status: {
-							id: A,
+							id: m,
 							duration: 999
 						}
 					}), s({
 						type: "UPDATE_ROSTER_PIECE",
 						pieceUid: i.uid,
+						pieceId: i.id,
 						updates: { metadata: {
 							...i.metadata,
 							fissureUses: e,
@@ -5301,6 +5303,7 @@ const ae = [
 			(e.metadata?.fissureCd || 0) > 0 && t({
 				type: "UPDATE_ROSTER_PIECE",
 				pieceUid: e.uid,
+				pieceId: e.id,
 				updates: { metadata: {
 					...e.metadata,
 					fissureCd: e.metadata.fissureCd - 1
@@ -5308,15 +5311,15 @@ const ae = [
 			});
 		} },
 		getDisplayStatus: (e, t) => {
-			const o = e.metadata?.fissureCd || 0, i = e.metadata?.fissureUses || 0;
+			const o = e.metadata?.fissureCd || 0, i = e.metadata?.fissureUses || 0, r = "就绪" === t("ready") || "冷却" === t("cooldown") || "undefined" != typeof navigator && navigator.language.startsWith("zh");
 			return i >= 3 ? {
-				text: t("depleted"),
+				text: r ? "已竭尽" : "DEPLETED",
 				colorClass: "text-red-500"
 			} : o > 0 ? {
-				text: `${t("cooldown")}: ${t("turnsRemaining", { n: o })} (${t("remainingUses", { n: 3 - i })})`,
+				text: r ? `冷却中: ${o}回合 (余${3 - i}次)` : `COOLDOWN: ${o}T (${3 - i} Left)`,
 				colorClass: "text-slate-500"
 			} : {
-				text: `${t("ready")} (${t("remainingUses", { n: 3 - i })})`,
+				text: r ? `就绪 (余${3 - i}次)` : `READY (${3 - i} Left)`,
 				colorClass: "text-cyan-400 animate-pulse"
 			};
 		}
@@ -6007,7 +6010,7 @@ const ue = {
 		return t;
 	} }
 };
-var Ae = class {
+var me = class {
 	static filterGoldGain(e, t, o) {
 		return t <= 0 ? t : e === M ? R.includes(o) ? t : 0 : t;
 	}
@@ -6055,7 +6058,7 @@ var Ae = class {
 		return i.checkGameOverOverride ? i.checkGameOverOverride(t, o) : null;
 	}
 };
-function me(e) {
+function Ae(e) {
 	const t = (e) => {
 		if (!e) return null;
 		const o = {
@@ -6147,7 +6150,7 @@ var Te = class {
 	}
 	static checkGameOver(e, t, r, s) {
 		if (0 === e.flat().filter(Boolean).length) return !1;
-		const a = r || "DEFAULT", c = Ae.checkGameOverOverride(a, e, t);
+		const a = r || "DEFAULT", c = me.checkGameOverOverride(a, e, t);
 		if (null !== c) return c;
 		let n = !1;
 		if (s?.proxyKing && t === o) n = e.flat().some((e) => e && e.color === t);
@@ -6169,7 +6172,7 @@ var Te = class {
 		s.depth = 0, s.actionCount = 0;
 		let E = !1;
 		for (; n.length > 0 && !(s.actionCount > e.MAX_ACTIONS || s.depth > e.MAX_DEPTH);) {
-			const e = n.shift(), t = s.activeMonarchId ? Ae.interceptSync(s.activeMonarchId, e, {
+			const e = n.shift(), t = s.activeMonarchId ? me.interceptSync(s.activeMonarchId, e, {
 				...s,
 				prng: c
 			}) : e;
@@ -6232,7 +6235,7 @@ var Te = class {
 			}
 			if (r) continue;
 			if (_e.apply(t, s), s.script && s.script.length > 0) {
-				const e = me(s.board), t = Ie(s.metadata);
+				const e = Ae(s.board), t = Ie(s.metadata);
 				for (const o of s.script) d.push({
 					action: o,
 					boardSnapshot: e,
@@ -6250,13 +6253,13 @@ var Te = class {
 				"REMOVE_SQUARE"
 			].includes(t.type) && (s.interceptors = $.build(s.board, s.metadata)), d.push({
 				action: t,
-				boardSnapshot: me(s.board),
+				boardSnapshot: Ae(s.board),
 				metadataSnapshot: Ie(s.metadata)
 			}), "DELAY" !== t.type && "SHOW_TEXT" !== t.type && s.actionCount++;
-			const A = t.pos || t.to || null;
+			const m = t.pos || t.to || null;
 			if (this.triggerHooksSync(t, s, (e) => {
 				"DELAY" !== e.type && "SHOW_TEXT" !== e.type && s.actionCount++, n.push(e);
-			}, a || null, l, A, c), "KILL" === t.type && l?.type === i.KING) {
+			}, a || null, l, m, c), "KILL" === t.type && l?.type === i.KING) {
 				let e = !1;
 				for (let t = 0; t < 8; t++) {
 					for (let o = 0; o < 8; o++) {
@@ -6280,7 +6283,7 @@ var Te = class {
 						const e = n.shift();
 						_e.apply(e, s), d.push({
 							action: e,
-							boardSnapshot: me(s.board),
+							boardSnapshot: Ae(s.board),
 							metadataSnapshot: Ie(s.metadata)
 						});
 					}
@@ -6297,7 +6300,7 @@ var Te = class {
 				};
 				d.push({
 					action: e,
-					boardSnapshot: me(s.board),
+					boardSnapshot: Ae(s.board),
 					metadataSnapshot: Ie(s.metadata)
 				});
 			} else if (this.checkGameOver(s.board, t, s.activeMonarchId, s.levelConstraints)) {
@@ -6308,7 +6311,7 @@ var Te = class {
 				};
 				d.push({
 					action: e,
-					boardSnapshot: me(s.board),
+					boardSnapshot: Ae(s.board),
 					metadataSnapshot: Ie(s.metadata)
 				});
 			}
@@ -6536,7 +6539,7 @@ const fe = {
 	},
 	SET_SQUARE: (e, t) => {
 		const o = `${e.pos.r},${e.pos.c}`;
-		t.metadata.squares[o] = [...t.metadata.squares[o] || [], e.status];
+		t.metadata.squares[o] = [e.status];
 	},
 	REMOVE_SQUARE: (e, t) => {
 		const o = `${e.pos.r},${e.pos.c}`;
@@ -6606,7 +6609,7 @@ const fe = {
 	},
 	UPDATE_ROSTER_PIECE: (e, t) => {
 		const o = _e.getActivePieces(t.board);
-		for (const { r: i, c: r, piece: s } of o) if (s.uid === e.pieceUid) {
+		for (const { r: i, c: r, piece: s } of o) if (s.uid === e.pieceUid || s.id === e.pieceId) {
 			const o = {
 				...s,
 				...e.updates
@@ -6617,7 +6620,7 @@ const fe = {
 				...o.traits || []
 			])], o.abilityMask = V.resolveMask(o), t.board[i][r] = o;
 		}
-		t.roster && (t.roster = t.roster.map((t) => t.uid === e.pieceUid ? {
+		t.roster && (t.roster = t.roster.map((t) => t.uid === e.pieceUid || t.id === e.pieceId ? {
 			...t,
 			...e.updates
 		} : t));
@@ -6686,7 +6689,7 @@ var _e = class e {
 		}
 		if ("UPDATE_ROSTER_PIECE" === t.type) {
 			const i = e.getActivePieces(o.board);
-			for (const { r: e, c: o, piece: r } of i) r.uid === t.pieceUid && (r.abilityMask = V.resolveMask(r));
+			for (const { r: e, c: o, piece: r } of i) r.uid !== t.pieceUid && r.id !== t.pieceId || (r.abilityMask = V.resolveMask(r));
 		}
 		o.metadata.cache = X.apply(o.metadata.cache, o.board, o.metadata, o.turn, [t], o.levelConstraints, o.isAISimulation);
 	}
@@ -7200,12 +7203,25 @@ var Ne = class {
 		return Math.max(5, o.value);
 	}
 }, Le = class {
-	static isSquarePassageBlocked(e, t, o, i) {
-		if (i) return i.squareBlock.some((o) => null === o.pieceUid && o.r === e && o.c === t);
-		if (o?.squares) {
-			const i = `${e},${t}`, r = o.squares[i];
-			if (r) {
-				for (const e of r) if (Pe.getDefinition(e.id)?.modifiers?.squareBlockMovement) return !0;
+	static isSquarePassageBlocked(e, t, o, i, r, s) {
+		if (s) return s.squareBlock.some((s) => null === s.pieceUid && s.r === o && s.c === i && s.fn({
+			board: e,
+			piece: t,
+			r: o,
+			c: i,
+			metadata: r
+		}));
+		if (r?.squares) {
+			const s = `${o},${i}`, a = r.squares[s];
+			if (a) for (const c of a) {
+				const s = Pe.getDefinition(c.id);
+				if (s?.modifiers?.squareBlockMovement) return s.modifiers.squareBlockMovement({
+					board: e,
+					piece: t,
+					r: o,
+					c: i,
+					metadata: r
+				});
 			}
 		}
 		return !1;
@@ -7268,22 +7284,22 @@ var Ne = class {
 	static generatePawnMoves(e, i, r, s, a, c, n) {
 		const d = s.color === t ? -1 : 1, p = i + d;
 		if (p >= 0 && p < 8) {
-			e[p][r] || this.isSquarePassageBlocked(p, r, c, n) || a.push({
+			e[p][r] || this.isSquarePassageBlocked(e, s, p, r, c, n) || a.push({
 				r: p,
 				c: r
 			});
 			const i = s.color === t ? o : t;
-			r - 1 >= 0 && e[p][r - 1]?.color === i && !this.isSquarePassageBlocked(p, r - 1, c, n) && a.push({
+			r - 1 >= 0 && e[p][r - 1]?.color === i && !this.isSquarePassageBlocked(e, s, p, r - 1, c, n) && a.push({
 				r: p,
 				c: r - 1
-			}), r + 1 < 8 && e[p][r + 1]?.color === i && !this.isSquarePassageBlocked(p, r + 1, c, n) && a.push({
+			}), r + 1 < 8 && e[p][r + 1]?.color === i && !this.isSquarePassageBlocked(e, s, p, r + 1, c, n) && a.push({
 				r: p,
 				c: r + 1
 			});
 		}
 		if (c?.squares?.[`${i},${r}`]?.some((e) => "SQUARE_RAILWAY" === e.id)) {
 			const t = i + 2 * d;
-			!(t >= 0 && t < 8) || e[i + d][r] || e[t][r] || this.isSquarePassageBlocked(i + d, r, c, n) || this.isSquarePassageBlocked(t, r, c, n) || a.push({
+			!(t >= 0 && t < 8) || e[i + d][r] || e[t][r] || this.isSquarePassageBlocked(e, s, i + d, r, c, n) || this.isSquarePassageBlocked(e, s, t, r, c, n) || a.push({
 				r: t,
 				c: r
 			});
@@ -7313,7 +7329,7 @@ var Ne = class {
 		const c = S[i.type], n = V.has(i, "LEAP_OVER");
 		for (let d = 0; d < c.length; d++) {
 			let p = t + c[d][0], E = o + c[d][1], l = !1;
-			for (; p >= 0 && p < 8 && E >= 0 && E < 8 && !this.isSquarePassageBlocked(p, E, s, a);) {
+			for (; p >= 0 && p < 8 && E >= 0 && E < 8 && !this.isSquarePassageBlocked(e, i, p, E, s, a);) {
 				const t = e[p][E];
 				if (t) {
 					if (t.color !== i.color && (r.push({
@@ -7400,40 +7416,55 @@ var Ne = class {
 function De(e, t, o, i, r, s) {
 	return Le.getValidMoves(e, t, o, i, s);
 }
-function Ce(e, o, i, r) {
-	const s = function(e, o, i, r) {
+function Ce(e, o, r, s) {
+	const a = function(e, o, i, r) {
 		return i?.cache ? o === t ? i.cache.whiteControl : i.cache.blackControl : Ge(e, o, i, r).control;
-	}(e, o, i, r), a = [];
-	for (let t = 0; t < 8; t++) for (let r = 0; r < 8; r++) {
-		const c = i?.squares?.[`${t},${r}`]?.some((s) => {
-			const a = Pe.getDefinition(s.id), c = a?.modifiers?.squareBlockMovement?.({
+	}(e, o, r, s), c = [];
+	for (let t = 0; t < 8; t++) for (let s = 0; s < 8; s++) {
+		const n = r?.squares?.[`${t},${s}`]?.some((a) => {
+			const c = Pe.getDefinition(a.id);
+			if (!c || !c.modifiers) return !1;
+			const n = {
+				color: o,
+				type: i.PAWN,
+				skills: [],
+				statuses: [],
+				equippedItems: []
+			}, d = "function" == typeof c.modifiers.squareBlockMovement ? c.modifiers.squareBlockMovement({
 				board: e,
-				piece: null,
+				piece: n,
 				r: t,
-				c: r,
-				metadata: i
-			}), n = a?.modifiers?.blockDeployment?.({
+				c: s,
+				metadata: r
+			}) : !!c.modifiers.squareBlockMovement, p = "function" == typeof c.modifiers.blockDeployment ? c.modifiers.blockDeployment({
 				board: e,
-				piece: null,
+				piece: n,
 				r: t,
-				c: r,
-				metadata: i,
+				c: s,
+				metadata: r,
 				color: o
-			});
-			return c || n;
-		});
-		e[t][r] || !s[t][r] || c || a.push({
+			}) : !!c.modifiers.blockDeployment;
+			return d || p;
+		}) || !1;
+		e[t][s] || !a[t][s] || n || c.push({
 			r: t,
-			c: r
+			c: s
 		});
 	}
-	return a;
+	return c;
 }
-function Ue(e, t, o, i) {
-	if (i?.squares) {
-		const e = `${t},${o}`, r = i.squares[e];
-		if (r) {
-			for (const t of r) if (Pe.getDefinition(t.id)?.modifiers?.squareBlockMovement) return !0;
+function Ue(e, t, o, i, r) {
+	if (r?.squares) {
+		const s = `${o},${i}`, a = r.squares[s];
+		if (a) for (const c of a) {
+			const s = Pe.getDefinition(c.id);
+			if (s?.modifiers?.squareBlockMovement) return s.modifiers.squareBlockMovement({
+				board: e,
+				piece: t,
+				r: o,
+				c: i,
+				metadata: r
+			});
 		}
 	}
 	return !1;
@@ -7458,14 +7489,14 @@ function Ge(e, r, s, a) {
 			}) && (l = !0);
 		}
 	}
-	let A = !1;
+	let m = !1;
 	if (a?.proxyKing && r === o) {
 		let t = !1;
 		e.forEach((e) => e.forEach((e) => {
 			e?.type === i.KING && e.color === o && (t = !0);
-		})), t || (A = !0);
+		})), t || (m = !0);
 	}
-	if (A) for (let t = 0; t < 8; t++) for (let i = 0; i < 8; i++) {
+	if (m) for (let t = 0; t < 8; t++) for (let i = 0; i < 8; i++) {
 		const r = e[t][i];
 		r && r.color === o && (c[t][i] = !0, d[t][i] = 0, ke(e, t, i, c, s).forEach((e) => n[e.r][e.c] = !0));
 	}
@@ -7499,11 +7530,11 @@ function Ge(e, r, s, a) {
 	}(e, r, c, d, E, s), !s?.globalJamming || s.globalJamming <= 0) (function(e, o, i, r, s, a, c, n, d, p, E) {
 		let l = 0;
 		for (; l < c.length;) {
-			const { r: p, c: u } = c[l++], A = e[p][u], m = s[p][u], I = ke(e, p, u, i, E);
-			Pe.getModifiers(A, e, p, u).forEach((t) => {
+			const { r: p, c: u } = c[l++], m = e[p][u], A = s[p][u], I = ke(e, p, u, i, E);
+			Pe.getModifiers(m, e, p, u).forEach((t) => {
 				t.networkRange && I.push(...t.networkRange({
 					board: e,
-					piece: A,
+					piece: m,
 					r: p,
 					c: u
 				}));
@@ -7511,7 +7542,7 @@ function Ge(e, r, s, a) {
 			for (const E of I) {
 				if ("FORWARD" === d && !(o === t ? E.r <= p : E.r >= p)) continue;
 				const l = e[E.r][E.c];
-				r[E.r][E.c] = !0, l && l.color === o && !i[E.r][E.c] && (i[E.r][E.c] = !0, s[E.r][E.c] = m + 1, n || (c.push(E), a.push({
+				r[E.r][E.c] = !0, l && l.color === o && !i[E.r][E.c] && (i[E.r][E.c] = !0, s[E.r][E.c] = A + 1, n || (c.push(E), a.push({
 					from: {
 						r: p,
 						c: u
@@ -7615,7 +7646,7 @@ function ke(e, o, s, a, c) {
 		const t = S[p];
 		for (let i = 0; i < t.length; i++) {
 			let r = o + t[i][0], a = s + t[i][1];
-			for (; r >= 0 && r < 8 && a >= 0 && a < 8 && !Ue(0, r, a, c) && (d.push({
+			for (; r >= 0 && r < 8 && a >= 0 && a < 8 && !Ue(e, n, r, a, c) && (d.push({
 				r,
 				c: a
 			}), !e[r][a]);) r += t[i][0], a += t[i][1];
@@ -8683,7 +8714,8 @@ const ge = [
 		name: "铁幕地块",
 		isInternal: !0,
 		tier: "LEGENDARY",
-		description: "铁幕地块"
+		description: "铁幕地块",
+		modifiers: { squareBlockMovement: (e) => (e.metadata?.squares?.[`${e.r},${e.c}`] || []).find((e) => "IRON_CURTAIN" === e.id)?.metadata?.ownerColor !== e.piece?.color }
 	},
 	{
 		id: "SQ_AFTERIMAGE",
@@ -9507,7 +9539,7 @@ const ge = [
 						customName: "unitDaizong"
 					}
 				});
-				const A = function(e) {
+				const m = function(e) {
 					const t = () => e ? e.next() : Math.random(), o = pe()[i.BISHOP].filter((e) => "LEGENDARY" === e.tier), r = o[Math.floor(t() * o.length)]?.id || "BISHOP_AURORA", s = Ee.filter((e) => "EQUIPMENT" === e.type), a = s.filter((e) => "LEGENDARY" === e.tier), c = s.filter((e) => "EPIC" === e.tier), n = a[Math.floor(t() * a.length)], d = c[Math.floor(t() * c.length)], p = s[Math.floor(t() * s.length)];
 					return {
 						skills: [r],
@@ -9538,23 +9570,23 @@ const ge = [
 							}
 						]
 					};
-				}(e), m = {
+				}(e), A = {
 					...oe(i.BISHOP, o),
 					uid: u,
 					level: 5,
 					traits: ["YUQIAN_TRAIT"],
 					customName: "unitYuqian",
-					skills: A.skills,
-					learnedSkills: A.skills,
-					equippedItems: A.equippedItems
+					skills: m.skills,
+					learnedSkills: m.skills,
+					equippedItems: m.equippedItems
 				};
 				c({
 					type: "ADD_TO_ROSTER",
-					piece: m
+					piece: A
 				}), c({
 					type: "SPAWN",
 					pos: E,
-					piece: m
+					piece: A
 				});
 			}
 		} }
@@ -9677,8 +9709,8 @@ const ge = [
 					dc: u
 				} }
 			});
-			const A = e[p][E];
-			A && A.type !== i.KING && a({
+			const m = e[p][E];
+			m && m.type !== i.KING && a({
 				type: "KILL",
 				pos: {
 					r: p,
@@ -9823,7 +9855,7 @@ const ge = [
 						c: t
 					}
 				})), a.forEach(({ p: e, nr: t, nc: a }) => {
-					r?.squares?.[`${t},${a}`]?.some((e) => e.id === s || e.id === l || e.id === A) && e.type !== i.KING ? (o({
+					r?.squares?.[`${t},${a}`]?.some((e) => e.id === s || e.id === l || e.id === m) && e.type !== i.KING ? (o({
 						type: "SPAWN",
 						pos: {
 							r: t,
@@ -13215,12 +13247,12 @@ var Be = class {
 				c: e
 			}));
 		}
-		const u = c.cache ? c.cache.whiteNetwork : void 0, A = c.cache ? c.cache.blackNetwork : void 0;
-		let m = 0, I = 0, T = 0, O = 0;
+		const u = c.cache ? c.cache.whiteNetwork : void 0, m = c.cache ? c.cache.blackNetwork : void 0;
+		let A = 0, I = 0, T = 0, O = 0;
 		const f = Array(8).fill(!1).map(() => Array(8).fill(!1)), _ = Array(8).fill(!1).map(() => Array(8).fill(!1));
 		for (let o = 0; o < 8; o++) for (let e = 0; e < 8; e++) {
 			const i = a[o][e];
-			i && (i.color === t ? ke(a, o, e, u, c).forEach((e) => f[e.r][e.c] = !0) : ke(a, o, e, A, c).forEach((e) => _[e.r][e.c] = !0));
+			i && (i.color === t ? ke(a, o, e, u, c).forEach((e) => f[e.r][e.c] = !0) : ke(a, o, e, m, c).forEach((e) => _[e.r][e.c] = !0));
 		}
 		for (let t = 0; t < 8; t++) for (let e = 0; e < 8; e++) {
 			f[t][e] && T++, _[t][e] && O++;
@@ -13229,7 +13261,7 @@ var Be = class {
 		}
 		a.forEach((e, t) => e.forEach((e, r) => {
 			if (!e) return;
-			const s = e.color === o, c = s ? !A || A[t][r] : !u || u[t][r];
+			const s = e.color === o, c = s ? !m || m[t][r] : !u || u[t][r];
 			let n = 0;
 			const d = Pe.getModifiers(e, a, t, r).find((e) => e.pieceValueOverride)?.pieceValueOverride?.({
 				board: a,
@@ -13263,11 +13295,11 @@ var Be = class {
 					EPIC: 200,
 					LEGENDARY: 500
 				}[e.tier || "COMMON"];
-			}), s ? I += n : m += n;
+			}), s ? I += n : A += n;
 		}));
 		const y = e.reserves;
-		if (y) for (const i of Object.keys(y[t])) m += (y[t][i] || 0) * (We[i] || 0) * .8, I += (y[o][i] || 0) * (We[i] || 0) * .8;
-		s += I - m, s += 8 * (O - T), Be.isKingInCheck(e, o) && (s -= 500), Be.isKingInCheck(e, t) && (s += 500);
+		if (y) for (const i of Object.keys(y[t])) A += (y[t][i] || 0) * (We[i] || 0) * .8, I += (y[o][i] || 0) * (We[i] || 0) * .8;
+		s += I - A, s += 8 * (O - T), Be.isKingInCheck(e, o) && (s -= 500), Be.isKingInCheck(e, t) && (s += 500);
 		const S = (e, t) => {
 			if (!e) return 0;
 			let o = 0;
@@ -13283,7 +13315,7 @@ var Be = class {
 			return o;
 		};
 		s += S(n, p), s -= S(d, l);
-		const R = s + .1 * ((m + I + T + O) % 5);
+		const R = s + .1 * ((A + I + T + O) % 5);
 		return r === t ? -R : R;
 	}
 };
@@ -13419,28 +13451,28 @@ const Qe = new class {
 			action: null
 		};
 		this.sortActions(E, e, i, d?.bestAction);
-		let l = E[0], u = a ? -Infinity : Infinity, A = r, m = s;
+		let l = E[0], u = a ? -Infinity : Infinity, m = r, A = s;
 		for (let t = 0; t < E.length; t++) {
 			const o = E[t], n = this.makeMove(e, o), d = this.getHash(e);
 			this.positionHistory.set(d, (this.positionHistory.get(d) ?? 0) + 1);
-			let A = 0;
-			const m = Be.isCapture(e, o), I = n.turnSnapshot !== e.turn ? !a : a;
-			i >= 3 && t >= 3 && !m && !p && "use_skill" !== o.type ? (A = this.search(e, i - 2, r, s, I, c + 1).score, (a ? A > r : A < s) && (A = this.search(e, i - 1, r, s, I, c + 1).score)) : A = this.search(e, i - 1, r, s, I, c + 1).score;
+			let m = 0;
+			const A = Be.isCapture(e, o), I = n.turnSnapshot !== e.turn ? !a : a;
+			i >= 3 && t >= 3 && !A && !p && "use_skill" !== o.type ? (m = this.search(e, i - 2, r, s, I, c + 1).score, (a ? m > r : m < s) && (m = this.search(e, i - 1, r, s, I, c + 1).score)) : m = this.search(e, i - 1, r, s, I, c + 1).score;
 			const T = this.positionHistory.get(d) ?? 1;
 			if (T <= 1 ? this.positionHistory.delete(d) : this.positionHistory.set(d, T - 1), this.unmakeMove(e, n), this.timeout) break;
 			if (a) {
-				if (A > u && (u = A, l = o), s <= (r = Math.max(r, A))) {
-					this.prunedNodes++, m || this.storeKillerAndHistory(o, i);
+				if (m > u && (u = m, l = o), s <= (r = Math.max(r, m))) {
+					this.prunedNodes++, A || this.storeKillerAndHistory(o, i);
 					break;
 				}
-			} else if (A < u && (u = A, l = o), (s = Math.min(s, A)) <= r) {
-				this.prunedNodes++, m || this.storeKillerAndHistory(o, i);
+			} else if (m < u && (u = m, l = o), (s = Math.min(s, m)) <= r) {
+				this.prunedNodes++, A || this.storeKillerAndHistory(o, i);
 				break;
 			}
 		}
 		if (!this.timeout) {
 			let e = 0;
-			u <= A ? e = 1 : u >= m && (e = 2), this.ttCache.set(n, {
+			u <= m ? e = 1 : u >= A && (e = 2), this.ttCache.set(n, {
 				depth: i,
 				score: u,
 				flag: e,
