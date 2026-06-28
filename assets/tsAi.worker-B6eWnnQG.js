@@ -712,10 +712,10 @@ const U = "STAT_TRACK", G = (e, t) => Math.atan2(e, t) * (180 / Math.PI), g = [
 		tier: "LEGENDARY",
 		pieceType: i.BISHOP,
 		description: "吃掉敌方棋子时，随机将一个本局阵亡的友方棋子放回库存。",
-		hooks: { onKill: ({ piece: e, emit: t, roster: o, deployedUids: r, board: s, prng: a }) => {
-			const n = r || [], c = (o || []).filter((e) => !(e.type === i.KING || !e.uid) && !(L.findPieces(s, (t) => t.uid === e.uid).length > 0 || n.includes(e.uid)));
-			if (c.length > 0 && a) {
-				const o = c[Math.floor(a.next() * c.length)];
+		hooks: { onKill: ({ piece: e, emit: t, roster: o, deployedUids: r, board: s, prng: a, victim: n }) => {
+			const c = r || [], d = (o || []).filter((t) => !(t.type === i.KING || !t.uid) && t.color === e.color && !c.includes(t.uid));
+			if (d.length > 0 && a) {
+				const o = d[Math.floor(a.next() * d.length)];
 				t({
 					type: "MODIFY_RESERVE",
 					color: e.color,
@@ -2659,15 +2659,16 @@ const j = () => crypto.randomUUID(), J = [
 		tier: "RARE",
 		pieceType: i.KNIGHT,
 		description: "马跳跃落点相邻 1 格内的敌方陷阱和地块效果被销毁。",
-		hooks: { onAfterMove: ({ r: e, c: t, metadata: o, emit: i }) => {
-			if (o && o.squares) for (let r = -1; r <= 1; r++) for (let s = -1; s <= 1; s++) {
-				const a = e + r, n = t + s, c = `${a},${n}`, d = o.squares[c];
-				d && d.length > 0 && d.forEach((e) => {
-					i({
+		hooks: { onAfterMove: ({ r: e, c: t, piece: o, metadata: i, emit: r }) => {
+			if (i && i.squares) for (let s = -1; s <= 1; s++) for (let a = -1; a <= 1; a++) {
+				const n = e + s, c = t + a, d = `${n},${c}`, l = i.squares[d];
+				l && l.length > 0 && l.forEach((e) => {
+					const t = e.metadata?.ownerColor;
+					void 0 !== t && t === o.color || r({
 						type: "REMOVE_SQUARE",
 						pos: {
-							r: a,
-							c: n
+							r: n,
+							c
 						},
 						statusId: e.id
 					});
@@ -2848,7 +2849,7 @@ const j = () => crypto.randomUUID(), J = [
 		tier: "EPIC",
 		pieceType: i.KNIGHT,
 		description: "移动后对周围敌军施加冻结。",
-		hooks: { onAfterMove: ({ r: e, c: t, emit: o }) => {
+		hooks: { onAfterMove: ({ board: e, r: t, c: o, piece: s, emit: a }) => {
 			[
 				[-1, 0],
 				[1, 0],
@@ -2858,17 +2859,20 @@ const j = () => crypto.randomUUID(), J = [
 				[-1, 1],
 				[1, -1],
 				[1, 1]
-			].forEach(([i, s]) => {
-				const a = e + i, n = t + s;
-				a >= 0 && a < 8 && n >= 0 && n < 8 && o({
-					type: "ADD_STATUS",
-					pos: {
-						r: a,
-						c: n
-					},
-					statusId: r.FROZEN,
-					duration: 2
-				});
+			].forEach(([n, c]) => {
+				const d = t + n, l = o + c;
+				if (d >= 0 && d < 8 && l >= 0 && l < 8) {
+					const t = e[d][l];
+					t && t.color !== s.color && t.type !== i.KING && a({
+						type: "ADD_STATUS",
+						pos: {
+							r: d,
+							c: l
+						},
+						statusId: r.FROZEN,
+						duration: 2
+					});
+				}
 			});
 		} }
 	},
@@ -3665,7 +3669,10 @@ const j = () => crypto.randomUUID(), J = [
 				}
 				return o;
 			},
-			movement: ({ board: e }, t) => t.filter((t) => !e[t.r][t.c])
+			movement: ({ board: e, piece: t }, o) => o.filter((o) => {
+				const i = e[o.r][o.c];
+				return !i || i.color === t.color;
+			})
 		}
 	},
 	{
@@ -3674,7 +3681,37 @@ const j = () => crypto.randomUUID(), J = [
 		tier: "RARE",
 		pieceType: i.PAWN,
 		description: "被吃掉时，若周围 1 格有其他“兵”，触发连锁爆炸（3x3）。",
-		hooks: { onDeath: ({ board: e, r: t, c: o, emit: i }) => {} }
+		hooks: { onDeath: ({ board: e, r: t, c: o, piece: r, victim: s, emit: a }) => {
+			if (!s || r.uid !== s.uid) return;
+			const n = (t, o, r) => {
+				const s = `${t},${o}`;
+				if (!r.has(s)) {
+					r.add(s), a({
+						type: "ANIMATE",
+						name: "SEMANTIC:DEEP_SPACE:EXECUTE:RARE",
+						pos: {
+							r: t,
+							c: o
+						},
+						duration: 400
+					});
+					for (let s = -1; s <= 1; s++) for (let c = -1; c <= 1; c++) {
+						const d = t + s, l = o + c;
+						if (L.isValidPos(d, l)) {
+							const t = e[d][l];
+							t && t.type !== i.KING && (a({
+								type: "KILL",
+								pos: {
+									r: d,
+									c: l
+								}
+							}), t.type === i.PAWN && n(d, l, r));
+						}
+					}
+				}
+			};
+			n(t, o, /* @__PURE__ */ new Set());
+		} }
 	}
 ];
 function te(e, t, o, r) {
@@ -6011,6 +6048,12 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 		description: "策反敌军",
 		hooks: { onUse: ({ piece: e, r: s, c: a, emit: n, setNoSkip: c }) => {
 			e && e.color === o && e.type !== i.KING ? (n({
+				type: "REMOVE_PIECE",
+				pos: {
+					r: s,
+					c: a
+				}
+			}), n({
 				type: "SPAWN",
 				pos: {
 					r: s,
@@ -6340,7 +6383,7 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 		description: "将棋子（不论棋盘或库存）转化为 30 金币。",
 		hooks: { onUse: (e) => {
 			const t = e.piece || e.board[e.r]?.[e.c];
-			t && t.type !== i.KING ? (e.emit({
+			t && t.type !== i.KING && t.uid ? (e.emit({
 				type: "REMOVE_FROM_ROSTER",
 				pieceUid: t.uid
 			}), e.board[e.r]?.[e.c] && (e.emit({
@@ -6388,36 +6431,30 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 		tier: "EPIC",
 		description: "献祭一名友军，使其力量永久叠加至该棋子（等级+1，槽位+1）。",
 		hooks: { onUse: (e) => {
-			e.piece && e.piece.type !== i.KING && e.piece.color === t ? (e.emit({
-				type: "REMOVE_FROM_ROSTER",
-				pieceUid: e.piece.uid
-			}), e.emit({
-				type: "LEVEL_UP",
-				pos: {
-					r: e.r,
-					c: e.c
-				}
-			}), e.emit({
-				type: "UPDATE_ROSTER_PIECE",
-				pieceUid: e.piece.uid,
-				updates: {
-					maxSlots: (e.piece.maxSlots || 1) + 1,
-					level: (e.piece.level || 1) + 1
-				}
-			}), e.emit({
-				type: "SHOW_TEXT",
-				text: "Sacrifice Success",
-				textKey: "LOG_SACRIFICE_SUCCESS",
-				style: "gold",
-				pos: {
-					r: e.r,
-					c: e.c
-				}
-			}), e.isAISimulation || k.emit(U, {
-				key: "allies_sacrificed",
-				value: 1,
-				isLifetimeOnly: !0
-			})) : (e.emit({
+			if (e.piece && e.piece.type !== i.KING && e.piece.color === t) {
+				const t = (e.piece.level || 1) + 1;
+				e.emit({
+					type: "UPDATE_ROSTER_PIECE",
+					pieceUid: e.piece.uid,
+					updates: {
+						level: t,
+						maxSlots: (e.piece.maxSlots || 1) + 1
+					}
+				}), e.emit({
+					type: "SHOW_TEXT",
+					text: "Sacrifice Success",
+					textKey: "LOG_SACRIFICE_SUCCESS",
+					style: "gold",
+					pos: {
+						r: e.r,
+						c: e.c
+					}
+				}), e.isAISimulation || k.emit(U, {
+					key: "allies_sacrificed",
+					value: 1,
+					isLifetimeOnly: !0
+				});
+			} else e.emit({
 				type: "SHOW_TEXT",
 				text: "Invalid target (Ally non-King only)",
 				textKey: "LOG_INVALID_TARGET",
@@ -6426,7 +6463,7 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 					r: e.r,
 					c: e.c
 				}
-			}), e.setNoSkip?.());
+			}), e.setNoSkip?.();
 		} }
 	},
 	{
@@ -6498,7 +6535,24 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 		name: "侦察雷达",
 		tier: "RARE",
 		pieceType: i.PAWN,
-		description: "只要该兵连通，周围 2 格内的敌方隐身/幻影失效。"
+		description: "只要该兵连通，周围 2 格内的敌方隐身/幻影失效。",
+		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: i, metadata: s, emit: a }) => {
+			const { networked: n } = be(e, i.color, s);
+			if (n[t][o]) for (let c = -2; c <= 2; c++) for (let s = -2; s <= 2; s++) {
+				const n = t + c, d = o + s;
+				if (n >= 0 && n < 8 && d >= 0 && d < 8) {
+					const t = e[n][d];
+					t && t.color !== i.color && t.statuses?.some((e) => e.id === r.INVISIBLE) && a({
+						type: "REMOVE_STATUS",
+						pos: {
+							r: n,
+							c: d
+						},
+						statusId: r.INVISIBLE
+					});
+				}
+			}
+		} }
 	},
 	{
 		id: "EQ_SIGNAL_BACKPACK",
@@ -6716,7 +6770,7 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 		tier: "EPIC",
 		pieceType: i.ROOK,
 		description: "免疫来自正上方和正下方的任何攻击。",
-		modifiers: { invulnerable: ({ board: e, r: t, c: o }, i) => L.findPieces(e, (e, t, r) => e === i && r === o).length > 0 }
+		modifiers: { invulnerable: ({ board: e, r: t, c: o }, i) => L.findPieces(e, (e, r, s) => e === i && s === o && r !== t).length > 0 }
 	},
 	{
 		id: "EQ_PHOENIX_FEATHER",
@@ -6844,6 +6898,12 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 					}
 				}
 				o || (a({
+					type: "REMOVE_PIECE",
+					pos: {
+						r: t.r,
+						c: t.c
+					}
+				}), a({
 					type: "SPAWN",
 					pos: {
 						r: t.r,
@@ -7068,17 +7128,18 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 		id: "EQ_STABILIZER",
 		name: "稳定器",
 		tier: "COMMON",
-		description: "该棋子不会被任何推开、拉近等强制位移效果影响。"
+		description: "该棋子不会被任何推开、拉近等强制位移效果影响。",
+		modifiers: { isSteady: () => !0 }
 	},
 	{
 		id: "EQ_SELF_DESTRUCT",
 		name: "自毁协议",
 		tier: "RARE",
 		description: "被吃时对周围 1 格造成毁灭爆炸，随后装备损毁。",
-		hooks: { onDeath: ({ board: e, r: t, c: o, emit: r }) => {
-			for (let s = -1; s <= 1; s++) for (let a = -1; a <= 1; a++) {
-				const n = t + s, c = o + a;
-				n >= 0 && n < 8 && c >= 0 && c < 8 && e[n][c]?.type !== i.KING && r({
+		hooks: { onDeath: ({ board: e, r: t, c: o, piece: r, emit: s }) => {
+			for (let a = -1; a <= 1; a++) for (let r = -1; r <= 1; r++) {
+				const n = t + a, c = o + r;
+				n >= 0 && n < 8 && c >= 0 && c < 8 && e[n][c]?.type !== i.KING && s({
 					type: "KILL",
 					pos: {
 						r: n,
@@ -7086,6 +7147,11 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 					}
 				});
 			}
+			s({
+				type: "UPDATE_ROSTER_PIECE",
+				pieceUid: r.uid,
+				updates: { equippedItems: (r.equippedItems || []).filter((e) => "EQ_SELF_DESTRUCT" !== e.effectId) }
+			});
 		} }
 	},
 	{
@@ -7095,7 +7161,7 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 		description: "该棋子断网后，可以多撑 2 回合才进入瘫痪状态。",
 		hooks: { onTurnStart: ({ board: e, r: t, c: o, piece: i, emit: s, metadata: a }) => {
 			const { networked: n } = be(e, i.color, a);
-			n[t][o] ? s({
+			if (n[t][o]) s({
 				type: "SPAWN",
 				pos: {
 					r: t,
@@ -7108,28 +7174,40 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 						batteryLeft: 2
 					}
 				}
-			}) : i.metadata?.batteryLeft > 0 && (s({
-				type: "SPAWN",
-				pos: {
-					r: t,
-					c: o
-				},
-				piece: {
-					...i,
-					metadata: {
-						...i.metadata,
-						batteryLeft: i.metadata.batteryLeft - 1
+			});
+			else if ((i.metadata?.batteryLeft || 0) > 0) {
+				const e = i.metadata.batteryLeft - 1;
+				s({
+					type: "SPAWN",
+					pos: {
+						r: t,
+						c: o
+					},
+					piece: {
+						...i,
+						metadata: {
+							...i.metadata,
+							batteryLeft: e
+						}
 					}
-				}
-			}), s({
-				type: "ADD_STATUS",
-				pos: {
-					r: t,
-					c: o
-				},
-				statusId: r.BACKUP_BUFFER_ACTIVE,
-				duration: 2
-			}));
+				}), s({
+					type: "ADD_STATUS",
+					pos: {
+						r: t,
+						c: o
+					},
+					statusId: r.BACKUP_BUFFER_ACTIVE,
+					duration: 2
+				}), e <= 0 && s({
+					type: "ADD_STATUS",
+					pos: {
+						r: t,
+						c: o
+					},
+					statusId: r.FROZEN,
+					duration: 99
+				});
+			}
 		} }
 	},
 	{
@@ -7336,7 +7414,26 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 		name: "王权遗物",
 		tier: "LEGENDARY",
 		pieceType: i.KING,
-		description: "当场上只剩下王且无兵可发时，获得“后”和“马”的移动能力。",
+		description: "当场上只剩下王且无兵可发时，获得\"后\"和\"马\"的移动能力。",
+		hooks: { onTurnStart: ({ piece: e, reserves: t, r: o, c: r, emit: s }) => {
+			if (e.type === i.KING) {
+				const i = t ? t[e.color] : {}, a = Object.values(i).every((e) => (e || 0) <= 0);
+				a !== e.metadata?.isReserveEmpty && s({
+					type: "SPAWN",
+					pos: {
+						r: o,
+						c: r
+					},
+					piece: {
+						...e,
+						metadata: {
+							...e.metadata,
+							isReserveEmpty: a
+						}
+					}
+				});
+			}
+		} },
 		modifiers: { movement: (e, t) => {
 			const { board: o, piece: i, r, c: s } = e, a = !0 === i.metadata?.isReserveEmpty;
 			if (1 === L.findPieces(o, (e) => e.color === i.color).length && a) [
@@ -7393,24 +7490,20 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 		description: "每进入下一关且金币>50，立刻获得 10 金币利息。",
 		pieceType: i.KING,
 		hooks: { onTurnStart: ({ piece: e, gold: o, historyLength: i, emit: r, r: s, c: a }) => {
-			0 === (i ?? 0) && e.color === t && "number" == typeof s && "number" == typeof a && (e.metadata?.ventureCapitalTriggered || (r({
-				type: "SPAWN",
-				pos: {
-					r: s,
-					c: a
-				},
-				piece: {
-					...e,
-					metadata: {
-						...e.metadata,
-						ventureCapitalTriggered: !0
-					}
-				}
-			}), (o ?? 0) >= 50 && r({
+			0 === (i ?? 0) && e.color === t && "number" == typeof s && "number" == typeof a && (o ?? 0) >= 50 && (r({
 				type: "MODIFY_GOLD",
 				amount: 10,
 				reason: "VENTURE_CAPITAL"
-			})));
+			}), r({
+				type: "SHOW_TEXT",
+				text: "Venture Capital +10",
+				textKey: "LOG_VENTURE_CAPITAL",
+				style: "gold",
+				pos: {
+					r: s,
+					c: a
+				}
+			}));
 		} }
 	},
 	{
@@ -7426,17 +7519,20 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 		name: "侦察探头",
 		tier: "COMMON",
 		description: "使 2x2 区域内的敌方隐身单位显形。",
-		hooks: { onUse: ({ board: e, r: t, c: o, emit: i }) => {
-			for (let s = 0; s < 2; s++) for (let a = 0; a < 2; a++) {
-				const n = t + s, c = o + a;
-				n < 8 && c < 8 && e[n][c] && i({
-					type: "REMOVE_STATUS",
-					pos: {
-						r: n,
-						c
-					},
-					statusId: r.INVISIBLE
-				});
+		hooks: { onUse: ({ board: e, r: o, c: i, piece: s, emit: a }) => {
+			for (let n = 0; n < 2; n++) for (let c = 0; c < 2; c++) {
+				const d = o + n, l = i + c;
+				if (d < 8 && l < 8) {
+					const o = e[d][l];
+					o && o.color !== (s?.color ?? t) && o.statuses?.some((e) => e.id === r.INVISIBLE) && a({
+						type: "REMOVE_STATUS",
+						pos: {
+							r: d,
+							c: l
+						},
+						statusId: r.INVISIBLE
+					});
+				}
 			}
 		} }
 	},
@@ -7865,7 +7961,7 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 							pieceUid: t.uid,
 							updates: { metadata: {
 								...t.metadata,
-								saluteCd: 4
+								saluteCd: 3
 							} }
 						}), s || k.emit(U, {
 							key: "enemy_pawns_killed",
@@ -7897,9 +7993,8 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 			if (o.color === t) {
 				const { networked: t } = be(e, o.color, r);
 				let s = 0;
-				t.forEach((e) => e.forEach((e) => {
-					e && s++;
-				})), s > 0 && (i({
+				for (let i = 0; i < 8; i++) for (let r = 0; r < 8; r++) e[i][r] && e[i][r].color === o.color && t[i][r] && s++;
+				s > 0 && (i({
 					type: "MODIFY_GOLD",
 					amount: s,
 					reason: "THRONE"
@@ -7919,18 +8014,26 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 		tier: "EPIC",
 		description: "主动：消耗 20 金币在当前格子放置永久“信号增益塔”。每关限一次。",
 		hooks: { onUse: (e) => {
-			const { r: t, c: o, board: i, emit: r, gold: s, setNoSkip: a, isAISimulation: n } = e;
-			(s ?? 0) < 20 ? (r({
+			const { r: t, c: o, board: i, emit: r, gold: s, metadata: a, setNoSkip: n, isAISimulation: c } = e, d = a?.signalTowersBuilt ?? 0;
+			d >= 1 ? (r({
+				type: "SHOW_TEXT",
+				text: "Already used this level",
+				textKey: "LOG_ALREADY_USED",
+				style: "system"
+			}), n?.()) : (s ?? 0) < 20 ? (r({
 				type: "SHOW_TEXT",
 				text: "Insufficient gold",
 				textKey: "LOG_NO_FUNDS",
 				style: "system"
-			}), a?.()) : i[t][o] ? (r({
+			}), n?.()) : i[t][o] ? (r({
 				type: "SHOW_TEXT",
 				text: "No space around",
 				textKey: "LOG_NO_SPACE",
 				style: "system"
-			}), a?.()) : (r({
+			}), n?.()) : (r({
+				type: "UPDATE_METADATA",
+				updates: { signalTowersBuilt: d + 1 }
+			}), r({
 				type: "MODIFY_GOLD",
 				amount: -20,
 				reason: "BUILD_TOWER"
@@ -7953,7 +8056,7 @@ const le = (e, t) => Math.atan2(e, t) * (180 / Math.PI), pe = [
 					r: t,
 					c: o
 				}
-			}), n || k.emit(U, {
+			}), c || k.emit(U, {
 				key: "towers_built",
 				value: 1,
 				isLifetimeOnly: !0
@@ -8822,28 +8925,36 @@ var _e = class {
 					key: "bishopSnipe6",
 					value: 1,
 					isLifetimeOnly: !0
-				}), s.type === i.ROOK && e.from && n && Math.max(Math.abs(n.r - e.from.r), Math.abs(n.c - e.from.c)) >= 7 && k.emit(U, {
+				}), s.type === i.ROOK && e.from && n && Math.max(Math.abs(n.r - e.from.r), Math.abs(n.c - e.from.c)) >= 6 && k.emit(U, {
 					key: "rookCrossBoard",
 					value: 1,
 					isLifetimeOnly: !0
 				}));
 			}
 		} else if ("SPAWN" === e.type) {
-			const t = this.resolvePos(e, c);
-			t && ke.handleHook("onDeploy", {
+			const o = this.resolvePos(e, c);
+			o && (ke.handleHook("onDeploy", {
 				...d,
 				piece: e.piece,
-				r: t.r,
-				c: t.c
-			});
-		} else if ("LEVEL_UP" === e.type) {
-			const t = e.pos, o = c[t.r][t.c];
-			o && ke.handleHook("onLevelUp", {
+				r: o.r,
+				c: o.c
+			}), ke.handleSquareHook("onDeploy", o.r, o.c, {
 				...d,
-				piece: o,
-				r: t.r,
-				c: t.c
-			});
+				piece: e.piece,
+				r: o.r,
+				c: o.c
+			}, t.metadata));
+		} else if ("LEVEL_UP" === e.type) {
+			const t = e.pos || this.resolvePos(e, c);
+			if (t) {
+				const e = c[t.r][t.c];
+				e && ke.handleHook("onLevelUp", {
+					...d,
+					piece: e,
+					r: t.r,
+					c: t.c
+				});
+			}
 		}
 	}
 	static calculateSequence(e, t, o) {
@@ -8868,16 +8979,19 @@ var _e = class {
 		return null;
 	}
 	static resolvePos(e, t) {
-		if (e.targetId) for (let o = 0; o < 8; o++) for (let i = 0; i < 8; i++) {
-			const r = t[o][i];
-			if (r && (r.id === e.targetId || r.uid === e.targetId)) return {
-				r: o,
-				c: i
-			};
-			if (r && r.stackedPiece && (r.stackedPiece.id === e.targetId || r.stackedPiece.uid === e.targetId)) return {
-				r: o,
-				c: i
-			};
+		if (e.targetId) for (let o = 0; o < 8; o++) {
+			const i = t[o];
+			if (i) for (let t = 0; t < 8; t++) {
+				const r = i[t];
+				if (r && (r.id === e.targetId || r.uid === e.targetId)) return {
+					r: o,
+					c: t
+				};
+				if (r && r.stackedPiece && (r.stackedPiece.id === e.targetId || r.stackedPiece.uid === e.targetId)) return {
+					r: o,
+					c: t
+				};
+			}
 		}
 		if (e.pos) return e.pos;
 	}
