@@ -65,6 +65,23 @@ jobs:
           done
           echo "copied $count icons"
           ls -l "$APPICONSET"
+      # iOS 全屏游戏：横屏时系统状态栏（时间 / 信号 / 电量）会浮在画面中间偏右，挡住 HUD。
+      # Tauri 没有对应的配置项，只能直接改 `tauri ios init` 生成出来的 Info.plist。
+      - name: Hide the iOS status bar
+        working-directory: ios
+        run: |
+          set -euo pipefail
+          PLIST=$(find src-tauri/gen/apple -maxdepth 3 -path "*_iOS/Info.plist" -type f | head -n 1)
+          if [ -z "$PLIST" ]; then
+            echo "::error::没有找到生成的 Info.plist"
+            exit 1
+          fi
+          echo "Info.plist: $PLIST"
+          /usr/libexec/PlistBuddy -c "Delete :UIStatusBarHidden" "$PLIST" >/dev/null 2>&1 || true
+          /usr/libexec/PlistBuddy -c "Add :UIStatusBarHidden bool true" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Delete :UIViewControllerBasedStatusBarAppearance" "$PLIST" >/dev/null 2>&1 || true
+          /usr/libexec/PlistBuddy -c "Add :UIViewControllerBasedStatusBarAppearance bool false" "$PLIST"
+          plutil -p "$PLIST" | grep -E "UIStatusBarHidden|UIViewControllerBasedStatusBarAppearance"
 
       # --no-sign 需要 tauri-cli >= 2.11.0（此处锁定 2.11.2）
       - name: Build unsigned iOS app
