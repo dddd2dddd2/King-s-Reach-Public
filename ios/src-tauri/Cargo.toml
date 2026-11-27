@@ -24,6 +24,7 @@ log = "0.4"
 tauri = { version = "2.11.2", features = [] }
 tauri-plugin-log = "2"
 tauri-plugin-store = "2.4.3"
+tauri-plugin-haptics = "2.4.2"
 
 [profile.release]
 panic = "abort"
