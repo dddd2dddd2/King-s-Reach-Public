@@ -46,6 +46,25 @@ jobs:
       - name: Initialize Tauri iOS project
         working-directory: ios
         run: npx tauri ios init --ci --skip-targets-install
+      # `tauri ios init` 只写「还不存在的文件」，而它的模板里自带整套默认 AppIcon，
+      # 所以必须把仓库里真正要用的图标按同名覆盖进刚生成的资源目录，否则装出来是 Tauri 默认图标。
+      - name: Apply project app icons
+        working-directory: ios
+        run: |
+          set -euo pipefail
+          APPICONSET=$(find src-tauri/gen/apple -type d -name "AppIcon.appiconset" | head -n 1)
+          if [ -z "$APPICONSET" ]; then
+            echo "::error::未找到 AppIcon.appiconset，iOS 工程可能没有生成。"
+            exit 1
+          fi
+          echo "AppIcon set: $APPICONSET"
+          count=0
+          for icon in src-tauri/icons/ios/AppIcon-*.png; do
+            cp "$icon" "$APPICONSET/$(basename "$icon")"
+            count=$((count + 1))
+          done
+          echo "copied $count icons"
+          ls -l "$APPICONSET"
 
       # --no-sign 需要 tauri-cli >= 2.11.0（此处锁定 2.11.2）
       - name: Build unsigned iOS app
