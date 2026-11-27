@@ -1,0 +1,35 @@
+{
+  "productName": "king-s-reach",
+  "version": "0.1.0",
+  "identifier": "com.hx.kingsreach",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:3000",
+    "beforeDevCommand": "",
+    "beforeBuildCommand": ""
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "King's REACH",
+        "resizable": true,
+        "fullscreen": false,
+        "minWidth": 400,
+        "minHeight": 400,
+        "visible": true
+      }
+    ],
+    "security": { "csp": null }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}

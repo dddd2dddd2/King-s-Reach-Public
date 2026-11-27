@@ -1,0 +1,87 @@
+name: Build iOS Unsigned IPA
+
+on:
+  workflow_dispatch: # 手动触发：Actions -> Build iOS Unsigned IPA -> Run workflow
+
+jobs:
+  build-ios:
+    runs-on: macos-latest # 公开仓库的 macOS 分钟不计费
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Rust & iOS target
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios
+
+      # 壳工程不自带前端：必须先把私有仓库的构建产物放进来
+      - name: Verify frontend bundle
+        working-directory: ios
+        run: |
+          set -euo pipefail
+          if [ ! -f dist/index.html ]; then
+            echo "::error::缺少 ios/dist/index.html。请先在私有仓库执行 npm run build（base 用默认 './'），再把 dist 的内容同步到本仓库 ios/dist/ 并提交。"
+            exit 1
+          fi
+          if grep -q "/King-s-Reach-Public/" dist/index.html; then
+            echo "::error::ios/dist 看起来是 GitHub Pages 版本（base=/King-s-Reach-Public/），App 内会 404。请改用默认 base './' 的构建产物。"
+            exit 1
+          fi
+          echo "frontend bundle OK: $(du -sh dist | cut -f1)"
+
+      - name: Install Tauri CLI
+        working-directory: ios
+        run: npm install --no-audit --no-fund
+
+      - name: Show toolchain info
+        working-directory: ios
+        run: npx tauri info || true
+
+      - name: Initialize Tauri iOS project
+        working-directory: ios
+        run: npx tauri ios init --ci --skip-targets-install
+
+      # --no-sign 需要 tauri-cli >= 2.11.0（此处锁定 2.11.2）
+      - name: Build unsigned iOS app
+        working-directory: ios
+        run: npx tauri ios build --ci --no-sign --target aarch64
+
+      - name: Package unsigned IPA
+        working-directory: ios
+        run: |
+          set -euo pipefail
+          mkdir -p ipa-output
+          IPA_FILE=$(find src-tauri/gen/apple/build -name "*.ipa" -type f | head -n 1 || true)
+          if [ -n "$IPA_FILE" ]; then
+            echo "Found IPA: $IPA_FILE"
+            cp "$IPA_FILE" ipa-output/app-unsigned.ipa
+          else
+            APP_DIR=$(find src-tauri/gen/apple/build -name "*.app" -type d | head -n 1 || true)
+            if [ -z "$APP_DIR" ]; then
+              echo "构建结束，但未找到 .ipa 或 .app" >&2
+              exit 1
+            fi
+            echo "Packing from app bundle: $APP_DIR"
+            mkdir -p Payload
+            cp -R "$APP_DIR" Payload/
+            zip -qry ipa-output/app-unsigned.ipa Payload
+            rm -rf Payload
+          fi
+          unzip -l ipa-output/app-unsigned.ipa | grep -q "Payload/.*\.app/" || {
+            echo "IPA 结构异常，缺少 Payload/*.app" >&2
+            exit 1
+          }
+          ls -lh ipa-output/app-unsigned.ipa
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-unsigned-ipa
+          path: ios/ipa-output/app-unsigned.ipa
+          if-no-files-found: error
