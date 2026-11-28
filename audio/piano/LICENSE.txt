@@ -1,0 +1,10 @@
+Salamander Grand Piano V3
+By Alexander Holm
+Source: https://github.com/sfzinstruments/SalamanderGrandPiano
+License: Creative Commons Attribution 3.0 Unported (CC BY 3.0)
+https://creativecommons.org/licenses/by/3.0/
+
+The grand piano is a Yamaha C5 sampled by Alexander Holm. The excerpts in this
+folder are trimmed, loudness-matched and encoded as OGG Vorbis for King's Reach.
+
+Attribution: "Salamander Grand Piano V3" by Alexander Holm, CC BY 3.0.

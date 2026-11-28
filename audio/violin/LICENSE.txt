@@ -1,0 +1,7 @@
+VSCO 2 Community Edition — Solo Violin (Arco Vib)
+Source: https://github.com/sgossner/VSCO-2-CE
+License: CC0 1.0 Universal (Public Domain Dedication)
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Recorded by Versilian Studios. The files in this folder are excerpts trimmed to
+4.5 seconds, loudness-matched and encoded as OGG Vorbis for King's Reach.
